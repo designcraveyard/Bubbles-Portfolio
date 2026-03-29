@@ -361,6 +361,170 @@ section { padding: 100px 2rem; }
   aspect-ratio: 16/7;
 }
 
+/* ===== EDUCATIONAL VIDEOS ===== */
+#edu-videos {
+  background: var(--cream-dark);
+}
+
+.edu-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.masonry {
+  columns: 3;
+  column-gap: 20px;
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  background: var(--cream);
+  border: 0.5px solid var(--border);
+}
+
+.masonry-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(26,23,20,0.08);
+}
+
+.masonry-item img {
+  width: 100%;
+  display: block;
+}
+
+.masonry-item .label {
+  padding: 14px 16px;
+  font-size: 14px;
+  font-family: var(--serif);
+}
+
+.masonry-item .label-sub {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 300;
+  font-family: var(--sans);
+  margin-top: 2px;
+}
+
+/* Video play overlay */
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.play-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.masonry-item:hover .play-btn {
+  transform: scale(1.1);
+  background: var(--accent);
+}
+
+.play-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: #fff;
+  margin-left: 3px;
+}
+
+/* ===== LIGHTBOX ===== */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.92);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  cursor: zoom-out;
+}
+
+.lightbox.open {
+  display: flex;
+}
+
+.lightbox-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 12px;
+  cursor: default;
+}
+
+.lightbox-content img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.lightbox-content iframe {
+  width: 80vw;
+  height: 45vw;
+  max-height: 80vh;
+  border: none;
+  border-radius: 12px;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  transition: background 0.2s;
+}
+.lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+.lightbox-caption {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  font-family: var(--serif);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .masonry { columns: 2; column-gap: 12px; }
+  .masonry-item { margin-bottom: 12px; }
+  .lightbox-content iframe { width: 95vw; height: 53vw; }
+}
+
+@media (max-width: 480px) {
+  .masonry { columns: 1; }
+}
+
 /* ===== CONTACT ===== */
 #contact {
   background: var(--ink);
@@ -466,6 +630,7 @@ footer p {
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#works">Work</a></li>
+      <li><a href="#edu-videos">Videos</a></li>
       <li><a href="#contact">Contact</a></li>
       <li><a href="resume.html">Resume</a></li>
       <li><a href="resume.html" class="btn-resume">Download CV</a></li>
@@ -538,7 +703,7 @@ footer p {
   </div>
   <div class="works-grid">
 
-    <div class="work-card featured fade-up">
+    <div class="work-card featured fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-02-food-delivery.jpg', 'Food Delivery')">
       <img src="shots/exports/showcases/showcase-02-food-delivery.jpg" alt="Food Delivery App" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">Food Delivery</p>
@@ -546,7 +711,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card fade-up">
+    <div class="work-card fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-04-flight-search.jpg', 'Flight Search')">
       <img src="shots/exports/showcases/showcase-04-flight-search.jpg" alt="Flight Search" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">Flight Search</p>
@@ -554,7 +719,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card fade-up">
+    <div class="work-card fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-08-investment-portfolio.jpg', 'Investment Portfolio')">
       <img src="shots/exports/showcases/showcase-08-investment-portfolio.jpg" alt="Investment Portfolio" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">Investment Portfolio</p>
@@ -562,7 +727,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card fade-up">
+    <div class="work-card fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-05-grocery-cart.jpg', 'Grocery Cart')">
       <img src="shots/exports/showcases/showcase-05-grocery-cart.jpg" alt="Grocery Cart" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">Grocery Cart</p>
@@ -570,7 +735,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card fade-up">
+    <div class="work-card fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-09-emi-calculator.jpg', 'EMI Calculator')">
       <img src="shots/exports/showcases/showcase-09-emi-calculator.jpg" alt="EMI Calculator" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">EMI Calculator</p>
@@ -578,7 +743,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card fade-up">
+    <div class="work-card fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-10-fashion-product.jpg', 'Fashion Product')">
       <img src="shots/exports/showcases/showcase-10-fashion-product.jpg" alt="Fashion Product" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">Fashion Product</p>
@@ -586,7 +751,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card fade-up">
+    <div class="work-card fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-18-ott-home-light.jpg', 'OTT Streaming')">
       <img src="shots/exports/showcases/showcase-18-ott-home-light.jpg" alt="OTT Home" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">OTT Streaming</p>
@@ -594,7 +759,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card fade-up">
+    <div class="work-card fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-12-wishlist.jpg', 'Wishlist')">
       <img src="shots/exports/showcases/showcase-12-wishlist.jpg" alt="Wishlist" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">Wishlist</p>
@@ -602,7 +767,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card fade-up">
+    <div class="work-card fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-13-calorie-tracker.jpg', 'Calorie Tracker')">
       <img src="shots/exports/showcases/showcase-13-calorie-tracker.jpg" alt="Calorie Tracker" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">Calorie Tracker</p>
@@ -610,7 +775,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card featured fade-up">
+    <div class="work-card featured fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-14-workout-session.jpg', 'Workout Session')">
       <img src="shots/exports/showcases/showcase-14-workout-session.jpg" alt="Workout Session" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">Workout Session</p>
@@ -618,7 +783,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card fade-up">
+    <div class="work-card fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-17-train-tickets.jpg', 'Train Tickets')">
       <img src="shots/exports/showcases/showcase-17-train-tickets.jpg" alt="Train Tickets" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">Train Tickets</p>
@@ -626,7 +791,7 @@ footer p {
       </div>
     </div>
 
-    <div class="work-card fade-up">
+    <div class="work-card fade-up" onclick="openLightbox('image', 'shots/exports/showcases/showcase-23-habit-tracker.jpg', 'Habit Tracker')">
       <img src="shots/exports/showcases/showcase-23-habit-tracker.jpg" alt="Habit Tracker" loading="lazy" />
       <div class="work-card-info">
         <p class="work-card-title">Habit Tracker</p>
@@ -636,6 +801,110 @@ footer p {
 
   </div>
 </section>
+
+<!-- EDUCATIONAL VIDEOS -->
+<section id="edu-videos">
+  <div class="edu-inner">
+    <div class="section-header">
+      <p class="section-eyebrow">Educational Content</p>
+      <h2 class="section-title">Videos & Character Design</h2>
+    </div>
+    <div class="masonry">
+
+      <!-- Video: Water Cycle (portrait) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('video', '', 'Water Cycle')">
+        <img src="EduVidoes/thumbnails/Water Cycle.jpg" alt="Water Cycle" loading="lazy" />
+        <div class="video-overlay">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+        </div>
+        <div class="label">Water Cycle<div class="label-sub">Science explainer</div></div>
+      </div>
+
+      <!-- Character: Beano Expressions (landscape) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('image', 'EduVidoes/beano-expressions.jpg', 'Beano — Expression Reference Sheet')">
+        <img src="EduVidoes/beano-expressions.jpg" alt="Beano Expressions" loading="lazy" />
+        <div class="label">Beano — Expressions<div class="label-sub">Character reference sheet</div></div>
+      </div>
+
+      <!-- Video: Food Chain (portrait) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('video', '', 'Food Chain')">
+        <img src="EduVidoes/thumbnails/Food Chain.jpg" alt="Food Chain" loading="lazy" />
+        <div class="video-overlay">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+        </div>
+        <div class="label">Food Chain<div class="label-sub">Science explainer</div></div>
+      </div>
+
+      <!-- Character: Sutti Poses (portrait) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('image', 'EduVidoes/sutti-poses.jpg', 'Sutti — Pose Reference Sheet')">
+        <img src="EduVidoes/sutti-poses.jpg" alt="Sutti Poses" loading="lazy" />
+        <div class="label">Sutti — Poses<div class="label-sub">Character reference sheet</div></div>
+      </div>
+
+      <!-- Video: Types of Forces (landscape) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('video', '', 'Types of Forces')">
+        <img src="EduVidoes/thumbnails/Types of Forces.jpg" alt="Types of Forces" loading="lazy" />
+        <div class="video-overlay">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+        </div>
+        <div class="label">Types of Forces<div class="label-sub">Physics explainer</div></div>
+      </div>
+
+      <!-- Storyboard (landscape) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('image', 'EduVidoes/storyboard.jpg', 'Storyboard — Beano Episode')">
+        <img src="EduVidoes/storyboard.jpg" alt="Storyboard" loading="lazy" />
+        <div class="label">Storyboard<div class="label-sub">Beano episode planning</div></div>
+      </div>
+
+      <!-- Video: Layers of Earth (portrait) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('video', '', 'Layers of Earth')">
+        <img src="EduVidoes/thumbnails/Layers of Earth.jpg" alt="Layers of Earth" loading="lazy" />
+        <div class="video-overlay">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+        </div>
+        <div class="label">Layers of Earth<div class="label-sub">Geography explainer</div></div>
+      </div>
+
+      <!-- Character: Beano Poses (landscape) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('image', 'EduVidoes/beano-poses.jpg', 'Beano — Pose Reference Sheet')">
+        <img src="EduVidoes/beano-poses.jpg" alt="Beano Poses" loading="lazy" />
+        <div class="label">Beano — Poses<div class="label-sub">Character reference sheet</div></div>
+      </div>
+
+      <!-- Video: Bal Gangadhar Tilak (portrait) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('video', '', 'Bal Gangadhar Tilak')">
+        <img src="EduVidoes/thumbnails/Bal Gangadhar Tilak.jpg" alt="Bal Gangadhar Tilak" loading="lazy" />
+        <div class="video-overlay">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+        </div>
+        <div class="label">Bal Gangadhar Tilak<div class="label-sub">History explainer</div></div>
+      </div>
+
+      <!-- Character: Sutti Expressions (portrait) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('image', 'EduVidoes/sutti-expressions.jpg', 'Sutti — Expression Reference Sheet')">
+        <img src="EduVidoes/sutti-expressions.jpg" alt="Sutti Expressions" loading="lazy" />
+        <div class="label">Sutti — Expressions<div class="label-sub">Character reference sheet</div></div>
+      </div>
+
+      <!-- Video: Clothes (portrait) -->
+      <div class="masonry-item fade-up" onclick="openLightbox('video', '', 'Clothes')">
+        <img src="EduVidoes/thumbnails/Clothes.jpg" alt="Clothes" loading="lazy" />
+        <div class="video-overlay">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+        </div>
+        <div class="label">Clothes<div class="label-sub">General knowledge</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+  <div class="lightbox-content" id="lightbox-content"></div>
+  <p class="lightbox-caption" id="lightbox-caption"></p>
+</div>
 
 <!-- CONTACT -->
 <section id="contact">
@@ -662,17 +931,83 @@ footer p {
   <p>Anjali Verma · 2026 · Designed by Anjali</p>
 </footer>
 
-<!-- Scroll animations -->
+<!-- Scroll animations + Lightbox -->
 <script>
+// Scroll reveal
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
+    if (entry.isIntersecting) entry.target.classList.add('visible');
   });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
 document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// YouTube URL map — update these once uploaded
+const youtubeMap = {
+  // 'Video Title': 'YOUTUBE_VIDEO_ID',
+};
+
+// Lightbox
+function openLightbox(type, src, caption) {
+  const lb = document.getElementById('lightbox');
+  const content = document.getElementById('lightbox-content');
+  const cap = document.getElementById('lightbox-caption');
+
+  // Clear previous content safely
+  while (content.firstChild) content.removeChild(content.firstChild);
+
+  if (type === 'image') {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = caption || '';
+    content.appendChild(img);
+  } else if (type === 'video') {
+    const ytId = youtubeMap[caption];
+    if (ytId) {
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube.com/embed/' + ytId + '?autoplay=1&rel=0';
+      iframe.allow = 'autoplay; encrypted-media';
+      iframe.allowFullscreen = true;
+      content.appendChild(iframe);
+    } else {
+      const msg = document.createElement('div');
+      msg.style.cssText = 'color:#fff;text-align:center;padding:60px;';
+      const title = document.createElement('p');
+      title.style.cssText = 'font-family:var(--serif);font-size:24px;';
+      title.textContent = 'Video coming soon';
+      const sub = document.createElement('p');
+      sub.style.cssText = 'font-size:14px;opacity:0.5;font-family:var(--sans);margin-top:12px;';
+      sub.textContent = caption || '';
+      msg.appendChild(title);
+      msg.appendChild(sub);
+      content.appendChild(msg);
+    }
+  }
+
+  cap.textContent = caption || '';
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox(e) {
+  if (e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
+    const lb = document.getElementById('lightbox');
+    lb.classList.remove('open');
+    while (document.getElementById('lightbox-content').firstChild)
+      document.getElementById('lightbox-content').removeChild(document.getElementById('lightbox-content').firstChild);
+    document.body.style.overflow = '';
+  }
+}
+
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const lb = document.getElementById('lightbox');
+    lb.classList.remove('open');
+    var c = document.getElementById('lightbox-content');
+    while (c.firstChild) c.removeChild(c.firstChild);
+    document.body.style.overflow = '';
+  }
+});
 </script>
 
 </body>
