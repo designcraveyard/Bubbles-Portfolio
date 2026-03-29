@@ -943,7 +943,12 @@ document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
 // YouTube URL map — update these once uploaded
 const youtubeMap = {
-  // 'Video Title': 'YOUTUBE_VIDEO_ID',
+  'Water Cycle': 'ccO0S0I0wtE',
+  'Food Chain': 'gDaaJeLXwhU',
+  'Clothes': 'Ca29RZj_N_E',
+  'Layers of Earth': 'cZ_fpAk99po',
+  'Bal Gangadhar Tilak': 'ahzzYl0a_uE',
+  'Types of Forces': 'vBBAIlg3_QU',
 };
 
 // Lightbox
@@ -963,10 +968,17 @@ function openLightbox(type, src, caption) {
   } else if (type === 'video') {
     const ytId = youtubeMap[caption];
     if (ytId) {
+      const isShort = caption !== 'Types of Forces';
       const iframe = document.createElement('iframe');
       iframe.src = 'https://www.youtube.com/embed/' + ytId + '?autoplay=1&rel=0';
       iframe.allow = 'autoplay; encrypted-media';
       iframe.allowFullscreen = true;
+      if (isShort) {
+        iframe.style.width = '360px';
+        iframe.style.height = '640px';
+        iframe.style.maxHeight = '85vh';
+        iframe.style.maxWidth = '90vw';
+      }
       content.appendChild(iframe);
     } else {
       const msg = document.createElement('div');
