@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1600">
-<title>EMI Calculator — Anjali Verma</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<title>Showcase</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -12,58 +11,77 @@ body {
   width: 1600px;
   height: 1200px;
   overflow: hidden;
-  font-family: 'DM Sans', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-.showcase {
-  width: 1600px;
-  height: 1200px;
+  background: linear-gradient(145deg, #E0F8F0 0%, #B0F0D8 50%, #78E0B8 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
-  padding: 0 140px;
-  gap: 80px;
 }
 
-.phone {
-  width: 340px;
-  height: 720px;
-  border-radius: 44px;
-  background: #000;
-  padding: 12px;
+/* iPhone 15 Pro style mockup */
+.iphone {
+  position: relative;
+  width: 380px;
+  height: 780px;
+  border-radius: 58px;
+  background: #1C1C1E;
+  padding: 14px;
   box-shadow:
-    0 60px 120px rgba(0,0,0,0.3),
-    0 20px 40px rgba(0,0,0,0.2),
-    inset 0 0 0 1px rgba(255,255,255,0.1);
-  position: relative;
-  flex-shrink: 0;
+    0 40px 80px rgba(0,0,0,0.18), 0 16px 32px rgba(0,0,0,0.10),
+    inset 0 0 0 0.5px rgba(255,255,255,0.3);
 }
 
-.phone::before {
+/* Titanium edge highlights */
+.iphone::before {
   content: '';
   position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  height: 28px;
-  background: #000;
-  border-radius: 20px;
-  z-index: 10;
+  inset: 0;
+  border-radius: 58px;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.12) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(255,255,255,0.04) 100%
+  );
+  pointer-events: none;
+  z-index: 5;
 }
 
-.phone-screen {
+/* Side button - power */
+.iphone::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 200px;
+  width: 3px;
+  height: 80px;
+  border-radius: 0 3px 3px 0;
+  background: #2A2A2C;
+}
+
+/* Volume buttons */
+.vol-up, .vol-down, .action-btn {
+  position: absolute;
+  left: -3px;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+  background: #2A2A2C;
+}
+.action-btn { top: 168px; height: 28px; }
+.vol-up { top: 220px; height: 54px; }
+.vol-down { top: 288px; height: 54px; }
+
+/* Screen */
+.screen {
   width: 100%;
   height: 100%;
-  border-radius: 34px;
+  border-radius: 46px;
   overflow: hidden;
-  background: #f5f5f5;
+  position: relative;
+  background: #000;
 }
 
-.phone-screen img {
+.screen img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -71,136 +89,74 @@ body {
   display: block;
 }
 
-.info-panel {
-  max-width: 480px;
-  flex-shrink: 0;
-}
-
-.info-panel .category {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  margin-bottom: 20px;
-  opacity: 0.6;
-}
-
-.info-panel h2 {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-size: 56px;
-  line-height: 1.1;
-  margin-bottom: 20px;
-  letter-spacing: -0.02em;
-}
-
-.info-panel .desc {
-  font-size: 18px;
-  line-height: 1.75;
-  opacity: 0.7;
-  font-weight: 300;
-}
-
-.info-panel .tags {
-  display: flex;
-  gap: 10px;
-  margin-top: 28px;
-  flex-wrap: wrap;
-}
-
-.info-panel .tag {
-  padding: 8px 18px;
-  border-radius: 24px;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-
-/* Decorative */
-.deco-circle {
+/* Dynamic Island */
+.dynamic-island {
   position: absolute;
-  border-radius: 50%;
-  z-index: 0;
-}
-.deco-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 2px solid;
-  z-index: 0;
-}
-.deco-dots {
-  position: absolute;
-  z-index: 0;
-  display: grid;
-  grid-template-columns: repeat(5, 6px);
-  gap: 14px;
-  opacity: 0.5;
-}
-.deco-dots span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-
-/* Author badge */
-.author {
-  position: absolute;
-  bottom: 48px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 400;
-  opacity: 0.5;
-  z-index: 5;
-  white-space: nowrap;
-}
-.author-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.4;
+  width: 126px;
+  height: 36px;
+  background: #000;
+  border-radius: 24px;
+  z-index: 10;
 }
 
-/* ===== THEME ===== */
-.theme-emi { background: linear-gradient(140deg, #E8FAF5 0%, #C2F0E0 30%, #8DE0C8 70%, #60CCA8 100%); color: #0D3D2E; }
-.theme-emi .tag { background: rgba(13,80,60,0.1); color: #0D503C; }
-.theme-emi .deco-circle { background: rgba(13,120,80,0.08); }
-.theme-emi .deco-ring { border-color: rgba(13,80,60,0.1); }
-.theme-emi .deco-dots span { background: rgba(13,80,60,0.12); }
+/* Status bar icons (subtle) */
+.status-bar {
+  position: absolute;
+  top: 16px;
+  left: 34px;
+  right: 34px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 8;
+  pointer-events: none;
+}
+
+/* Home indicator */
+.home-indicator {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.25);
+  z-index: 10;
+}
+
+/* Subtle reflection on screen */
+.screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 46px;
+  background: linear-gradient(
+    165deg,
+    rgba(255,255,255,0.06) 0%,
+    transparent 30%
+  );
+  pointer-events: none;
+  z-index: 6;
+}
 
 </style>
 </head>
 <body>
-<div class="showcase theme-emi">
-  <div class="deco-circle" style="top: -80px; right: -80px; width: 300px; height: 300px;"></div>
-  <div class="deco-ring" style="bottom: 80px; left: -40px; width: 200px; height: 200px;"></div>
-  <div class="deco-dots" style="bottom: 120px; right: 100px;">
-    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-  </div>
-  
-    <div class="phone" style="transform: perspective(1200px) rotateY(-6deg) rotateX(3deg);">
-      <div class="phone-screen">
-        <img src="exports/images/shot-09-emi-calculator.jpg" alt="EMI Calculator" />
-      </div>
-    </div>
-    <div class="info-panel">
-      <p class="category">FINTECH</p>
-      <h2>EMI Calculator</h2>
-      <p class="desc">An intuitive loan EMI calculator with interactive sliders, amortization breakdown, and monthly payment projections.</p>
-      <div class="tags">
-        <span class="tag">Fintech</span>
-        <span class="tag">Calculator</span>
-        <span class="tag">Tool UI</span>
-      </div>
-    </div>
-  <div class="author">
-    <span>Anjali Verma</span>
-    <span class="author-dot"></span>
-    <span>UX Designer</span>
+
+<div class="iphone">
+  <div class="action-btn"></div>
+  <div class="vol-up"></div>
+  <div class="vol-down"></div>
+  <div class="screen">
+    <div class="dynamic-island"></div>
+    <div class="home-indicator"></div>
+    <img src="exports/images/shot-09-emi-calculator.jpg" alt="App Screenshot" />
   </div>
 </div>
+
 </body>
 </html>
