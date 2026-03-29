@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit Card Statement - Light</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F0F0F3;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    color: #0A1628;
+    -webkit-font-smoothing: antialiased;
+  }
+  .phone {
+    width: 390px;
+    min-height: 100vh;
+    background: #FFFFFF;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 56px 24px 16px;
+    background: #FFFFFF;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-left .avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0A1628, #1a2d4a);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+  }
+  .header h1 { font-size: 18px; font-weight: 700; }
+  .header-icons { display: flex; gap: 16px; }
+  .header-icons i { color: #0A1628; }
+
+  .content { padding: 0 20px 40px; }
+
+  /* Card */
+  .card-container {
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .credit-card {
+    width: 100%;
+    height: 210px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #0A1628 0%, #162544 50%, #1e3560 100%);
+    padding: 24px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 12px 40px rgba(10, 22, 40, 0.25);
+  }
+  .credit-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255,255,255,0.05) 45%,
+      rgba(255,255,255,0.12) 50%,
+      rgba(255,255,255,0.05) 55%,
+      transparent 60%
+    );
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-30%) rotate(25deg); }
+    100% { transform: translateX(30%) rotate(25deg); }
+  }
+  .card-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+  .card-bank { font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+  .card-type { font-size: 11px; font-weight: 600; color: #B8860B; letter-spacing: 2px; text-transform: uppercase; }
+  .card-chip {
+    width: 40px; height: 30px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #B8860B, #DAA520);
+    position: relative; z-index: 1;
+  }
+  .card-number {
+    font-family: 'DM Sans', monospace;
+    font-size: 16px;
+    letter-spacing: 3px;
+    position: relative; z-index: 1;
+    opacity: 0.9;
+  }
+  .card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative; z-index: 1;
+  }
+  .card-holder-label { font-size: 9px; text-transform: uppercase; opacity: 0.6; letter-spacing: 1px; margin-bottom: 2px; }
+  .card-holder-name { font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+  .card-network { font-size: 22px; font-weight: 700; font-style: italic; opacity: 0.8; }
+
+  /* Due Banner */
+  .due-banner {
+    background: #FFF0F0;
+    border: 1px solid #FFD4D4;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+  .due-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: #FFE0E0;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .due-icon i { color: #D32F2F; }
+  .due-text { flex: 1; }
+  .due-text .label { font-size: 11px; color: #888; font-weight: 500; }
+  .due-text .date { font-size: 14px; font-weight: 700; color: #D32F2F; }
+  .due-text .amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0A1628;
+  }
+
+  /* Limit Section */
+  .section {
+    margin-bottom: 24px;
+  }
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: #0A1628;
+  }
+  .limit-card {
+    background: #F8F8FA;
+    border-radius: 16px;
+    padding: 20px;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+  .limit-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .limit-label { font-size: 12px; color: #888; font-weight: 500; }
+  .limit-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .limit-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: #E8E8EC;
+    margin: 14px 0;
+    overflow: hidden;
+  }
+  .limit-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #0A1628, #1e3560);
+    width: 0%;
+    animation: barFill 1s ease 0.5s forwards;
+  }
+  @keyframes barFill { to { width: 22.9%; } }
+  .limit-stats {
+    display: flex;
+    gap: 12px;
+  }
+  .limit-stat {
+    flex: 1;
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+  .limit-stat .val {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0A1628;
+  }
+  .limit-stat .lbl { font-size: 11px; color: #888; margin-top: 2px; }
+  .limit-stat.used .val { color: #D32F2F; }
+  .limit-stat.min .val { font-size: 15px; color: #B8860B; }
+
+  /* Spend Breakdown */
+  .breakdown {
+    animation: fadeUp 0.6s ease 0.3s both;
+  }
+  .spend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .spend-icon {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .spend-info { flex: 1; }
+  .spend-cat { font-size: 13px; font-weight: 600; }
+  .spend-bar-track {
+    height: 6px;
+    border-radius: 3px;
+    background: #E8E8EC;
+    margin-top: 4px;
+    overflow: hidden;
+  }
+  .spend-bar-val {
+    height: 100%;
+    border-radius: 3px;
+    width: 0%;
+    transition: width 1s ease;
+  }
+  .spend-amt {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Rewards */
+  .rewards-card {
+    background: linear-gradient(135deg, #FFF8E7, #FFF1CC);
+    border: 1px solid #F0D68A;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    animation: fadeUp 0.6s ease 0.4s both;
+  }
+  .rewards-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #B8860B, #DAA520);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .rewards-icon i { color: #fff; }
+  .rewards-info { flex: 1; }
+  .rewards-label { font-size: 11px; color: #8B7D3C; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  .rewards-points {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #6B4F00;
+  }
+  .rewards-sub { font-size: 11px; color: #8B7D3C; }
+
+  /* Transactions */
+  .tx-list { animation: fadeUp 0.6s ease 0.5s both; }
+  .tx-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #F0F0F3;
+  }
+  .tx-item:last-child { border-bottom: none; }
+  .tx-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: #F8F8FA;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tx-icon i { color: #0A1628; }
+  .tx-details { flex: 1; }
+  .tx-name { font-size: 14px; font-weight: 600; }
+  .tx-date { font-size: 11px; color: #999; margin-top: 2px; }
+  .tx-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+  }
+  .tx-amount.debit { color: #D32F2F; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="phone">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="avatar"><i data-lucide="user" style="width:18px;height:18px;"></i></div>
+      <h1>Credit Card</h1>
+    </div>
+    <div class="header-icons">
+      <i data-lucide="bell" style="width:20px;height:20px;"></i>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Card -->
+    <div class="card-container">
+      <div class="credit-card">
+        <div class="card-top">
+          <div>
+            <div class="card-bank">HDFC BANK</div>
+            <div class="card-type">Regalia</div>
+          </div>
+          <div class="card-chip"></div>
+        </div>
+        <div class="card-number">&bull;&bull;&bull;&bull;  &bull;&bull;&bull;&bull;  &bull;&bull;&bull;&bull;  4821</div>
+        <div class="card-bottom">
+          <div>
+            <div class="card-holder-label">Card Holder</div>
+            <div class="card-holder-name">ABHISHEK VERMA</div>
+          </div>
+          <div class="card-network">VISA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Due Banner -->
+    <div class="due-banner">
+      <div class="due-icon"><i data-lucide="alert-circle" style="width:18px;height:18px;"></i></div>
+      <div class="due-text">
+        <div class="label">Payment Due</div>
+        <div class="date">15 Jan 2026</div>
+      </div>
+      <div class="due-text" style="text-align:right;">
+        <div class="label">Minimum Due</div>
+        <div class="amount">&rupee;2,118</div>
+      </div>
+    </div>
+
+    <!-- Limits -->
+    <div class="section">
+      <div class="section-title">Credit Limit</div>
+      <div class="limit-card">
+        <div class="limit-row">
+          <span class="limit-label">Total Limit</span>
+          <span class="limit-value">&rupee;1,85,000</span>
+        </div>
+        <div class="limit-bar"><div class="limit-bar-fill"></div></div>
+        <div class="limit-stats">
+          <div class="limit-stat">
+            <div class="val">&rupee;1,42,650</div>
+            <div class="lbl">Available</div>
+          </div>
+          <div class="limit-stat used">
+            <div class="val">&rupee;42,350</div>
+            <div class="lbl">Used</div>
+          </div>
+          <div class="limit-stat min">
+            <div class="val">&rupee;2,118</div>
+            <div class="lbl">Min Due</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spend Breakdown -->
+    <div class="section breakdown">
+      <div class="section-title">Spend Breakdown</div>
+
+      <div class="spend-item">
+        <div class="spend-icon" style="background:#EEF0FF;"><i data-lucide="shopping-cart" style="width:16px;height:16px;color:#4F5BD5;"></i></div>
+        <div class="spend-info">
+          <div class="spend-cat">Shopping</div>
+          <div class="spend-bar-track"><div class="spend-bar-val" style="background:#4F5BD5;" data-w="42%"></div></div>
+        </div>
+        <div class="spend-amt">&rupee;17,800</div>
+      </div>
+
+      <div class="spend-item">
+        <div class="spend-icon" style="background:#FFF0EC;"><i data-lucide="utensils" style="width:16px;height:16px;color:#E8623A;"></i></div>
+        <div class="spend-info">
+          <div class="spend-cat">Dining</div>
+          <div class="spend-bar-track"><div class="spend-bar-val" style="background:#E8623A;" data-w="24%"></div></div>
+        </div>
+        <div class="spend-amt">&rupee;10,200</div>
+      </div>
+
+      <div class="spend-item">
+        <div class="spend-icon" style="background:#E8F8F0;"><i data-lucide="plane" style="width:16px;height:16px;color:#1FAD64;"></i></div>
+        <div class="spend-info">
+          <div class="spend-cat">Travel</div>
+          <div class="spend-bar-track"><div class="spend-bar-val" style="background:#1FAD64;" data-w="19%"></div></div>
+        </div>
+        <div class="spend-amt">&rupee;8,100</div>
+      </div>
+
+      <div class="spend-item">
+        <div class="spend-icon" style="background:#F5EEFF;"><i data-lucide="film" style="width:16px;height:16px;color:#8B5CF6;"></i></div>
+        <div class="spend-info">
+          <div class="spend-cat">Entertainment</div>
+          <div class="spend-bar-track"><div class="spend-bar-val" style="background:#8B5CF6;" data-w="15%"></div></div>
+        </div>
+        <div class="spend-amt">&rupee;6,250</div>
+      </div>
+    </div>
+
+    <!-- Rewards -->
+    <div class="section">
+      <div class="section-title">Rewards</div>
+      <div class="rewards-card">
+        <div class="rewards-icon"><i data-lucide="coins" style="width:24px;height:24px;"></i></div>
+        <div class="rewards-info">
+          <div class="rewards-label">Reward Points</div>
+          <div class="rewards-points">12,450</div>
+          <div class="rewards-sub">Worth &rupee;3,112 &middot; Redeem now</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="section">
+      <div class="section-title">Recent Transactions</div>
+      <div class="tx-list">
+        <div class="tx-item">
+          <div class="tx-icon"><i data-lucide="shopping-cart" style="width:20px;height:20px;"></i></div>
+          <div class="tx-details">
+            <div class="tx-name">Amazon India</div>
+            <div class="tx-date">27 Dec 2025</div>
+          </div>
+          <div class="tx-amount debit">-&rupee;4,299</div>
+        </div>
+        <div class="tx-item">
+          <div class="tx-icon"><i data-lucide="utensils" style="width:20px;height:20px;"></i></div>
+          <div class="tx-details">
+            <div class="tx-name">Zomato</div>
+            <div class="tx-date">25 Dec 2025</div>
+          </div>
+          <div class="tx-amount debit">-&rupee;862</div>
+        </div>
+        <div class="tx-item">
+          <div class="tx-icon"><i data-lucide="plane" style="width:20px;height:20px;"></i></div>
+          <div class="tx-details">
+            <div class="tx-name">MakeMyTrip</div>
+            <div class="tx-date">22 Dec 2025</div>
+          </div>
+          <div class="tx-amount debit">-&rupee;8,100</div>
+        </div>
+        <div class="tx-item">
+          <div class="tx-icon"><i data-lucide="film" style="width:20px;height:20px;"></i></div>
+          <div class="tx-details">
+            <div class="tx-name">BookMyShow</div>
+            <div class="tx-date">20 Dec 2025</div>
+          </div>
+          <div class="tx-amount debit">-&rupee;750</div>
+        </div>
+        <div class="tx-item">
+          <div class="tx-icon"><i data-lucide="shopping-cart" style="width:20px;height:20px;"></i></div>
+          <div class="tx-details">
+            <div class="tx-name">Myntra</div>
+            <div class="tx-date">18 Dec 2025</div>
+          </div>
+          <div class="tx-amount debit">-&rupee;3,490</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+  // Animate spend bars
+  setTimeout(() => {
+    document.querySelectorAll('.spend-bar-val').forEach(bar => {
+      bar.style.width = bar.dataset.w;
+    });
+  }, 600);
+</script>
+</body>
+</html>

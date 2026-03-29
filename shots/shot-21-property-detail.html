@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Detail - 2 BHK Apartment</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f0f0f0;font-family:'Open Sans',sans-serif;display:flex;justify-content:center;min-height:100vh;padding:20px 0}
+.phone{width:390px;background:#fff;min-height:844px;position:relative;overflow-x:hidden;padding-bottom:80px;border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.fade-in{opacity:0;transform:translateY(18px);animation:fadeUp .5s ease forwards}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+/* Hero */
+.hero{position:relative;height:260px;background:url('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=390&h=250&fit=crop') center/cover;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:0;background:
+  repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(255,255,255,.06) 30px,rgba(255,255,255,.06) 31px),
+  repeating-linear-gradient(90deg,transparent,transparent 30px,rgba(255,255,255,.06) 30px,rgba(255,255,255,.06) 31px);
+}
+.hero .floorplan{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.12}
+.hero .floorplan svg{width:220px;height:180px}
+.hero-top{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;z-index:2}
+.hero-top .back{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.35);color:#fff;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.hero-icons{display:flex;gap:10px}
+.hero-icons button{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.35);color:#fff;border:none;font-size:16px;cursor:pointer;backdrop-filter:blur(4px)}
+.media-badge{position:absolute;bottom:14px;left:16px;z-index:2;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;letter-spacing:.2px}
+
+/* Content */
+.content{padding:20px 18px}
+.price-row{display:flex;align-items:baseline;gap:10px;animation-delay:.1s}
+.price{font-family:'Poppins',sans-serif;font-size:28px;font-weight:700;color:#1a1a1a}
+.price-per{font-size:13px;color:#666;font-weight:500}
+.config{font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:#1a2744;margin-top:6px;animation-delay:.15s}
+.location{font-size:13px;color:#555;margin-top:4px;animation-delay:.2s}
+.tags{display:flex;align-items:center;gap:12px;margin-top:10px;animation-delay:.25s}
+.verified{display:inline-flex;align-items:center;gap:4px;background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px}
+.updated{font-size:12px;color:#888}
+
+/* Section */
+.section{margin-top:22px}
+.section-title{font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;color:#1a2744;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+
+/* Highlights */
+.highlights-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.highlight-item{background:#f8f9fb;border-radius:10px;padding:12px 8px;text-align:center;font-size:12px;color:#444;line-height:1.4}
+.highlight-item .icon{font-size:20px;margin-bottom:4px}
+
+/* About */
+.about-text{font-size:13px;color:#555;line-height:1.65}
+.read-more{color:#1a1a1a;font-size:13px;font-weight:600;border:none;background:none;cursor:pointer;margin-top:4px;padding:0;text-decoration:underline}
+
+/* Dimensions */
+.dim-table{width:100%;border-collapse:collapse}
+.dim-table tr{border-bottom:1px solid #f0f0f0}
+.dim-table td{padding:10px 0;font-size:13px}
+.dim-table td:first-child{color:#333;font-weight:500}
+.dim-table td:last-child{color:#666;text-align:right}
+
+/* Nearby */
+.nearby-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.nearby-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#444;background:#f8f9fb;padding:10px 12px;border-radius:10px}
+.nearby-item .ni-icon{font-size:18px}
+.nearby-item .ni-dist{color:#888;font-size:11px;margin-left:auto}
+
+/* EMI */
+.emi-bar{background:#f8f9fb;border:1px solid #e5e5e5;border-radius:10px;padding:12px 16px;font-size:13px;color:#333;display:flex;align-items:center;gap:6px}
+.emi-bar strong{color:#1a1a1a}
+
+/* Seller */
+.seller-card{background:#f8f9fb;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.seller-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FF6B2E,#ff8f5e);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:16px}
+.seller-info{flex:1}
+.seller-name{font-weight:600;font-size:14px;color:#1a2744}
+.seller-meta{font-size:12px;color:#888;margin-top:2px}
+.seller-meta span{margin-right:8px}
+.verified-badge{background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px}
+
+/* Sticky Bottom */
+.sticky-bottom{position:sticky;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;padding:12px 18px;display:flex;gap:10px;z-index:10}
+.sticky-bottom button{flex:1;padding:14px;border:none;border-radius:12px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-call{background:#1a1a1a;color:#fff}
+.btn-wa{background:#fff;color:#1a1a1a;border:1.5px solid #1a1a1a}
+</style>
+</head>
+<body>
+<div class="phone">
+  <!-- Hero -->
+  <div class="hero fade-in">
+    <div class="floorplan">
+      <svg viewBox="0 0 220 180" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.5">
+        <rect x="10" y="10" width="90" height="70" rx="2"/><rect x="110" y="10" width="100" height="70" rx="2"/>
+        <rect x="10" y="90" width="130" height="80" rx="2"/><rect x="150" y="90" width="60" height="80" rx="2"/>
+        <line x1="55" y1="10" x2="55" y2="80"/><line x1="10" y1="130" x2="140" y2="130"/>
+        <rect x="60" y="72" width="16" height="8" rx="1"/><rect x="142" y="125" width="8" height="16" rx="1"/>
+      </svg>
+    </div>
+    <div class="hero-top">
+      <button class="back">&larr;</button>
+      <div class="hero-icons">
+        <button><i data-lucide="heart" style="width:16px;height:16px;color:#fff"></i></button>
+        <button>&#8599;</button>
+      </div>
+    </div>
+    <div class="media-badge">12 Photos &middot; 1 Video &middot; 3D Tour</div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <div class="price-row fade-in" style="animation-delay:.1s">
+      <span class="price">&#8377;64,00,000</span>
+      <span class="price-per">&#8377;6,095/sq ft</span>
+    </div>
+    <div class="config fade-in" style="animation-delay:.15s">2 BHK Apartment &middot; 1050 sq ft &middot; 4th Floor / 14th</div>
+    <div class="location fade-in" style="animation-delay:.2s">Prestige Sunrise Park, Sector 93B, Noida 201304</div>
+    <div class="tags fade-in" style="animation-delay:.25s">
+      <span class="verified">&#10003; VERIFIED</span>
+      <span class="updated">Updated 3 days ago</span>
+    </div>
+
+    <!-- Highlights -->
+    <div class="section fade-in" style="animation-delay:.3s">
+      <div class="section-title">Key Highlights</div>
+      <div class="highlights-grid">
+        <div class="highlight-item"><div class="icon"><i data-lucide="sofa" style="width:20px;height:20px"></i></div>Semi-Furnished</div>
+        <div class="highlight-item"><div class="icon"><i data-lucide="car" style="width:20px;height:20px"></i></div>Covered Parking</div>
+        <div class="highlight-item"><div class="icon"><i data-lucide="compass" style="width:20px;height:20px"></i></div>East Facing</div>
+        <div class="highlight-item"><div class="icon"><i data-lucide="waves" style="width:20px;height:20px"></i></div>Swimming Pool</div>
+        <div class="highlight-item"><div class="icon"><i data-lucide="shield" style="width:20px;height:20px"></i></div>24/7 Security</div>
+        <div class="highlight-item"><div class="icon"><i data-lucide="lightbulb" style="width:20px;height:20px"></i></div>Power Backup</div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="section fade-in" style="animation-delay:.4s">
+      <div class="section-title">About This Property</div>
+      <p class="about-text">Well-maintained 2 BHK apartment in Prestige Sunrise Park with modern amenities and excellent connectivity. The society features landscaped gardens, a clubhouse, and round-the-clock security. Ideal for families looking for a peaceful yet well-connected locality...</p>
+      <button class="read-more">Read more</button>
+    </div>
+
+    <!-- Dimensions -->
+    <div class="section fade-in" style="animation-delay:.5s">
+      <div class="section-title">Room Dimensions</div>
+      <table class="dim-table">
+        <tr><td>Master Bedroom</td><td>12 &times; 13 ft</td></tr>
+        <tr><td>Second Bedroom</td><td>10 &times; 11 ft</td></tr>
+        <tr><td>Living Room</td><td>18 &times; 15 ft</td></tr>
+        <tr><td>Kitchen</td><td>9 &times; 8 ft</td></tr>
+      </table>
+    </div>
+
+    <!-- Nearby -->
+    <div class="section fade-in" style="animation-delay:.6s">
+      <div class="section-title">Nearby</div>
+      <div class="nearby-row">
+        <div class="nearby-item"><span class="ni-icon"><i data-lucide="train" style="width:18px;height:18px"></i></span>Metro<span class="ni-dist">2.3 km</span></div>
+        <div class="nearby-item"><span class="ni-icon"><i data-lucide="school" style="width:18px;height:18px"></i></span>School<span class="ni-dist">0.5 km</span></div>
+        <div class="nearby-item"><span class="ni-icon"><i data-lucide="hospital" style="width:18px;height:18px"></i></span>Hospital<span class="ni-dist">1.2 km</span></div>
+        <div class="nearby-item"><span class="ni-icon"><i data-lucide="shopping-cart" style="width:18px;height:18px"></i></span>Mall<span class="ni-dist">0.8 km</span></div>
+      </div>
+    </div>
+
+    <!-- EMI -->
+    <div class="section fade-in" style="animation-delay:.7s">
+      <div class="section-title">EMI Calculator</div>
+      <div class="emi-bar"><strong>&#8377;64L</strong> @ 8.5% &middot; 20 yrs = <strong>&#8377;55,634/month</strong></div>
+    </div>
+
+    <!-- Seller -->
+    <div class="section fade-in" style="animation-delay:.8s">
+      <div class="section-title">Listed By</div>
+      <div class="seller-card">
+        <div class="seller-avatar">SP</div>
+        <div class="seller-info">
+          <div class="seller-name">Suresh Properties <span class="verified-badge">Verified</span></div>
+          <div class="seller-meta"><span><i data-lucide="star" style="width:12px;height:12px;color:#f59e0b;vertical-align:middle"></i> 4.6</span><span>89 deals</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky Bottom -->
+  <div class="sticky-bottom fade-in" style="animation-delay:.9s">
+    <button class="btn-call"><i data-lucide="phone" style="width:16px;height:16px"></i> Call Agent</button>
+    <button class="btn-wa"><i data-lucide="message-circle" style="width:16px;height:16px"></i> WhatsApp</button>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

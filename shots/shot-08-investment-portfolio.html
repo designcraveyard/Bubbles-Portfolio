@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investment Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0b0e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+  }
+  .phone {
+    width: 390px;
+    min-height: 844px;
+    background: #111318;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 80px rgba(0,200,83,0.08), 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .screen { padding: 56px 20px 90px; overflow-y: auto; height: 844px; }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; }
+  .header .sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .settings-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .settings-icon:hover { background: rgba(255,255,255,0.1); }
+  .settings-icon svg { width: 18px; height: 18px; stroke: #9ca3af; }
+
+  /* Total Value Card */
+  .total-card {
+    background: linear-gradient(135deg, #161922 0%, #1a1f2e 100%);
+    border-radius: 20px; padding: 24px; margin-bottom: 12px;
+    position: relative; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .total-card .sparkline-bg {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 80px; opacity: 0.15;
+  }
+  .total-label { font-size: 13px; color: #6b7280; margin-bottom: 8px; font-weight: 500; }
+  .total-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 40px; font-weight: 700; letter-spacing: -1px;
+    position: relative; z-index: 1;
+  }
+  .total-gain {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #00E676; font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px; font-weight: 600; margin-top: 6px;
+    position: relative; z-index: 1;
+  }
+  .total-gain .arrow { font-size: 12px; }
+  .total-gain .label { color: #6b7280; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400; }
+
+  /* Today's change */
+  .today-change {
+    background: rgba(255,255,255,0.03); border-radius: 14px;
+    padding: 14px 18px; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .live-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #00C853;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,200,83,0.5); }
+    50% { box-shadow: 0 0 0 6px rgba(0,200,83,0); }
+  }
+  .today-change .text { font-size: 14px; color: #d1d5db; }
+  .today-change .green { color: #00E676; font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
+
+  /* Chart */
+  .chart-section { margin-bottom: 28px; }
+  .chart-section svg { width: 100%; display: block; }
+  .chart-labels {
+    display: flex; justify-content: space-between;
+    padding: 8px 4px 0; font-size: 11px; color: #4b5563;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* Holdings */
+  .section-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .section-header h2 {
+    font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600;
+  }
+  .badge {
+    background: rgba(0,200,83,0.12); color: #00E676;
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; font-family: 'Space Grotesk', sans-serif;
+  }
+  .holding-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px; padding: 16px 18px;
+    margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+    opacity: 0; transform: translateY(20px);
+  }
+  .holding-card.visible {
+    animation: slideIn 0.5s ease forwards;
+  }
+  @keyframes slideIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .holding-left .name {
+    font-weight: 600; font-size: 15px; margin-bottom: 4px;
+  }
+  .holding-left .shares {
+    font-size: 12px; color: #6b7280;
+  }
+  .holding-right { text-align: right; }
+  .holding-right .value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; font-size: 15px; margin-bottom: 4px;
+  }
+  .holding-right .change {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 4px; justify-content: flex-end;
+  }
+  .holding-right .change.gain { color: #00E676; }
+  .holding-right .change.loss { color: #ef4444; }
+  .dot-indicator { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-indicator.green { background: #00C853; }
+  .dot-indicator.red { background: #ef4444; }
+
+  /* SIP */
+  .sip-card {
+    background: linear-gradient(135deg, rgba(0,200,83,0.06) 0%, rgba(0,200,83,0.02) 100%);
+    border: 1px solid rgba(0,200,83,0.12);
+    border-radius: 16px; padding: 16px 18px; margin-top: 20px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px;
+    opacity: 0; transform: translateY(20px);
+  }
+  .sip-card.visible { animation: slideIn 0.5s ease forwards; }
+  .sip-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: rgba(0,200,83,0.12); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .sip-icon svg { width: 20px; height: 20px; stroke: #00C853; }
+  .sip-info .title { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+  .sip-info .detail { font-size: 12px; color: #6b7280; }
+  .sip-info .detail span { color: #00E676; font-weight: 600; font-family: 'Space Grotesk', sans-serif; }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 80px; background: #111318;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 0 10px 16px;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; opacity: 0.5; transition: opacity 0.2s;
+  }
+  .nav-item.active { opacity: 1; }
+  .nav-item svg { width: 22px; height: 22px; }
+  .nav-item span { font-size: 10px; font-weight: 500; }
+  .nav-item.active span { color: #00E676; }
+  .nav-item.active svg { stroke: #00C853; }
+
+  /* Chart draw animation */
+  .chart-line { stroke-dasharray: 800; stroke-dashoffset: 800; }
+  .chart-line.animate { animation: drawLine 2s ease forwards; }
+  @keyframes drawLine {
+    to { stroke-dashoffset: 0; }
+  }
+  .chart-fill { opacity: 0; }
+  .chart-fill.animate { animation: fadeInFill 1s ease 1.2s forwards; }
+  @keyframes fadeInFill { to { opacity: 1; } }
+  .chart-glow { stroke-dasharray: 800; stroke-dashoffset: 800; }
+  .chart-glow.animate { animation: drawLine 2s ease forwards; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="screen">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1>Portfolio</h1>
+        <div class="sub">As of today</div>
+      </div>
+      <div class="settings-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Total Value Card -->
+    <div class="total-card">
+      <div class="total-label">Total Investment Value</div>
+      <div class="total-value" id="totalValue">&#8377;0</div>
+      <div class="total-gain">
+        <span id="totalGain">+&#8377;0</span>
+        <span id="totalPct">(+0%)</span>
+        <span class="arrow">&#9650;</span>
+        <span class="label">All time</span>
+      </div>
+      <svg class="sparkline-bg" viewBox="0 0 350 80" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00C853" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#00C853" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,60 Q50,55 80,45 T160,35 T240,25 T300,18 T350,10 L350,80 L0,80Z" fill="url(#sparkGrad)"/>
+      </svg>
+    </div>
+
+    <!-- Today's Change -->
+    <div class="today-change">
+      <div class="live-dot"></div>
+      <div class="text">
+        <span class="green" id="todayChange">+&#8377;1,240 (0.38%)</span> today
+      </div>
+    </div>
+
+    <!-- Area Chart -->
+    <div class="chart-section">
+      <svg viewBox="0 0 350 160" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00C853" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#00C853" stop-opacity="0.01"/>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="4" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Grid -->
+        <line x1="0" y1="40" x2="350" y2="40" stroke="#1f2937" stroke-width="0.5" stroke-dasharray="4,4"/>
+        <line x1="0" y1="80" x2="350" y2="80" stroke="#1f2937" stroke-width="0.5" stroke-dasharray="4,4"/>
+        <line x1="0" y1="120" x2="350" y2="120" stroke="#1f2937" stroke-width="0.5" stroke-dasharray="4,4"/>
+        <!-- Fill -->
+        <path class="chart-fill" id="chartFill"
+          d="M0,130 C25,125 45,118 70,110 C95,102 115,95 140,82 C165,69 185,72 210,60 C235,48 255,55 280,40 C305,25 325,22 350,15 L350,160 L0,160Z"
+          fill="url(#chartGrad)"/>
+        <!-- Glow line -->
+        <path class="chart-glow" id="chartGlow"
+          d="M0,130 C25,125 45,118 70,110 C95,102 115,95 140,82 C165,69 185,72 210,60 C235,48 255,55 280,40 C305,25 325,22 350,15"
+          fill="none" stroke="#00C853" stroke-width="3" stroke-opacity="0.3" filter="url(#glow)"/>
+        <!-- Main line -->
+        <path class="chart-line" id="chartLine"
+          d="M0,130 C25,125 45,118 70,110 C95,102 115,95 140,82 C165,69 185,72 210,60 C235,48 255,55 280,40 C305,25 325,22 350,15"
+          fill="none" stroke="#00C853" stroke-width="2" stroke-linecap="round"/>
+        <!-- End dot -->
+        <circle id="chartDot" cx="350" cy="15" r="4" fill="#00C853" opacity="0" style="transition: opacity 0.3s;">
+          <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+      <div class="chart-labels">
+        <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span>
+      </div>
+    </div>
+
+    <!-- Holdings -->
+    <div class="section-header">
+      <h2>Your Holdings</h2>
+      <span class="badge">3 stocks</span>
+    </div>
+
+    <div class="holding-card" data-delay="0">
+      <div class="holding-left">
+        <div class="name">Reliance Industries</div>
+        <div class="shares">5 shares</div>
+      </div>
+      <div class="holding-right">
+        <div class="value">&#8377;1,42,350</div>
+        <div class="change gain"><div class="dot-indicator green"></div>+12.4%</div>
+      </div>
+    </div>
+
+    <div class="holding-card" data-delay="1">
+      <div class="holding-left">
+        <div class="name">TCS</div>
+        <div class="shares">3 shares</div>
+      </div>
+      <div class="holding-right">
+        <div class="value">&#8377;98,420</div>
+        <div class="change gain"><div class="dot-indicator green"></div>+8.1%</div>
+      </div>
+    </div>
+
+    <div class="holding-card" data-delay="2">
+      <div class="holding-left">
+        <div class="name">Infosys</div>
+        <div class="shares">8 shares</div>
+      </div>
+      <div class="holding-right">
+        <div class="value">&#8377;83,810</div>
+        <div class="change loss"><div class="dot-indicator red"></div>-2.3%</div>
+      </div>
+    </div>
+
+    <!-- SIP -->
+    <div class="sip-card" data-delay="3">
+      <div class="sip-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="sip-info">
+        <div class="title">Active SIPs &middot; <span style="color:#00E676">&#8377;5,000/month</span></div>
+        <div class="detail">Next instalment: <span>Dec 1</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+      </svg>
+      <span>Home</span>
+    </div>
+    <div class="nav-item">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="#9ca3af">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+      </svg>
+      <span>Explore</span>
+    </div>
+    <div class="nav-item">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="#9ca3af">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+      </svg>
+      <span>Orders</span>
+    </div>
+    <div class="nav-item">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="#9ca3af">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+      </svg>
+      <span>More</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Count-up animation
+  function countUp(el, target, prefix, suffix, duration) {
+    const start = performance.now();
+    const format = n => n.toLocaleString('en-IN');
+    function tick(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      const val = Math.round(target * ease);
+      el.textContent = prefix + format(val) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // Start animations after short delay
+  setTimeout(() => {
+    countUp(document.getElementById('totalValue'), 324580, '\u20B9', '', 1500);
+    countUp(document.getElementById('totalGain'), 28340, '+\u20B9', '', 1500);
+    setTimeout(() => {
+      document.getElementById('totalPct').textContent = '(+9.6%)';
+    }, 1500);
+
+    // Chart animation
+    document.getElementById('chartLine').classList.add('animate');
+    document.getElementById('chartGlow').classList.add('animate');
+    document.getElementById('chartFill').classList.add('animate');
+    setTimeout(() => {
+      document.getElementById('chartDot').setAttribute('opacity', '1');
+    }, 2000);
+
+    // Holdings stagger
+    document.querySelectorAll('.holding-card, .sip-card').forEach(card => {
+      const delay = parseInt(card.dataset.delay) * 200 + 800;
+      setTimeout(() => card.classList.add('visible'), delay);
+    });
+  }, 300);
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

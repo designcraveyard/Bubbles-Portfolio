@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shot 11 — Checkout Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#FAFAF8;font-family:'Nunito',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;color:#2D2D2D}
+.frame{width:1200px;height:800px;display:flex;align-items:center;justify-content:center;gap:40px;position:relative}
+.phone{width:320px;height:640px;background:#fff;border-radius:40px;box-shadow:0 20px 60px rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.06),inset 0 0 0 2px #e0e0e0;position:relative;overflow:hidden;opacity:0;transform:translateY(30px)}
+.phone::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:28px;background:#1a1a1a;border-radius:0 0 16px 16px;z-index:10}
+.phone::after{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#333;border-radius:4px;z-index:11}
+.phone.a1{animation:slideUp .6s .2s forwards}
+.phone.a2{animation:slideUp .6s .45s forwards}
+.phone.a3{animation:slideUp .6s .7s forwards}
+@keyframes slideUp{to{opacity:1;transform:translateY(0)}}
+.screen{padding:40px 16px 16px;height:100%;overflow-y:auto;overflow-x:hidden;-ms-overflow-style:none;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.topbar{font-weight:800;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.topbar .back{display:flex;align-items:center;cursor:pointer}
+.topbar .back i{width:18px;height:18px}
+/* Cart */
+.cart-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0}
+.cart-item .thumb{width:56px;height:56px;border-radius:10px;flex-shrink:0;background-size:cover;background-position:center}
+.cart-item .info{flex:1;min-width:0}
+.cart-item .name{font-weight:700;font-size:12px;line-height:1.3}
+.cart-item .meta{font-size:10px;color:#888;margin-top:2px}
+.cart-item .price{font-weight:800;font-size:13px;margin-top:3px}
+.cart-item .qty{font-size:10px;color:#666;display:flex;align-items:center;gap:6px;margin-top:4px}
+.qty-btn{width:20px;height:20px;border-radius:4px;border:1px solid #ddd;background:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.summary{background:#f8f8f6;border-radius:12px;padding:12px;margin-top:12px;font-size:12px}
+.summary .row{display:flex;justify-content:space-between;margin-bottom:6px}
+.summary .row.total{font-weight:800;font-size:14px;border-top:1px dashed #ddd;padding-top:8px;margin-top:4px}
+.summary .discount{color:#388E3C}
+.summary .free{color:#388E3C;font-weight:700}
+.saving{background:#E8F5E9;color:#388E3C;font-weight:700;font-size:12px;text-align:center;padding:8px;border-radius:8px;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px}
+.saving i{width:14px;height:14px}
+.btn{background:#2874F0;color:#fff;border:none;width:100%;padding:12px;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;margin-top:12px;letter-spacing:.5px}
+/* Address */
+.addr-card{border:2px solid #2874F0;border-radius:12px;padding:12px;margin-bottom:10px;position:relative;background:#F0F5FF}
+.addr-card .badge{background:#2874F0;color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;margin-bottom:6px}
+.addr-card .badge i{width:10px;height:10px}
+.addr-card .addr-name{font-weight:800;font-size:13px}
+.addr-card .addr-detail{font-size:11px;color:#555;margin-top:3px;line-height:1.5}
+.addr-card .addr-phone{font-size:11px;color:#555;margin-top:4px;display:flex;align-items:center;gap:4px}
+.addr-card .addr-phone i{width:12px;height:12px}
+.addr-card .addr-actions{display:flex;gap:12px;margin-top:8px;font-size:11px;font-weight:700;color:#2874F0}
+.addr-card .check{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;background:#2874F0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px}
+.check i{width:12px;height:12px}
+.add-addr{border:2px dashed #ccc;border-radius:12px;padding:14px;text-align:center;font-weight:700;font-size:13px;color:#2874F0;cursor:pointer;margin-bottom:12px}
+.delivery-section .label{font-weight:800;font-size:12px;margin-bottom:8px;color:#888;text-transform:uppercase;letter-spacing:.5px}
+.del-option{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;margin-bottom:6px;border:1.5px solid #eee;font-size:12px;cursor:pointer}
+.del-option.selected{border-color:#2874F0;background:#F0F5FF}
+.del-option .radio{width:16px;height:16px;border-radius:50%;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.del-option.selected .radio{border-color:#2874F0}
+.del-option.selected .radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#2874F0}
+.del-option .del-info{flex:1}
+.del-option .del-title{font-weight:700}
+.del-option .del-sub{font-size:10px;color:#888}
+.del-option .del-price{font-weight:800;font-size:12px}
+.del-option .del-price.free{color:#388E3C}
+/* Payment */
+.pay-option{border:1.5px solid #eee;border-radius:10px;margin-bottom:8px;overflow:hidden;cursor:pointer}
+.pay-option.selected{border-color:#2874F0;background:#F0F5FF}
+.pay-head{display:flex;align-items:center;gap:10px;padding:10px 12px;font-size:12px;font-weight:700}
+.pay-head .radio{width:16px;height:16px;border-radius:50%;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pay-option.selected .radio{border-color:#2874F0}
+.pay-option.selected .radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#2874F0}
+.pay-body{padding:0 12px 12px;font-size:11px}
+.upi-icons{display:flex;gap:12px;margin-bottom:10px}
+.upi-icon{width:40px;height:40px;border-radius:10px;background:#fff;border:1px solid #eee;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#333;flex-direction:column;gap:1px}
+.upi-icon svg{width:20px;height:20px}
+.upi-field{display:flex;align-items:center;border:1.5px solid #ddd;border-radius:8px;overflow:hidden;margin-top:6px}
+.upi-field input{border:none;outline:none;padding:8px 10px;font-family:'Nunito',sans-serif;font-size:12px;flex:1;background:transparent}
+.upi-field .verify{background:#2874F0;color:#fff;border:none;padding:8px 12px;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;cursor:pointer}
+.pay-summary{background:#f8f8f6;border-radius:10px;padding:10px;margin-top:8px;font-size:12px}
+.pay-summary .row{display:flex;justify-content:space-between}
+.secure{display:flex;align-items:center;justify-content:center;gap:4px;font-size:9px;color:#888;margin-top:8px}
+.secure i{width:12px;height:12px}
+</style>
+</head>
+<body>
+<div class="frame">
+
+<!-- SCREEN 1: Cart -->
+<div class="phone a1">
+<div class="screen">
+<div class="topbar"><span class="back"><i data-lucide="arrow-left"></i></span> My Cart (3 items)</div>
+
+<div class="cart-item">
+<div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=56&h=56&fit=crop')"></div>
+<div class="info">
+<div class="name">Embroidered Kurta</div>
+<div class="meta">M &middot; Midnight Plum</div>
+<div class="price">&#8377;3,299</div>
+<div class="qty"><span class="qty-btn">&#8722;</span> 1 <span class="qty-btn">+</span></div>
+</div>
+</div>
+
+<div class="cart-item">
+<div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1549298916-b41d501d3772?w=56&h=56&fit=crop')"></div>
+<div class="info">
+<div class="name">White Sneakers</div>
+<div class="meta">Size 7</div>
+<div class="price">&#8377;1,899</div>
+<div class="qty"><span class="qty-btn">&#8722;</span> 1 <span class="qty-btn">+</span></div>
+</div>
+</div>
+
+<div class="cart-item">
+<div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=56&h=56&fit=crop')"></div>
+<div class="info">
+<div class="name">Tote Bag</div>
+<div class="meta">Canvas</div>
+<div class="price">&#8377;599</div>
+<div class="qty"><span class="qty-btn">&#8722;</span> 1 <span class="qty-btn">+</span></div>
+</div>
+</div>
+
+<div class="summary">
+<div class="row"><span>Bag Total</span><span>&#8377;5,797</span></div>
+<div class="row discount"><span>Discount</span><span>-&#8377;1,850</span></div>
+<div class="row"><span>Delivery</span><span class="free">FREE</span></div>
+<div class="row total"><span>Total</span><span>&#8377;3,947</span></div>
+</div>
+
+<div class="saving"><i data-lucide="party-popper" style="width:14px;height:14px;"></i> You're saving &#8377;1,850</div>
+<button class="btn">PROCEED</button>
+</div>
+</div>
+
+<!-- SCREEN 2: Address -->
+<div class="phone a2">
+<div class="screen">
+<div class="topbar"><span class="back"><i data-lucide="arrow-left"></i></span> Delivery Address</div>
+
+<div class="addr-card">
+<div class="check"><i data-lucide="check" style="width:12px;height:12px;"></i></div>
+<span class="badge"><i data-lucide="home" style="width:10px;height:10px;"></i> HOME</span>
+<div class="addr-name">Anjali Sharma</div>
+<div class="addr-detail">B-204, Maple Heights<br>Sector 62, Noida 201309</div>
+<div class="addr-phone"><i data-lucide="phone" style="width:12px;height:12px;"></i> 9876543210</div>
+<div class="addr-actions"><span>EDIT</span><span>DELETE</span></div>
+</div>
+
+<div class="add-addr">+ Add New Address</div>
+
+<div class="delivery-section">
+<div class="label">Delivery Speed</div>
+<div class="del-option selected">
+<div class="radio"></div>
+<div class="del-info">
+<div class="del-title">Standard</div>
+<div class="del-sub">3 &ndash; 5 business days</div>
+</div>
+<div class="del-price free">FREE</div>
+</div>
+<div class="del-option">
+<div class="radio"></div>
+<div class="del-info">
+<div class="del-title">Express</div>
+<div class="del-sub">Tomorrow by 9 PM</div>
+</div>
+<div class="del-price">&#8377;99</div>
+</div>
+</div>
+
+<button class="btn" style="margin-top:16px">DELIVER HERE</button>
+</div>
+</div>
+
+<!-- SCREEN 3: Payment -->
+<div class="phone a3">
+<div class="screen">
+<div class="topbar"><span class="back"><i data-lucide="arrow-left"></i></span> Payment</div>
+
+<div class="pay-option selected">
+<div class="pay-head">
+<div class="radio"></div>
+UPI
+</div>
+<div class="pay-body">
+<div class="upi-icons">
+<div class="upi-icon" style="color:#5F259F">
+<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="3" stroke="#5F259F" stroke-width="2"/><path d="M8 12h2l2-3v6" stroke="#5F259F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+PhonePe
+</div>
+<div class="upi-icon" style="color:#4285F4">
+<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="6" stroke="#4285F4" stroke-width="2"/><path d="M9 10h6M12 7v6" stroke="#4285F4" stroke-width="1.5" stroke-linecap="round"/></svg>
+GPay
+</div>
+<div class="upi-icon" style="color:#00BAF2">
+<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="6" stroke="#00BAF2" stroke-width="2"/><path d="M9 8l3 4 3-4" stroke="#00BAF2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+Paytm
+</div>
+</div>
+<div class="upi-field">
+<input type="text" value="anjali@okicici" readonly>
+<button class="verify">VERIFY</button>
+</div>
+</div>
+</div>
+
+<div class="pay-option">
+<div class="pay-head"><div class="radio"></div> Credit / Debit Card</div>
+</div>
+<div class="pay-option">
+<div class="pay-head"><div class="radio"></div> Net Banking</div>
+</div>
+<div class="pay-option">
+<div class="pay-head"><div class="radio"></div> EMI</div>
+</div>
+<div class="pay-option">
+<div class="pay-head"><div class="radio"></div> Cash on Delivery</div>
+</div>
+
+<div class="pay-summary">
+<div class="row"><span>3 Items</span><span style="font-weight:800">&#8377;3,947</span></div>
+</div>
+
+<button class="btn">PAY &#8377;3,947</button>
+
+<div class="secure"><i data-lucide="lock" style="width:12px;height:12px;"></i> Secured by 256-bit encryption</div>
+</div>
+</div>
+
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

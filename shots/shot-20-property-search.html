@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Search — 2 BHK Flats in Noida</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Mulish',sans-serif;background:#F5F5F5;display:flex;justify-content:center;min-height:100vh;color:#2D2D2D;}
+.phone{width:390px;min-height:844px;background:#fff;position:relative;overflow-x:hidden;overflow-y:auto;}
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;position:sticky;top:0;z-index:20;border-bottom:1px solid #ECECEC;}
+.header-left{display:flex;align-items:center;gap:10px;}
+.back-btn{font-size:20px;color:#2D2D2D;text-decoration:none;font-weight:700;}
+.header-title{font-size:15px;font-weight:700;color:#2D2D2D;}
+.header-right{display:flex;align-items:center;gap:14px;}
+.filter-btn{font-size:13px;color:#FF6B2E;font-weight:700;display:flex;align-items:center;gap:4px;cursor:pointer;}
+.toggle-view{display:flex;gap:2px;background:#F0F0F0;border-radius:6px;padding:2px;}
+.toggle-view span{display:block;width:28px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;color:#999;}
+.toggle-view span.active{background:#fff;color:#2D2D2D;box-shadow:0 1px 3px rgba(0,0,0,.1);}
+
+/* Filter chips */
+.chips{display:flex;gap:8px;padding:10px 16px;overflow-x:auto;background:#fff;border-bottom:1px solid #ECECEC;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid #DDD;background:#fff;color:#2D2D2D;display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap;}
+.chip .x{color:#999;font-size:10px;}
+.chip.active{background:#FFF3ED;border-color:#FF6B2E;color:#FF6B2E;}
+.chip.add{border-style:dashed;color:#999;}
+
+/* Map */
+.map-area{width:100%;height:300px;background:#E8E8E8;position:relative;overflow:hidden;}
+.road{position:absolute;background:rgba(255,255,255,.7);border-radius:2px;}
+.road.h1{width:100%;height:2px;top:90px;}
+.road.h2{width:100%;height:2px;top:180px;}
+.road.h3{width:70%;height:2px;top:240px;left:15%;}
+.road.v1{width:2px;height:100%;left:100px;}
+.road.v2{width:2px;height:100%;left:220px;}
+.road.v3{width:2px;height:100%;left:310px;}
+.area-label{position:absolute;font-size:9px;font-weight:600;color:#B0B0B0;letter-spacing:.5px;text-transform:uppercase;}
+.al1{top:50px;left:30px;}.al2{top:130px;left:240px;}.al3{top:200px;left:60px;}.al4{top:260px;left:260px;}
+
+/* Pins */
+.pin{position:absolute;padding:4px 8px;border-radius:12px;font-size:11px;font-weight:800;color:#fff;background:#FF6B2E;cursor:pointer;transform:translateX(-50%);white-space:nowrap;z-index:2;}
+.pin::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid #FF6B2E;}
+.pin.p1{top:60px;left:140px;}.pin.p2{top:150px;left:280px;}.pin.p3{top:110px;left:70px;}.pin.p4{top:210px;left:310px;}
+
+/* You are here */
+.you-marker{position:absolute;top:160px;left:160px;z-index:3;}
+.you-dot{width:14px;height:14px;border-radius:50%;background:#4A90D9;border:3px solid #fff;box-shadow:0 0 0 4px rgba(74,144,217,.25);margin:0 auto;}
+.you-label{margin-top:4px;background:#4A90D9;color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap;text-align:center;}
+
+/* Popup card */
+.map-popup{position:absolute;top:55px;left:170px;background:#fff;border-radius:10px;padding:10px 12px;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:5;width:140px;}
+.map-popup::after{content:'';position:absolute;bottom:-6px;left:20px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #fff;}
+.map-popup .price{font-size:16px;font-weight:800;color:#FF6B2E;}
+.map-popup .type{font-size:11px;color:#666;margin-top:2px;}
+.map-popup .verified-tag{display:inline-block;margin-top:5px;font-size:9px;font-weight:800;color:#2E9E5C;background:#E8F8EF;padding:2px 7px;border-radius:4px;letter-spacing:.5px;}
+
+.expand-map{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.95);border:none;padding:7px 18px;border-radius:20px;font-size:12px;font-weight:700;color:#2D2D2D;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);font-family:'Mulish',sans-serif;z-index:4;}
+
+.results-count{padding:12px 16px 8px;font-size:12px;color:#888;font-weight:600;}
+.results-count b{color:#2D2D2D;}
+
+/* Cards */
+.card{margin:0 16px 12px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06);animation:slideUp .5s ease both;}
+.card:nth-child(2){animation-delay:.1s;}
+.card:nth-child(3){animation-delay:.2s;}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+.card.featured{border-left:4px solid #FF6B2E;}
+.card-image{width:100%;height:150px;background:linear-gradient(135deg,#E0E0E0 0%,#D0D0D0 100%);position:relative;background-size:cover;background-position:center;}
+.card-image .img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.card-image .img-placeholder svg{width:40px;height:40px;opacity:.3;}
+.card-badges{position:absolute;top:8px;left:8px;display:flex;gap:5px;}
+.badge{font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;letter-spacing:.3px;}
+.badge.feat{background:#FF6B2E;color:#fff;}
+.badge.verif{background:rgba(46,158,92,.9);color:#fff;}
+.badge.new-proj{background:#4A90D9;color:#fff;}
+.badge.no-broker{background:#2E9E5C;color:#fff;}
+.badge.price-drop{background:#FF6B2E;color:#fff;}
+.badge.resale{background:rgba(0,0,0,.6);color:#fff;}
+.photo-count{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;}
+.tour-badge{position:absolute;bottom:8px;left:8px;background:rgba(255,255,255,.95);color:#2D2D2D;font-size:10px;font-weight:800;padding:4px 10px;border-radius:12px;}
+
+.card-body{padding:12px 14px 14px;}
+.card-name{font-size:14px;font-weight:800;color:#2D2D2D;margin-bottom:2px;}
+.card-loc{font-size:12px;color:#888;font-weight:500;margin-bottom:8px;}
+.card-specs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.spec{font-size:11px;font-weight:600;color:#555;background:#F5F5F5;padding:3px 8px;border-radius:6px;}
+.card-price-row{display:flex;align-items:center;justify-content:space-between;}
+.card-price{font-size:18px;font-weight:800;color:#FF6B2E;}
+.card-price .unit{font-size:12px;font-weight:600;color:#999;}
+.contact-btn{background:#FF6B2E;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Mulish',sans-serif;}
+.amenities{display:flex;gap:12px;margin-top:8px;padding-top:8px;border-top:1px solid #F0F0F0;}
+.amenity{font-size:10px;color:#888;font-weight:600;display:flex;align-items:center;gap:3px;}
+
+/* Sort bar */
+.sort-bar{position:sticky;bottom:0;background:#fff;border-top:1px solid #ECECEC;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:#2D2D2D;z-index:20;}
+.sort-bar span{color:#FF6B2E;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="phone">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <a class="back-btn">←</a>
+      <div class="header-title">2 BHK Flats in Noida</div>
+    </div>
+    <div class="header-right">
+      <div class="filter-btn">Filter <i data-lucide="chevron-down" style="width:14px;height:14px"></i></div>
+      <div class="toggle-view">
+        <span class="active"><i data-lucide="layout-grid" style="width:14px;height:14px"></i></span>
+        <span><i data-lucide="list" style="width:14px;height:14px"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Chips -->
+  <div class="chips">
+    <div class="chip active">2 BHK <span class="x">✕</span></div>
+    <div class="chip active">₹50L–80L <span class="x">✕</span></div>
+    <div class="chip">Verified</div>
+    <div class="chip">Ready to move</div>
+    <div class="chip add">+ Add</div>
+  </div>
+
+  <!-- Map -->
+  <div class="map-area">
+    <div class="road h1"></div><div class="road h2"></div><div class="road h3"></div>
+    <div class="road v1"></div><div class="road v2"></div><div class="road v3"></div>
+    <div class="area-label al1">Sector 62</div>
+    <div class="area-label al2">Sector 78</div>
+    <div class="area-label al3">Sector 76</div>
+    <div class="area-label al4">Sector 93B</div>
+
+    <div class="pin p1">₹62L</div>
+    <div class="pin p2">₹71L</div>
+    <div class="pin p3">₹58L</div>
+    <div class="pin p4">₹79L</div>
+
+    <div class="you-marker">
+      <div class="you-dot"></div>
+      <div class="you-label">You are here · Sector 62</div>
+    </div>
+
+    <div class="map-popup">
+      <div class="price">₹64L</div>
+      <div class="type">2 BHK · 1,050 sqft</div>
+      <div class="verified-tag">✓ VERIFIED</div>
+    </div>
+
+    <button class="expand-map">Expand map ↕</button>
+  </div>
+
+  <div class="results-count"><b>48 properties</b> found in Noida</div>
+
+  <!-- Card 1 — Featured -->
+  <div class="card featured">
+    <div class="card-image" style="background-image:url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=390&h=150&fit=crop')">
+      <div class="card-badges">
+        <span class="badge feat">FEATURED</span>
+        <span class="badge verif">✓ Verified</span>
+      </div>
+      <div class="photo-count"><i data-lucide="camera" style="width:12px;height:12px;vertical-align:middle"></i> 8 Photos</div>
+      <div class="tour-badge"><i data-lucide="video" style="width:12px;height:12px;vertical-align:middle"></i> 3D Tour</div>
+    </div>
+    <div class="card-body">
+      <div class="card-name">Prestige Sunrise Park</div>
+      <div class="card-loc">Sector 93B, Noida</div>
+      <div class="card-specs">
+        <span class="spec">2 BHK</span>
+        <span class="spec">1,050 sqft</span>
+      </div>
+      <div class="amenities">
+        <span class="amenity"><i data-lucide="train" style="width:12px;height:12px"></i> 2.3km Metro</span>
+        <span class="amenity"><i data-lucide="school" style="width:12px;height:12px"></i> School 500m</span>
+      </div>
+      <div class="card-price-row" style="margin-top:10px">
+        <div class="card-price">₹64 <span class="unit">Lac</span></div>
+        <button class="contact-btn">CONTACT OWNER</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <div class="card-image" style="background-image:url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=390&h=150&fit=crop')">
+      <div class="card-badges">
+        <span class="badge new-proj">New Project</span>
+        <span class="badge no-broker">No Brokerage</span>
+      </div>
+      <div class="photo-count"><i data-lucide="camera" style="width:12px;height:12px;vertical-align:middle"></i> 5 Photos</div>
+    </div>
+    <div class="card-body">
+      <div class="card-name">Mahagun Moderne</div>
+      <div class="card-loc">Sector 78, Noida</div>
+      <div class="card-specs">
+        <span class="spec">2 BHK</span>
+        <span class="spec">985 sqft</span>
+      </div>
+      <div class="card-price-row">
+        <div class="card-price">₹58.5 <span class="unit">Lac</span></div>
+        <button class="contact-btn">CONTACT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <div class="card-image" style="background-image:url('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=390&h=150&fit=crop')">
+      <div class="card-badges">
+        <span class="badge resale">Resale</span>
+        <span class="badge price-drop">Price drop ₹3L ↓</span>
+      </div>
+      <div class="photo-count"><i data-lucide="camera" style="width:12px;height:12px;vertical-align:middle"></i> 6 Photos</div>
+    </div>
+    <div class="card-body">
+      <div class="card-name">Amrapali Silicon City</div>
+      <div class="card-loc">Sector 76, Noida</div>
+      <div class="card-specs">
+        <span class="spec">2 BHK + Study</span>
+        <span class="spec">1,200 sqft</span>
+      </div>
+      <div class="card-price-row">
+        <div class="card-price">₹71 <span class="unit">Lac</span></div>
+        <button class="contact-btn">CONTACT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sort Bar -->
+  <div class="sort-bar">Sort by: <span>Relevance <i data-lucide="chevron-down" style="width:12px;height:12px;vertical-align:middle"></i></span></div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390,initial-scale=1">
+<title>The Leela Palace, Udaipur</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--amber-900:#92400E;--amber-600:#D97706;--amber-500:#F59E0B;--amber-50:#FFFBEB;--gold:#C8956C;--text:#1C1917;--text-light:#78716C;--green:#16A34A;--white:#FFFFFF}
+body{font-family:'Libre Franklin',sans-serif;background:#F5F0EB;display:flex;justify-content:center;min-height:100vh;color:var(--text);-webkit-font-smoothing:antialiased}
+.phone{width:390px;background:var(--white);min-height:100vh;overflow-x:hidden;position:relative}
+.serif{font-family:'Libre Baskerville',Georgia,serif}
+
+/* Hero */
+.hero{position:relative;height:260px;background:url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=390&h=260&fit=crop') center/cover no-repeat;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(transparent,rgba(0,0,0,.25))}
+.hero-nav{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;z-index:2}
+.hero-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);backdrop-filter:blur(10px);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.hero-title{display:none}
+.thumb-row{position:absolute;bottom:14px;left:24px;right:24px;display:flex;align-items:center;gap:10px;z-index:2}
+.thumb{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.6);overflow:hidden;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.thumb-label{font-size:9px;color:rgba(255,255,255,.7);text-align:center;margin-top:2px}
+.thumb-wrap{display:flex;flex-direction:column;align-items:center}
+.photo-count{color:rgba(255,255,255,.8);font-size:12px;font-weight:500;margin-left:auto;white-space:nowrap}
+
+/* Content */
+.content{padding:24px 20px 32px}
+.hotel-name{font-family:'Libre Baskerville',serif;font-size:24px;font-weight:700;color:var(--text);line-height:1.25}
+.hotel-loc{font-size:13px;color:var(--text-light);margin-top:4px;font-weight:400}
+.rating-row{display:flex;align-items:center;gap:8px;margin-top:16px;flex-wrap:wrap}
+.rating-badge{background:var(--amber-900);color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px}
+.rating-text{font-size:13px;color:var(--text)}
+.rating-text span{font-weight:600}
+.rating-sub{font-size:12px;color:var(--text-light)}
+
+/* Location chips */
+.loc-chips{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.loc-chip{background:var(--amber-50);border:1px solid #FDE68A;border-radius:20px;padding:6px 14px;font-size:12px;color:var(--amber-900);font-weight:500;white-space:nowrap}
+
+/* USP tags */
+.usp-row{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+.usp{font-size:11px;color:var(--text-light);font-weight:500;letter-spacing:.3px}
+.usp::after{content:' \00B7';margin-left:6px;color:#D6D3D1}
+.usp:last-child::after{display:none}
+
+/* Divider */
+.divider{height:1px;background:#E7E5E4;margin:24px 0}
+
+/* Section title */
+.sec-title{font-family:'Libre Baskerville',serif;font-size:16px;font-weight:700;margin-bottom:16px;color:var(--text)}
+
+/* Room cards */
+.rooms-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;margin:0 -20px;padding-left:20px;padding-right:20px;scrollbar-width:none}
+.rooms-scroll::-webkit-scrollbar{display:none}
+.room-card{min-width:220px;border-radius:16px;overflow:hidden;border:1.5px solid #E7E5E4;flex-shrink:0;background:#fff}
+.room-card.highlight{border-color:var(--amber-600);box-shadow:0 4px 20px rgba(217,119,6,.15)}
+.room-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:40px}
+.room-card.highlight .room-img{background:linear-gradient(135deg,#FEF3C7,#FDE68A)}
+.room-card:not(.highlight) .room-img{background:linear-gradient(135deg,#F5F5F4,#E7E5E4)}
+.room-body{padding:14px}
+.room-type{font-size:13px;font-weight:600;color:var(--text)}
+.room-feat{font-size:11px;color:var(--text-light);margin-top:3px}
+.room-price{font-family:'Libre Baskerville',serif;font-size:16px;font-weight:700;color:var(--amber-900);margin-top:8px}
+.room-price span{font-size:11px;font-weight:400;color:var(--text-light);font-family:'Libre Franklin',sans-serif}
+.room-tag{display:inline-block;background:var(--amber-50);color:var(--amber-900);font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-top:6px}
+
+/* Price block */
+.price-block{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-radius:16px;padding:20px;margin-top:24px}
+.price-main{display:flex;align-items:baseline;gap:6px}
+.price-main .amt{font-family:'Libre Baskerville',serif;font-size:26px;font-weight:700;color:var(--amber-900)}
+.price-main .per{font-size:13px;color:var(--text-light)}
+.price-details{font-size:12px;color:var(--text-light);margin-top:6px}
+.price-total{font-size:14px;font-weight:600;color:var(--text);margin-top:2px}
+.free-cancel{color:var(--green);font-size:12px;font-weight:600;margin-top:8px;display:flex;align-items:center;gap:4px}
+.cta{display:block;width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--amber-600),var(--amber-500));color:#fff;font-family:'Libre Franklin',sans-serif;font-size:15px;font-weight:700;text-align:center;cursor:pointer;margin-top:16px;letter-spacing:.3px;box-shadow:0 4px 16px rgba(217,119,6,.3)}
+
+/* Amenities grid */
+.amenities-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.amenity{background:#FAFAF9;border-radius:12px;padding:16px 10px;text-align:center}
+.amenity-icon{font-size:24px;margin-bottom:6px}
+.amenity-label{font-size:11px;color:var(--text-light);font-weight:500}
+
+/* Reviews */
+.review{display:flex;gap:12px;margin-bottom:20px}
+.review:last-child{margin-bottom:0}
+.avatar{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff}
+.review-body{flex:1}
+.review-head{display:flex;align-items:center;justify-content:space-between}
+.review-name{font-size:13px;font-weight:600}
+.review-date{font-size:11px;color:var(--text-light)}
+.review-stars{font-size:11px;color:var(--amber-500);margin-top:2px}
+.review-text{font-size:12px;color:#57534E;line-height:1.55;margin-top:6px}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.anim{opacity:0;animation:fadeUp .7s cubic-bezier(.23,1,.32,1) forwards}
+.a1{animation-delay:.1s}.a2{animation-delay:.2s}.a3{animation-delay:.3s}.a4{animation-delay:.4s}
+.a5{animation-delay:.5s}.a6{animation-delay:.6s}.a7{animation-delay:.7s}.a8{animation-delay:.85s}
+.a9{animation-delay:1s}
+
+.hero-fade{animation:fadeIn 1s ease forwards}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- Hero -->
+  <div class="hero hero-fade">
+    <div class="hero-nav">
+      <button class="hero-btn">&larr;</button>
+      <button class="hero-btn">&hearts;</button>
+    </div>
+    <div class="hero-title anim a1">
+      <h1>The Leela Palace,<br>Udaipur</h1>
+      <p>Luxury Heritage Hotel</p>
+    </div>
+    <div class="thumb-row anim a2">
+      <div class="thumb-wrap"><div class="thumb"><img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=50&h=50&fit=crop" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div><span class="thumb-label">Pool</span></div>
+      <div class="thumb-wrap"><div class="thumb"><img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=50&h=50&fit=crop" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div><span class="thumb-label">Room</span></div>
+      <div class="thumb-wrap"><div class="thumb"><i data-lucide="utensils" style="width:20px;height:20px;color:#fff"></i></div><span class="thumb-label">Restaurant</span></div>
+      <div class="thumb-wrap"><div class="thumb"><i data-lucide="sunrise" style="width:20px;height:20px;color:#fff"></i></div><span class="thumb-label">View</span></div>
+      <span class="photo-count">28 photos &rsaquo;</span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Name & Rating -->
+    <div class="anim a2">
+      <h2 class="hotel-name">The Leela Palace</h2>
+      <p class="hotel-loc">Udaipur, Rajasthan</p>
+    </div>
+
+    <div class="rating-row anim a3">
+      <span class="rating-badge">9.8</span>
+      <span class="rating-text"><span>Exceptional</span></span>
+      <span class="rating-sub">2,847 reviews</span>
+      <span style="font-size:13px;color:#F59E0B">&#9733; 4.9</span>
+    </div>
+
+    <!-- Location chips -->
+    <div class="loc-chips anim a3">
+      <span class="loc-chip"><i data-lucide="map-pin" style="width:12px;height:12px;display:inline-block;vertical-align:-2px"></i> City Palace 2.4km</span>
+      <span class="loc-chip"><i data-lucide="waves" style="width:12px;height:12px;display:inline-block;vertical-align:-2px"></i> Lake Pichola 0.5km</span>
+    </div>
+
+    <!-- USP tags -->
+    <div class="usp-row anim a3">
+      <span class="usp">Heritage</span>
+      <span class="usp">Lake view</span>
+      <span class="usp">Free breakfast</span>
+      <span class="usp">Infinity pool</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Room Cards -->
+    <div class="anim a4">
+      <h3 class="sec-title">Select your room</h3>
+      <div class="rooms-scroll">
+        <div class="room-card highlight">
+          <div class="room-img"><i data-lucide="bed-double" style="width:40px;height:40px;color:var(--amber-600)"></i></div>
+          <div class="room-body">
+            <div class="room-type">Deluxe Lake View</div>
+            <div class="room-feat">King bed &middot; 45 sqm &middot; Balcony</div>
+            <div class="room-price">&#8377;12,400 <span>/night</span></div>
+            <span class="room-tag">Best Value</span>
+          </div>
+        </div>
+        <div class="room-card">
+          <div class="room-img"><i data-lucide="castle" style="width:40px;height:40px;color:var(--text-light)"></i></div>
+          <div class="room-body">
+            <div class="room-type">Premier Suite</div>
+            <div class="room-feat">King bed &middot; 82 sqm &middot; Lounge</div>
+            <div class="room-price">&#8377;24,800 <span>/night</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Price Block -->
+    <div class="price-block anim a5">
+      <div class="price-main">
+        <span class="amt">&#8377;12,400</span>
+        <span class="per">/night</span>
+      </div>
+      <div class="price-details">Jan 10 &ndash; 12 &middot; 2 nights</div>
+      <div class="price-total">Total: &#8377;24,800</div>
+      <div class="free-cancel">&#10003; Free cancellation until Jan 8</div>
+      <button class="cta">Reserve for &#8377;0 now</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Amenities -->
+    <div class="anim a6">
+      <h3 class="sec-title">Amenities</h3>
+      <div class="amenities-grid">
+        <div class="amenity"><div class="amenity-icon"><i data-lucide="waves" style="width:24px;height:24px;color:var(--amber-600)"></i></div><div class="amenity-label">Pool</div></div>
+        <div class="amenity"><div class="amenity-icon"><i data-lucide="utensils" style="width:24px;height:24px;color:var(--amber-600)"></i></div><div class="amenity-label">Restaurants</div></div>
+        <div class="amenity"><div class="amenity-icon"><i data-lucide="sparkles" style="width:24px;height:24px;color:var(--amber-600)"></i></div><div class="amenity-label">Spa</div></div>
+        <div class="amenity"><div class="amenity-icon"><i data-lucide="car" style="width:24px;height:24px;color:var(--amber-600)"></i></div><div class="amenity-label">Parking</div></div>
+        <div class="amenity"><div class="amenity-icon"><i data-lucide="wifi" style="width:24px;height:24px;color:var(--amber-600)"></i></div><div class="amenity-label">WiFi</div></div>
+        <div class="amenity"><div class="amenity-icon"><i data-lucide="spray-can" style="width:24px;height:24px;color:var(--amber-600)"></i></div><div class="amenity-label">Housekeeping</div></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Reviews -->
+    <div class="anim a7">
+      <h3 class="sec-title">Guest reviews</h3>
+
+      <div class="review">
+        <div class="avatar" style="background:linear-gradient(135deg,#92400E,#D97706)">A</div>
+        <div class="review-body">
+          <div class="review-head">
+            <span class="review-name">Ananya Sharma</span>
+            <span class="review-date">Dec 2025</span>
+          </div>
+          <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">Absolutely breathtaking property. Woke up to the most stunning lake views every morning. The staff anticipated every need before we even asked. Worth every rupee.</p>
+        </div>
+      </div>
+
+      <div class="review">
+        <div class="avatar" style="background:linear-gradient(135deg,#7C2D12,#B45309)">R</div>
+        <div class="review-body">
+          <div class="review-head">
+            <span class="review-name">Rohan Mehra</span>
+            <span class="review-date">Nov 2025</span>
+          </div>
+          <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">The infinity pool overlooking Lake Pichola is otherworldly. Sheesh Mahal dinner was a once-in-a-lifetime experience. Already planning our return.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:32px"></div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ride In-Progress</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a14;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'DM Sans',sans-serif;}
+.phone{width:390px;height:844px;position:relative;overflow:hidden;background:#1A1A2E;border-radius:40px;box-shadow:0 0 80px rgba(0,0,0,.6);}
+
+/* MAP */
+.map{position:absolute;inset:0;overflow:hidden;}
+.map-grid{position:absolute;inset:-20px;opacity:.12;}
+.map-grid .h,.map-grid .v{position:absolute;background:rgba(255,255,255,.3);}
+.map-grid .h{width:120%;height:1px;}
+.map-grid .v{height:120%;width:1px;}
+.map-road{position:absolute;background:rgba(255,255,255,.06);border-radius:4px;}
+.road-1{width:340px;height:12px;top:280px;left:20px;transform:rotate(-18deg);}
+.road-2{width:14px;height:300px;top:100px;left:180px;transform:rotate(8deg);}
+.road-3{width:260px;height:10px;top:400px;left:60px;transform:rotate(5deg);}
+.road-4{width:10px;height:200px;top:200px;left:300px;transform:rotate(-5deg);}
+.road-5{width:200px;height:8px;top:200px;left:100px;transform:rotate(-30deg);}
+
+/* ROUTE LINE */
+.route-line{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+.route-line svg{width:100%;height:100%;}
+
+/* ORIGIN PIN */
+.pin-origin{position:absolute;top:160px;left:60px;z-index:5;}
+.pin-origin .dot{width:16px;height:16px;background:#fff;border-radius:50%;border:3px solid #22c55e;box-shadow:0 0 12px rgba(34,197,94,.5);}
+.pin-origin .pulse{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;background:rgba(34,197,94,.15);border-radius:50%;animation:pulse 2s infinite;}
+.pin-origin .label{position:absolute;top:-32px;left:50%;transform:translateX(-50%);white-space:nowrap;background:rgba(255,255,255,.12);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:4px 10px;border-radius:8px;font-size:10px;color:#fff;font-weight:600;}
+
+/* DESTINATION PIN */
+.pin-dest{position:absolute;top:320px;right:50px;z-index:5;}
+.pin-dest .marker{width:28px;height:36px;position:relative;}
+.pin-dest .marker-body{width:28px;height:28px;background:#ef4444;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(239,68,68,.4);}
+.pin-dest .marker-inner{width:10px;height:10px;background:#fff;border-radius:50%;transform:rotate(45deg);}
+.pin-dest .label{position:absolute;top:-30px;left:50%;transform:translateX(-50%);white-space:nowrap;background:rgba(255,255,255,.12);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:4px 10px;border-radius:8px;font-size:10px;color:#fff;font-weight:600;}
+
+/* CAR ICON */
+.car-icon{position:absolute;top:230px;left:160px;z-index:10;transform:rotate(25deg);animation:carMove 6s ease-in-out infinite alternate;}
+.car-icon svg{filter:drop-shadow(0 0 8px rgba(255,165,0,.6));}
+
+@keyframes carMove{0%{translate:-8px 6px;}100%{translate:8px -6px;}}
+@keyframes pulse{0%{transform:translate(-50%,-50%) scale(1);opacity:1;}100%{transform:translate(-50%,-50%) scale(2.5);opacity:0;}}
+@keyframes pillPulse{0%,100%{box-shadow:0 4px 24px rgba(0,0,0,.2);}50%{box-shadow:0 4px 32px rgba(59,130,246,.25);}}
+
+/* TOP PILL */
+.top-pill{position:absolute;top:58px;left:50%;transform:translateX(-50%);z-index:20;background:rgba(255,255,255,.13);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.18);border-radius:40px;padding:10px 22px;display:flex;align-items:center;gap:8px;animation:pillPulse 3s ease-in-out infinite;}
+.top-pill span{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#fff;white-space:nowrap;}
+
+/* SOS TOP */
+.sos-top{position:absolute;top:60px;left:20px;z-index:20;background:rgba(239,68,68,.2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(239,68,68,.3);border-radius:20px;padding:6px 14px;display:flex;align-items:center;gap:5px;cursor:pointer;}
+.sos-top .icon{font-size:11px;}
+.sos-top span{font-size:11px;color:#fca5a5;font-weight:600;}
+
+/* BOTTOM SHEET */
+.bottom-sheet{position:absolute;bottom:0;left:0;right:0;max-height:48%;background:#fff;border-radius:24px 24px 0 0;z-index:15;padding:12px 20px 16px;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.3);overflow-y:auto;}
+.bottom-sheet .handle{width:36px;height:4px;background:#ddd;border-radius:4px;margin:0 auto 10px;flex-shrink:0;}
+
+/* DRIVER SECTION */
+.driver{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #f0f0f0;}
+.driver-photo{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;}
+.driver-photo .initials{color:#fff;font-weight:700;font-size:18px;font-family:'Syne',sans-serif;}
+.driver-photo .rating{position:absolute;bottom:-4px;right:-4px;background:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;color:#f59e0b;box-shadow:0 2px 6px rgba(0,0,0,.1);display:flex;align-items:center;gap:2px;}
+.driver-info{flex:1;min-width:0;}
+.driver-name{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#111;}
+.driver-plate{font-size:12px;color:#666;margin-top:1px;font-weight:500;}
+.driver-car{font-size:11px;color:#999;margin-top:1px;}
+.driver-actions{display:flex;gap:8px;}
+.driver-actions button{width:40px;height:40px;border-radius:50%;border:1.5px solid #e0e0e0;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;}
+.driver-actions button:hover{background:#f5f5f5;border-color:#bbb;}
+
+/* ROUTE TIMELINE */
+.timeline{padding:10px 0 8px;display:flex;flex-direction:column;gap:0;}
+.tl-stop{display:flex;align-items:flex-start;gap:12px;}
+.tl-dot-col{display:flex;flex-direction:column;align-items:center;width:18px;flex-shrink:0;}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.tl-dot.green{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.4);}
+.tl-dot.red{background:#ef4444;box-shadow:0 0 8px rgba(239,68,68,.4);}
+.tl-line-seg{width:2px;height:28px;background:repeating-linear-gradient(to bottom,#ccc 0,#ccc 4px,transparent 4px,transparent 8px);margin:4px 0;position:relative;overflow:hidden;}
+.tl-line-seg::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(to bottom,#6366f1 0,#6366f1 4px,transparent 4px,transparent 8px);animation:dashFlow 1.5s linear infinite;}
+@keyframes dashFlow{0%{transform:translateY(-8px);}100%{transform:translateY(0);}}
+.tl-text .place{font-weight:600;font-size:13px;color:#222;}
+.tl-text .meta{font-size:11px;color:#999;margin-top:1px;}
+
+/* PROGRESS BAR */
+.progress-wrap{margin-top:10px;margin-bottom:10px;}
+.progress-bar{height:5px;background:#eee;border-radius:4px;overflow:hidden;}
+.progress-fill{width:40%;height:100%;background:linear-gradient(90deg,#f97316,#22c55e);border-radius:4px;position:relative;animation:progGlow 2s ease-in-out infinite alternate;}
+@keyframes progGlow{0%{box-shadow:0 0 4px rgba(249,115,22,.4);}100%{box-shadow:0 0 10px rgba(34,197,94,.5);}}
+
+/* DETAILS */
+.details{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 0;border-top:1px solid #f0f0f0;}
+.detail-main{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:#111;}
+.detail-sub{font-size:12px;color:#888;}
+.detail-divider{color:#ddd;font-size:12px;}
+.payment{font-size:11px;color:#888;display:flex;align-items:center;gap:4px;margin-top:2px;width:100%;}
+.payment .upi-badge{background:#f0f0ff;color:#6366f1;font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;}
+
+/* SHARE & SOS */
+.share-link{font-size:13px;color:#3b82f6;font-weight:600;margin-top:auto;cursor:pointer;padding-top:8px;text-decoration:none;display:block;}
+.share-link:hover{text-decoration:underline;}
+.sos-bottom{width:100%;padding:8px;border:1.5px solid rgba(239,68,68,.2);background:rgba(239,68,68,.04);border-radius:10px;color:#ef4444;font-weight:700;font-size:12px;font-family:'Syne',sans-serif;letter-spacing:.5px;cursor:pointer;margin-top:8px;text-align:center;transition:all .2s;}
+.sos-bottom:hover{background:rgba(239,68,68,.1);}
+.safety-note{text-align:center;font-size:10px;color:#bbb;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:4px;}
+</style>
+</head>
+<body>
+<div class="phone">
+  <!-- MAP BACKGROUND -->
+  <div class="map">
+    <div class="map-grid">
+      <div class="h" style="top:80px;left:0"></div>
+      <div class="h" style="top:160px;left:0"></div>
+      <div class="h" style="top:240px;left:0"></div>
+      <div class="h" style="top:320px;left:0"></div>
+      <div class="h" style="top:400px;left:0"></div>
+      <div class="v" style="left:80px;top:0"></div>
+      <div class="v" style="left:160px;top:0"></div>
+      <div class="v" style="left:240px;top:0"></div>
+      <div class="v" style="left:320px;top:0"></div>
+    </div>
+    <div class="map-road road-1"></div>
+    <div class="map-road road-2"></div>
+    <div class="map-road road-3"></div>
+    <div class="map-road road-4"></div>
+    <div class="map-road road-5"></div>
+
+    <!-- ROUTE SVG -->
+    <svg class="route-line" viewBox="0 0 390 844" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M68 168 C100 200, 120 240, 168 238 C200 236, 220 260, 240 280 C260 300, 300 310, 332 328" stroke="rgba(59,130,246,0.6)" stroke-width="5" stroke-linecap="round" stroke-dasharray="0" fill="none"/>
+      <path d="M68 168 C100 200, 120 240, 168 238 C200 236, 220 260, 240 280 C260 300, 300 310, 332 328" stroke="rgba(99,102,241,0.25)" stroke-width="14" stroke-linecap="round" fill="none"/>
+    </svg>
+
+    <!-- ORIGIN -->
+    <div class="pin-origin">
+      <div class="pulse"></div>
+      <div class="dot"></div>
+      <div class="label">Sector 62</div>
+    </div>
+
+    <!-- DESTINATION -->
+    <div class="pin-dest">
+      <div class="label">CP</div>
+      <div class="marker">
+        <div class="marker-body"><div class="marker-inner"></div></div>
+      </div>
+    </div>
+
+    <!-- CAR -->
+    <div class="car-icon">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect x="6" y="8" width="20" height="16" rx="4" fill="#f97316"/>
+        <rect x="9" y="5" width="14" height="8" rx="3" fill="#fb923c"/>
+        <circle cx="10" cy="26" r="2.5" fill="#333"/>
+        <circle cx="22" cy="26" r="2.5" fill="#333"/>
+        <rect x="8" y="11" width="5" height="3" rx="1" fill="rgba(255,255,255,0.5)"/>
+        <rect x="19" y="11" width="5" height="3" rx="1" fill="rgba(255,255,255,0.5)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- TOP PILL -->
+  <div class="top-pill">
+    <i data-lucide="car" style="width:16px;height:16px;"></i> <span>Arriving in 34 mins</span>
+  </div>
+
+  <!-- SOS TOP -->
+  <div class="sos-top">
+    <i data-lucide="shield-alert" style="width:12px;height:12px;color:#fca5a5;"></i>
+    <span>SOS</span>
+  </div>
+
+  <!-- BOTTOM SHEET -->
+  <div class="bottom-sheet">
+    <div class="handle"></div>
+
+    <!-- DRIVER -->
+    <div class="driver">
+      <div class="driver-photo">
+        <span class="initials">RK</span>
+        <div class="rating"><i data-lucide="star" style="width:10px;height:10px;display:inline;vertical-align:middle;color:#f59e0b;"></i> 4.8</div>
+      </div>
+      <div class="driver-info">
+        <div class="driver-name">Rajesh Kumar</div>
+        <div class="driver-plate">KA 05 MX 4491</div>
+        <div class="driver-car">White Maruti Swift Dzire</div>
+      </div>
+      <div class="driver-actions">
+        <button title="Call"><i data-lucide="phone" style="width:16px;height:16px;color:#666;"></i></button>
+        <button title="Chat"><i data-lucide="message-circle" style="width:16px;height:16px;color:#666;"></i></button>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="timeline">
+      <div class="tl-stop">
+        <div class="tl-dot-col">
+          <div class="tl-dot green"></div>
+          <div class="tl-line-seg"></div>
+        </div>
+        <div class="tl-text">
+          <div class="place">Sector 62, Noida</div>
+          <div class="meta">Picked up &middot; 10:14 AM</div>
+        </div>
+      </div>
+      <div class="tl-stop">
+        <div class="tl-dot-col">
+          <div class="tl-dot red"></div>
+        </div>
+        <div class="tl-text">
+          <div class="place">Connaught Place, New Delhi</div>
+          <div class="meta">ETA 10:48 AM</div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+      </div>
+    </div>
+
+    <!-- DETAILS -->
+    <div class="details">
+      <span class="detail-main">&#8377;234</span>
+      <span class="detail-divider">&middot;</span>
+      <span class="detail-sub">Ola Mini</span>
+      <span class="detail-divider">&middot;</span>
+      <span class="detail-sub">28.4 km</span>
+      <span class="detail-divider">&middot;</span>
+      <span class="detail-sub">34 min remaining</span>
+      <div class="payment">
+        <span class="upi-badge">UPI</span>
+        <span>***@okicici</span>
+      </div>
+    </div>
+
+    <a class="share-link">Share trip with family &rarr;</a>
+    <button class="sos-bottom">EMERGENCY SOS</button>
+    <div class="safety-note"><i data-lucide="lock" style="width:10px;height:10px;display:inline;vertical-align:middle;"></i> Emergency contact notified</div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

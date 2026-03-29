@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cab Booking - Shot 24</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a14;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'DM Sans',sans-serif;}
+.phone{width:390px;height:844px;background:#1A1A2E;position:relative;overflow:hidden;border-radius:40px;box-shadow:0 0 60px rgba(0,0,0,.6);}
+
+/* MAP */
+.map{position:absolute;inset:0;overflow:hidden;}
+.map svg{width:100%;height:100%;}
+.road{stroke:#2D2D44;stroke-linecap:round;fill:none;}
+.highway{stroke:#2a3a5c;stroke-linecap:round;fill:none;}
+.intersection{fill:rgba(255,255,255,.35);r:2.5;}
+
+/* Labels on map */
+.map-label{position:absolute;font-family:'DM Sans',sans-serif;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.5px;text-transform:uppercase;}
+.map-label.s62{top:28%;left:52%;}
+.map-label.s18{top:18%;left:20%;}
+.map-label.noida{top:35%;left:60%;font-size:8px;color:rgba(255,255,255,.2);}
+
+/* Pulsing current location */
+.current-loc{position:absolute;top:32%;left:55%;}
+.current-loc .dot{width:14px;height:14px;background:#4A90FF;border-radius:50%;border:3px solid #fff;position:relative;z-index:2;}
+.current-loc .pulse{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;background:rgba(74,144,255,.4);border-radius:50%;animation:pulse 2s ease-out infinite;}
+@keyframes pulse{0%{width:14px;height:14px;opacity:.8;}100%{width:60px;height:60px;opacity:0;}}
+
+/* Animated car dot */
+.car-dot{position:absolute;width:20px;height:20px;animation:moveCar 8s ease-in-out infinite alternate;z-index:3;filter:drop-shadow(0 0 6px rgba(255,215,0,.6));}
+@keyframes moveCar{
+0%{top:32%;left:55%;}
+20%{top:30%;left:50%;}
+40%{top:26%;left:42%;}
+60%{top:22%;left:35%;}
+80%{top:19%;left:28%;}
+100%{top:16%;left:22%;}
+}
+
+/* Route line */
+.route-line{stroke:url(#routeGrad);stroke-width:3;fill:none;stroke-dasharray:6 4;stroke-linecap:round;animation:dashMove 1.5s linear infinite;}
+@keyframes dashMove{to{stroke-dashoffset:-20;}}
+
+/* Top floating elements */
+.top-bar{position:absolute;top:54px;left:0;right:0;display:flex;align-items:center;padding:0 20px;z-index:10;}
+.hamburger{width:42px;height:42px;background:rgba(255,255,255,.12);backdrop-filter:blur(16px);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;cursor:pointer;}
+.hamburger span{width:18px;height:2px;background:#fff;border-radius:2px;}
+.tooltip-pill{margin:0 auto;background:rgba(255,255,255,.12);backdrop-filter:blur(16px);padding:8px 18px;border-radius:20px;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;}
+
+/* BOTTOM SHEET */
+.bottom-sheet{position:absolute;bottom:0;left:0;right:0;max-height:56%;background:#fff;border-radius:24px 24px 0 0;z-index:20;display:flex;flex-direction:column;padding:0 20px;box-shadow:0 -10px 40px rgba(0,0,0,.3);overflow-y:auto;}
+.drag-pill{width:36px;height:4px;background:#D0D0D0;border-radius:4px;margin:10px auto 12px;flex-shrink:0;}
+
+/* Pickup / Drop */
+.route-input{display:flex;align-items:center;gap:12px;padding:10px 0;}
+.route-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.route-dot.green{background:#34C759;box-shadow:0 0 8px rgba(52,199,89,.4);}
+.route-dot.red{background:#FF3B30;box-shadow:0 0 8px rgba(255,59,48,.4);}
+.route-info{flex:1;}
+.route-info .place{font-weight:600;font-size:14px;color:#1a1a1a;}
+.route-info .code{font-size:11px;color:#888;margin-top:1px;}
+.edit-btn{font-size:12px;color:#4A90FF;font-weight:600;cursor:pointer;}
+
+.divider-row{display:flex;align-items:center;padding:0 0 0 3px;gap:12px;}
+.dotted-line{flex:1;border-top:2px dashed #ddd;}
+.swap-btn{width:30px;height:30px;background:#f2f2f7;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;color:#666;}
+
+/* Vehicle selector */
+.vehicles-label{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#1a1a1a;margin:14px 0 10px;letter-spacing:.3px;}
+.vehicles-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;}
+.vehicles-scroll::-webkit-scrollbar{display:none;}
+.v-card{min-width:120px;padding:12px;border-radius:14px;border:1.5px solid #e8e8ef;background:#fafafa;cursor:pointer;position:relative;flex-shrink:0;transition:all .2s;}
+.v-card.selected{border-color:#4A90FF;background:rgba(74,144,255,.06);box-shadow:0 0 16px rgba(74,144,255,.15);}
+.v-card .v-icon{font-size:22px;}
+.v-card .v-name{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:#1a1a1a;margin:6px 0 4px;}
+.v-card .v-meta{font-size:10px;color:#888;line-height:1.5;}
+.v-card .v-price{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#1a1a1a;margin-top:6px;}
+
+.trip-info{font-size:12px;color:#888;text-align:center;margin:10px 0 8px;font-weight:500;}
+
+/* Offer chip */
+.offer-chip{display:flex;align-items:center;gap:8px;background:#E8F8EC;border-radius:10px;padding:10px 14px;margin-bottom:12px;cursor:pointer;}
+.offer-chip .tag{font-size:11px;color:#1B8C3A;font-weight:600;}
+.offer-chip .save{font-size:11px;color:#34C759;font-weight:700;margin-left:auto;}
+
+/* CTA */
+.cta-btn{width:100%;padding:14px;background:#1a1a1a;color:#fff;border:none;border-radius:14px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;letter-spacing:.5px;cursor:pointer;margin-bottom:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s;}
+.cta-btn:active{transform:scale(.97);}
+.cta-btn .price{color:#FFD700;}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- MAP BACKGROUND -->
+  <div class="map">
+    <svg viewBox="0 0 390 844" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="routeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#4A90FF"/>
+          <stop offset="100%" stop-color="#FFD700"/>
+        </linearGradient>
+      </defs>
+      <!-- Grid roads -->
+      <line class="road" x1="0" y1="80" x2="390" y2="80" stroke-width="1.5"/>
+      <line class="road" x1="0" y1="160" x2="390" y2="160" stroke-width="1"/>
+      <line class="road" x1="0" y1="240" x2="390" y2="240" stroke-width="1.5"/>
+      <line class="road" x1="0" y1="310" x2="390" y2="310" stroke-width="1"/>
+      <line class="road" x1="60" y1="0" x2="60" y2="400" stroke-width="1"/>
+      <line class="road" x1="140" y1="0" x2="140" y2="420" stroke-width="1.5"/>
+      <line class="road" x1="220" y1="0" x2="220" y2="400" stroke-width="1"/>
+      <line class="road" x1="300" y1="0" x2="300" y2="420" stroke-width="1.5"/>
+      <line class="road" x1="0" y1="380" x2="390" y2="380" stroke-width="1"/>
+      <!-- Highways -->
+      <line class="highway" x1="0" y1="200" x2="390" y2="170" stroke-width="3"/>
+      <line class="highway" x1="180" y1="0" x2="200" y2="420" stroke-width="3"/>
+      <!-- Diagonal roads -->
+      <line class="road" x1="0" y1="350" x2="200" y2="100" stroke-width="1"/>
+      <line class="road" x1="100" y1="400" x2="350" y2="50" stroke-width="1"/>
+      <!-- Intersections -->
+      <circle class="intersection" cx="60" cy="80"/>
+      <circle class="intersection" cx="140" cy="80"/>
+      <circle class="intersection" cx="220" cy="80"/>
+      <circle class="intersection" cx="300" cy="80"/>
+      <circle class="intersection" cx="60" cy="160"/>
+      <circle class="intersection" cx="140" cy="160"/>
+      <circle class="intersection" cx="300" cy="160"/>
+      <circle class="intersection" cx="60" cy="240"/>
+      <circle class="intersection" cx="140" cy="240"/>
+      <circle class="intersection" cx="220" cy="240"/>
+      <circle class="intersection" cx="300" cy="240"/>
+      <circle class="intersection" cx="60" cy="310"/>
+      <circle class="intersection" cx="140" cy="310"/>
+      <circle class="intersection" cx="220" cy="310"/>
+      <circle class="intersection" cx="300" cy="310"/>
+      <circle class="intersection" cx="140" cy="380"/>
+      <circle class="intersection" cx="220" cy="380"/>
+      <!-- Route path -->
+      <path class="route-line" d="M215,270 C210,250 195,230 180,210 C165,190 145,170 120,150 C100,135 88,120 85,105"/>
+    </svg>
+    <div class="map-label s62">Sector 62</div>
+    <div class="map-label s18">Sector 18</div>
+    <div class="map-label noida">Noida</div>
+  </div>
+
+  <!-- Pulsing location -->
+  <div class="current-loc">
+    <div class="pulse"></div>
+    <div class="dot"></div>
+  </div>
+
+  <!-- Animated car -->
+  <div class="car-dot"><svg width="20" height="20" viewBox="0 0 32 32" fill="none"><rect x="6" y="10" width="20" height="12" rx="3" fill="#FFD700"/><rect x="9" y="6" width="14" height="8" rx="2" fill="#ffe566"/><circle cx="10" cy="24" r="2" fill="#333"/><circle cx="22" cy="24" r="2" fill="#333"/><rect x="9" y="12" width="4" height="3" rx="1" fill="rgba(255,255,255,.5)"/><rect x="19" y="12" width="4" height="3" rx="1" fill="rgba(255,255,255,.5)"/></svg></div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="hamburger"><span></span><span></span><span></span></div>
+    <div class="tooltip-pill"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> Set on map</div>
+  </div>
+
+  <!-- Bottom Sheet -->
+  <div class="bottom-sheet">
+    <div class="drag-pill"></div>
+
+    <div class="route-input">
+      <div class="route-dot green"></div>
+      <div class="route-info">
+        <div class="place">Sector 62, Noida</div>
+        <div class="code">201309</div>
+      </div>
+      <div class="edit-btn">Edit</div>
+    </div>
+
+    <div class="divider-row">
+      <div style="width:10px;display:flex;justify-content:center;"><div style="width:0;height:16px;border-left:2px dashed #ddd;"></div></div>
+      <div class="dotted-line"></div>
+      <div class="swap-btn">&#8645;</div>
+    </div>
+
+    <div class="route-input">
+      <div class="route-dot red"></div>
+      <div class="route-info">
+        <div class="place">Connaught Place, New Delhi</div>
+      </div>
+      <div class="edit-btn">Edit</div>
+    </div>
+
+    <div class="vehicles-label">Choose your ride</div>
+    <div class="vehicles-scroll">
+      <div class="v-card selected">
+        <div class="v-icon"><i data-lucide="car" style="width:22px;height:22px;color:#4A90FF;"></i></div>
+        <div class="v-name">Ola Mini</div>
+        <div class="v-meta">4 seats &middot; 4 min</div>
+        <div class="v-price">&#x20B9;234</div>
+      </div>
+      <div class="v-card">
+        <div class="v-icon"><i data-lucide="car-front" style="width:22px;height:22px;color:#666;"></i></div>
+        <div class="v-name">Ola Prime</div>
+        <div class="v-meta">4 seats &middot; 6 min</div>
+        <div class="v-price">&#x20B9;312</div>
+      </div>
+      <div class="v-card">
+        <div class="v-icon"><i data-lucide="truck" style="width:22px;height:22px;color:#666;"></i></div>
+        <div class="v-name">Ola SUV</div>
+        <div class="v-meta">6 seats &middot; 8 min</div>
+        <div class="v-price">&#x20B9;445</div>
+      </div>
+    </div>
+
+    <div class="trip-info">Estimated 42 mins &middot; 28.4 km</div>
+
+    <div class="offer-chip">
+      <div class="tag"><i data-lucide="ticket" style="width:14px;height:14px;display:inline;vertical-align:middle;"></i> Apply <b>OLAFIRST</b></div>
+      <div class="save">Save &#x20B9;50</div>
+    </div>
+
+    <button class="cta-btn">BOOK OLA MINI &middot; <span class="price">&#x20B9;234</span></button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

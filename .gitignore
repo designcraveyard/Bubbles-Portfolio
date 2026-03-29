@@ -1,0 +1,13 @@
+.vercel
+node_modules/
+.DS_Store
+shots/node_modules/
+shots/exports/_verify-*
+.playwright-mcp/
+shots/package.json
+shots/package-lock.json
+shots/generate-showcases.mjs
+shots/take-screenshots.mjs
+shots/retake-18.mjs
+shots/verify-portfolio.mjs
+shots/showcase-template.html

@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shot Frame Templates — Bubbles Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Clash+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #09090B;
+  color: #FAFAFA;
+  padding: 60px 40px 80px;
+}
+h1 { font-family: 'Clash Display', sans-serif; font-size: 42px; font-weight: 700; text-align: center; letter-spacing: -1px; margin-bottom: 6px; }
+.subtitle { text-align: center; color: #71717A; font-size: 15px; margin-bottom: 12px; }
+.ref-note { text-align: center; color: #3F3F46; font-size: 12px; margin-bottom: 60px; font-family: 'JetBrains Mono', monospace; }
+
+.templates { display: flex; flex-direction: column; gap: 100px; max-width: 1440px; margin: 0 auto; }
+
+.template-section { position: relative; }
+.template-header {
+  display: flex; align-items: baseline; gap: 16px; margin-bottom: 20px;
+  padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.tnum { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6366F1; letter-spacing: 2px; }
+.tname { font-family: 'Clash Display', sans-serif; font-size: 22px; font-weight: 600; }
+.tdesc { font-size: 13px; color: #52525B; margin-left: auto; max-width: 400px; text-align: right; }
+.tags { display: flex; gap: 6px; margin-top: 4px; justify-content: flex-end; }
+.tag { padding: 3px 8px; border-radius: 4px; background: rgba(99,102,241,0.08); color: #818CF8; font-size: 10px; font-weight: 600; letter-spacing: 0.5px; }
+
+/* ============================================
+   TEMPLATE 1 — SCATTERED SHOWCASE
+   Inspired by Ronas IT — multiple phones
+   on a pastel/muted background at angles
+   ============================================ */
+.t1 {
+  width: 100%;
+  height: 720px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #1A1625 0%, #1E1A2E 50%, #221D35 100%);
+  position: relative;
+  overflow: hidden;
+}
+.t1::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(99,102,241,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(168,85,247,0.06) 0%, transparent 50%);
+}
+/* Noise overlay */
+.t1::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.t1-title-block {
+  position: absolute;
+  top: 40px;
+  left: 48px;
+  z-index: 10;
+}
+.t1-category {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #A78BFA;
+  margin-bottom: 8px;
+}
+.t1-title {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #F5F3FF;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+.t1-subtitle {
+  font-size: 13px;
+  color: #71717A;
+  margin-top: 6px;
+}
+
+.t1 .phone-frame {
+  position: absolute;
+  border-radius: 32px;
+  border: 5px solid #1A1A2A;
+  background: #0A0A0F;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.4),
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 32px 64px rgba(0,0,0,0.3);
+  overflow: hidden;
+  z-index: 2;
+}
+.t1 .phone-frame iframe {
+  width: 390px;
+  height: 844px;
+  border: none;
+  pointer-events: none;
+}
+.t1 .phone-frame.p1 {
+  width: 260px; height: 548px;
+  top: 120px; left: 48px;
+  transform: rotate(-6deg);
+}
+.t1 .phone-frame.p1 iframe { transform: scale(0.6667); transform-origin: top left; }
+
+.t1 .phone-frame.p2 {
+  width: 280px; height: 590px;
+  top: 60px; left: 340px;
+  transform: rotate(2deg);
+  z-index: 3;
+}
+.t1 .phone-frame.p2 iframe { transform: scale(0.7179); transform-origin: top left; }
+
+.t1 .phone-frame.p3 {
+  width: 260px; height: 548px;
+  top: 100px; right: 280px;
+  transform: rotate(-3deg);
+}
+.t1 .phone-frame.p3 iframe { transform: scale(0.6667); transform-origin: top left; }
+
+.t1 .phone-frame.p4 {
+  width: 240px; height: 505px;
+  top: 140px; right: 40px;
+  transform: rotate(5deg);
+}
+.t1 .phone-frame.p4 iframe { transform: scale(0.6154); transform-origin: top left; }
+
+/* ============================================
+   TEMPLATE 2 — HERO SINGLE
+   One phone centered on clean gradient,
+   bold title and category. Inspired by Qudra.
+   ============================================ */
+.t2 {
+  width: 100%;
+  height: 720px;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #0C0C0C 0%, #111318 40%, #0D1117 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.t2-glow {
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+}
+.t2-glow.g1 { background: #6366F1; top: -200px; left: 50%; transform: translateX(-50%); opacity: 0.08; }
+.t2-glow.g2 { background: #A855F7; bottom: -250px; right: -100px; opacity: 0.05; width: 600px; height: 600px; }
+
+.t2-phone {
+  width: 300px;
+  height: 632px;
+  border-radius: 40px;
+  border: 6px solid #1C1C28;
+  background: #0A0A0F;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 24px 80px rgba(0,0,0,0.6),
+    0 0 120px rgba(99,102,241,0.04);
+  overflow: hidden;
+  z-index: 2;
+  position: relative;
+}
+.t2-phone iframe {
+  width: 390px; height: 844px;
+  border: none;
+  transform: scale(0.7692);
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+.t2-text-left {
+  position: absolute;
+  left: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  max-width: 260px;
+}
+.t2-cat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #6366F1;
+  margin-bottom: 12px;
+}
+.t2-title {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  color: #FAFAFA;
+  margin-bottom: 12px;
+}
+.t2-desc {
+  font-size: 13px;
+  color: #52525B;
+  line-height: 1.6;
+}
+
+.t2-text-right {
+  position: absolute;
+  right: 48px;
+  bottom: 48px;
+  z-index: 3;
+  text-align: right;
+}
+.t2-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #3F3F46;
+  letter-spacing: 1px;
+}
+
+/* ============================================
+   TEMPLATE 3 — THREE-UP FLOW
+   Clean 3-screen user flow with step labels
+   Inspired by multi-screen Dribbble shots
+   ============================================ */
+.t3 {
+  width: 100%;
+  height: 720px;
+  border-radius: 16px;
+  background: #F7F7F8;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.t3::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(99,102,241,0.03) 0%, transparent 60%);
+}
+
+.t3-header {
+  text-align: center;
+  margin-bottom: 32px;
+  z-index: 2;
+}
+.t3-header-cat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #6366F1;
+  margin-bottom: 6px;
+}
+.t3-header-title {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #18181B;
+  letter-spacing: -0.3px;
+}
+
+.t3-phones {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 2;
+}
+
+.t3-phone-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.t3-phone-wrap .phone-frame {
+  border-radius: 28px;
+  border: 4px solid #E4E4E7;
+  background: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.03);
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+.t3-phone-wrap .phone-frame iframe {
+  border: none;
+  pointer-events: none;
+}
+.t3-phone-wrap.side .phone-frame {
+  width: 210px; height: 442px;
+}
+.t3-phone-wrap.side .phone-frame iframe {
+  width: 390px; height: 844px;
+  transform: scale(0.5385);
+  transform-origin: top left;
+}
+.t3-phone-wrap.center .phone-frame {
+  width: 240px; height: 505px;
+  border-color: #6366F1;
+  box-shadow: 0 16px 48px rgba(99,102,241,0.12), 0 4px 12px rgba(0,0,0,0.05);
+  transform: translateY(-12px);
+}
+.t3-phone-wrap.center .phone-frame iframe {
+  width: 390px; height: 844px;
+  transform: scale(0.6154);
+  transform-origin: top left;
+}
+
+.t3-step {
+  display: flex; align-items: center; gap: 6px;
+}
+.t3-step-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #6366F1; color: #fff;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.t3-step-label {
+  font-size: 12px; font-weight: 600; color: #71717A;
+}
+
+.t3-arrow {
+  font-size: 20px;
+  color: #D4D4D8;
+  margin-top: -30px;
+}
+
+/* ============================================
+   TEMPLATE 4 — DARK SPLIT
+   Left: bold typography. Right: phone.
+   Inspired by Nixtio dark shots.
+   ============================================ */
+.t4 {
+  width: 100%;
+  height: 720px;
+  border-radius: 16px;
+  background: #050507;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+}
+.t4-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+}
+.t4-glow.g1 {
+  width: 400px; height: 400px;
+  background: rgba(168,85,247,0.12);
+  top: -120px; right: 100px;
+}
+.t4-glow.g2 {
+  width: 350px; height: 350px;
+  background: rgba(59,130,246,0.08);
+  bottom: -100px; left: 200px;
+}
+
+.t4-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px;
+  z-index: 2;
+}
+.t4-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: rgba(168,85,247,0.1);
+  border: 1px solid rgba(168,85,247,0.15);
+  color: #C084FC;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.t4-heading {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #FAFAFA;
+  line-height: 1.05;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+.t4-heading span { color: #A78BFA; }
+.t4-body {
+  font-size: 14px;
+  color: #52525B;
+  line-height: 1.7;
+  max-width: 360px;
+}
+.t4-features {
+  display: flex;
+  gap: 24px;
+  margin-top: 28px;
+}
+.t4-feat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.t4-feat-val {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #FAFAFA;
+}
+.t4-feat-label {
+  font-size: 11px;
+  color: #52525B;
+  letter-spacing: 0.5px;
+}
+
+.t4-right {
+  flex: 0 0 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  padding-right: 40px;
+}
+.t4-phone {
+  width: 280px;
+  height: 590px;
+  border-radius: 36px;
+  border: 5px solid #1A1A24;
+  background: #0A0A0F;
+  box-shadow:
+    0 0 0 1px rgba(168,85,247,0.08),
+    0 24px 64px rgba(0,0,0,0.5),
+    0 0 80px rgba(168,85,247,0.04);
+  overflow: hidden;
+}
+.t4-phone iframe {
+  width: 390px; height: 844px;
+  border: none;
+  transform: scale(0.7179);
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+/* ============================================
+   TEMPLATE 5 — PERSPECTIVE GALLERY
+   Phones in 3D perspective with grid floor
+   ============================================ */
+.t5 {
+  width: 100%;
+  height: 720px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #0A0A0F 0%, #111116 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+}
+.t5-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  transform: perspective(400px) rotateX(55deg);
+  transform-origin: center bottom;
+  mask-image: linear-gradient(transparent 10%, rgba(255,255,255,0.5) 60%, white 100%);
+  -webkit-mask-image: linear-gradient(transparent 10%, rgba(255,255,255,0.5) 60%, white 100%);
+}
+.t5-phones {
+  display: flex;
+  gap: 24px;
+  transform: rotateY(-8deg) rotateX(3deg);
+  z-index: 2;
+}
+.t5-phone {
+  width: 220px;
+  height: 463px;
+  border-radius: 28px;
+  border: 4px solid #1E1E28;
+  background: #0A0A0F;
+  box-shadow:
+    12px 12px 40px rgba(0,0,0,0.4),
+    -3px -3px 20px rgba(99,102,241,0.03);
+  overflow: hidden;
+  position: relative;
+}
+.t5-phone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 40%);
+  border-radius: 28px;
+  pointer-events: none;
+}
+.t5-phone iframe {
+  width: 390px; height: 844px;
+  border: none;
+  transform: scale(0.5641);
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+.t5-label {
+  position: absolute;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #71717A;
+  z-index: 10;
+}
+.t5-label.tl { top: 32px; left: 32px; }
+.t5-label.br { bottom: 32px; right: 32px; }
+
+/* ============================================
+   TEMPLATE 6 — BROWSER FRAME
+   For desktop shots (Finance Dashboard)
+   ============================================ */
+.t6 {
+  width: 100%;
+  height: 720px;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #0F0F1A 0%, #151528 50%, #1A1040 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 40px;
+}
+.t6::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 60%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.t6-browser {
+  width: 100%;
+  max-width: 1100px;
+  height: 620px;
+  border-radius: 12px;
+  background: #0A0A0F;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow:
+    0 24px 80px rgba(0,0,0,0.5),
+    0 0 80px rgba(99,102,241,0.03);
+  overflow: hidden;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+.t6-chrome {
+  height: 44px;
+  background: #111118;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.t6-dot { width: 12px; height: 12px; border-radius: 50%; }
+.t6-dot.r { background: #FF5F57; }
+.t6-dot.y { background: #FEBC2E; }
+.t6-dot.g { background: #28C840; }
+.t6-urlbar {
+  flex: 1;
+  height: 26px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.04);
+  margin-left: 16px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+.t6-url {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #3F3F46;
+}
+.t6-viewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.t6-viewport iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+
+/* ============================================
+   TEMPLATE 7 — FEATURE CALLOUT
+   Phone + annotated feature highlights
+   ============================================ */
+.t7 {
+  width: 100%;
+  height: 720px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #FAFBFF 0%, #F0F1FF 60%, #E8EAFF 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 60px;
+  gap: 60px;
+}
+
+.t7-phone-area {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 2;
+}
+.t7-phone {
+  width: 260px;
+  height: 548px;
+  border-radius: 32px;
+  border: 4px solid #D4D4D8;
+  background: #fff;
+  box-shadow: 0 16px 48px rgba(99,102,241,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  overflow: hidden;
+}
+.t7-phone iframe {
+  width: 390px; height: 844px;
+  border: none;
+  transform: scale(0.6667);
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+.t7-callouts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  z-index: 2;
+  max-width: 480px;
+}
+.t7-callout-header {
+  margin-bottom: 4px;
+}
+.t7-callout-cat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #6366F1;
+  margin-bottom: 4px;
+}
+.t7-callout-title {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #18181B;
+  letter-spacing: -0.3px;
+}
+
+.t7-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.t7-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #6366F1; color: #fff;
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.t7-item-content {}
+.t7-item-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #18181B;
+  margin-bottom: 3px;
+}
+.t7-item-desc {
+  font-size: 12px;
+  color: #71717A;
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+<h1>Shot Frame Templates</h1>
+<p class="subtitle">7 Dribbble-inspired presentation frames for Bubbles Portfolio</p>
+<p class="ref-note">Based on analysis of top Dribbble shots by Ronas IT, Qudra, Nixtio, Halo Lab, BL/S</p>
+
+<div class="templates">
+
+<!-- ═══ TEMPLATE 1 — SCATTERED SHOWCASE ═══ -->
+<div class="template-section">
+  <div class="template-header">
+    <span class="tnum">01</span>
+    <span class="tname">Scattered Showcase</span>
+    <div>
+      <div class="tdesc">Multiple phones at organic angles on dark textured background. Inspired by Ronas IT's 1.9k-liked self-care app shot.</div>
+      <div class="tags"><span class="tag">Multi-Screen</span><span class="tag">Dark</span><span class="tag">Portfolio Overview</span></div>
+    </div>
+  </div>
+  <div class="t1">
+    <div class="t1-title-block">
+      <div class="t1-category">Mobile UI Collection</div>
+      <div class="t1-title">Indian App<br>Design System</div>
+      <div class="t1-subtitle">25 screens across fintech, health, travel & commerce</div>
+    </div>
+    <div class="phone-frame p1">
+      <iframe src="shot-10-fashion-product.html" loading="lazy"></iframe>
+    </div>
+    <div class="phone-frame p2">
+      <iframe src="shot-03-meditation.html" loading="lazy"></iframe>
+    </div>
+    <div class="phone-frame p3">
+      <iframe src="shot-23-habit-tracker.html" loading="lazy"></iframe>
+    </div>
+    <div class="phone-frame p4">
+      <iframe src="shot-15-doctor-booking.html" loading="lazy"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEMPLATE 2 — HERO SINGLE ═══ -->
+<div class="template-section">
+  <div class="template-header">
+    <span class="tnum">02</span>
+    <span class="tname">Hero Single</span>
+    <div>
+      <div class="tdesc">One phone centered on near-black with subtle glow. Bold title left-aligned. Inspired by Qudra's digital wallet shot.</div>
+      <div class="tags"><span class="tag">Single Screen</span><span class="tag">Dark</span><span class="tag">Hero/Cover</span></div>
+    </div>
+  </div>
+  <div class="t2">
+    <div class="t2-glow g1"></div>
+    <div class="t2-glow g2"></div>
+    <div class="t2-text-left">
+      <div class="t2-cat">Fashion &middot; E-Commerce</div>
+      <div class="t2-title">Aarke Studio</div>
+      <div class="t2-desc">Premium fashion product experience with immersive imagery, size guides, and one-tap checkout.</div>
+    </div>
+    <div class="t2-phone">
+      <iframe src="shot-10-fashion-product.html" loading="lazy"></iframe>
+    </div>
+    <div class="t2-text-right">
+      <div class="t2-meta">SHOT 10 / 25</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEMPLATE 3 — THREE-UP FLOW ═══ -->
+<div class="template-section">
+  <div class="template-header">
+    <span class="tnum">03</span>
+    <span class="tname">Three-Up Flow</span>
+    <div>
+      <div class="tdesc">Three screens showing user journey. Center screen elevated with accent border. Light editorial background.</div>
+      <div class="tags"><span class="tag">UX Flow</span><span class="tag">Light</span><span class="tag">3 Screens</span></div>
+    </div>
+  </div>
+  <div class="t3">
+    <div class="t3-header">
+      <div class="t3-header-cat">Payments &middot; UPI Flow</div>
+      <div class="t3-header-title">Send Money in 3 Taps</div>
+    </div>
+    <div class="t3-phones">
+      <div class="t3-phone-wrap side">
+        <div class="phone-frame">
+          <iframe src="shot-06-upi-send-money.html" loading="lazy"></iframe>
+        </div>
+        <div class="t3-step">
+          <div class="t3-step-num">1</div>
+          <div class="t3-step-label">Enter Amount</div>
+        </div>
+      </div>
+      <span class="t3-arrow">→</span>
+      <div class="t3-phone-wrap center">
+        <div class="phone-frame">
+          <iframe src="shot-11-checkout-flow.html" loading="lazy"></iframe>
+        </div>
+        <div class="t3-step">
+          <div class="t3-step-num">2</div>
+          <div class="t3-step-label">Review & Pay</div>
+        </div>
+      </div>
+      <span class="t3-arrow">→</span>
+      <div class="t3-phone-wrap side">
+        <div class="phone-frame">
+          <iframe src="shot-07-credit-card.html" loading="lazy"></iframe>
+        </div>
+        <div class="t3-step">
+          <div class="t3-step-num">3</div>
+          <div class="t3-step-label">Confirmation</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEMPLATE 4 — DARK SPLIT ═══ -->
+<div class="template-section">
+  <div class="template-header">
+    <span class="tnum">04</span>
+    <span class="tname">Dark Split</span>
+    <div>
+      <div class="tdesc">Bold typography left, phone right. Multi-color glow orbs. Inspired by Nixtio and BL/S dark showcase shots.</div>
+      <div class="tags"><span class="tag">Side-by-Side</span><span class="tag">Premium Dark</span><span class="tag">Neon Glow</span></div>
+    </div>
+  </div>
+  <div class="t4">
+    <div class="t4-glow g1"></div>
+    <div class="t4-glow g2"></div>
+    <div class="t4-left">
+      <div class="t4-badge">Healthcare</div>
+      <div class="t4-heading">Doctor<br><span>Booking</span></div>
+      <div class="t4-body">Appointment scheduling with real-time slot availability, specialist search, and insurance verification.</div>
+      <div class="t4-features">
+        <div class="t4-feat">
+          <div class="t4-feat-val">15+</div>
+          <div class="t4-feat-label">Specialties</div>
+        </div>
+        <div class="t4-feat">
+          <div class="t4-feat-val">3 tap</div>
+          <div class="t4-feat-label">Booking flow</div>
+        </div>
+        <div class="t4-feat">
+          <div class="t4-feat-val">98%</div>
+          <div class="t4-feat-label">Task success</div>
+        </div>
+      </div>
+    </div>
+    <div class="t4-right">
+      <div class="t4-phone">
+        <iframe src="shot-15-doctor-booking.html" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEMPLATE 5 — PERSPECTIVE GALLERY ═══ -->
+<div class="template-section">
+  <div class="template-header">
+    <span class="tnum">05</span>
+    <span class="tname">Perspective Gallery</span>
+    <div>
+      <div class="tdesc">3D-tilted phones on grid floor with glass reflection. Cinematic depth. Common pattern on high-engagement Dribbble shots.</div>
+      <div class="tags"><span class="tag">3D Perspective</span><span class="tag">Cinematic</span><span class="tag">Multi-Screen</span></div>
+    </div>
+  </div>
+  <div class="t5">
+    <div class="t5-grid"></div>
+    <div class="t5-label tl">Wellness &middot; Lifestyle &middot; iOS</div>
+    <div class="t5-label br">Bubbles Portfolio &middot; 2025</div>
+    <div class="t5-phones">
+      <div class="t5-phone">
+        <iframe src="shot-03-meditation.html" loading="lazy"></iframe>
+      </div>
+      <div class="t5-phone">
+        <iframe src="shot-14-workout-session.html" loading="lazy"></iframe>
+      </div>
+      <div class="t5-phone">
+        <iframe src="shot-13-calorie-tracker.html" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEMPLATE 6 — BROWSER FRAME ═══ -->
+<div class="template-section">
+  <div class="template-header">
+    <span class="tnum">06</span>
+    <span class="tname">Browser Frame</span>
+    <div>
+      <div class="tdesc">Desktop shot in minimal browser chrome on deep gradient. For web/dashboard layouts like the Finance Dashboard.</div>
+      <div class="tags"><span class="tag">Desktop</span><span class="tag">Browser Chrome</span><span class="tag">Dashboard</span></div>
+    </div>
+  </div>
+  <div class="t6">
+    <div class="t6-browser">
+      <div class="t6-chrome">
+        <div class="t6-dot r"></div>
+        <div class="t6-dot y"></div>
+        <div class="t6-dot g"></div>
+        <div class="t6-urlbar">
+          <span class="t6-url">app.finflow.io/dashboard</span>
+        </div>
+      </div>
+      <div class="t6-viewport">
+        <iframe src="shot-01-finance-dashboard.html" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEMPLATE 7 — FEATURE CALLOUT ═══ -->
+<div class="template-section">
+  <div class="template-header">
+    <span class="tnum">07</span>
+    <span class="tname">Feature Callout</span>
+    <div>
+      <div class="tdesc">Phone left with numbered design annotations right. Great for UX case studies. Inspired by Halo Lab and Afterglow.</div>
+      <div class="tags"><span class="tag">Annotated</span><span class="tag">Light</span><span class="tag">Case Study</span></div>
+    </div>
+  </div>
+  <div class="t7">
+    <div class="t7-phone-area">
+      <div class="t7-phone">
+        <iframe src="shot-08-investment-portfolio.html" loading="lazy"></iframe>
+      </div>
+    </div>
+    <div class="t7-callouts">
+      <div class="t7-callout-header">
+        <div class="t7-callout-cat">Fintech &middot; Investment</div>
+        <div class="t7-callout-title">Portfolio Tracker</div>
+      </div>
+      <div class="t7-item">
+        <div class="t7-num">1</div>
+        <div class="t7-item-content">
+          <div class="t7-item-title">Live Market Data</div>
+          <div class="t7-item-desc">Real-time stock prices with sparkline charts and color-coded gain/loss indicators</div>
+        </div>
+      </div>
+      <div class="t7-item">
+        <div class="t7-num">2</div>
+        <div class="t7-item-content">
+          <div class="t7-item-title">Asset Allocation</div>
+          <div class="t7-item-desc">Donut chart breakdown by sector with drill-down into individual holdings</div>
+        </div>
+      </div>
+      <div class="t7-item">
+        <div class="t7-num">3</div>
+        <div class="t7-item-content">
+          <div class="t7-item-title">Quick Actions</div>
+          <div class="t7-item-desc">One-tap buy/sell with smart order routing and price alerts</div>
+        </div>
+      </div>
+      <div class="t7-item">
+        <div class="t7-num">4</div>
+        <div class="t7-item-content">
+          <div class="t7-item-title">Accessible Design</div>
+          <div class="t7-item-desc">WCAG AA compliant, scalable text, 44px+ touch targets throughout</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /templates -->
+
+<div style="text-align:center; padding:80px 0 20px; color:#3F3F46; font-size:12px; font-family:'JetBrains Mono',monospace;">
+  Bubbles Portfolio &middot; Dribbble-inspired templates &middot; 2025
+</div>
+
+</body>
+</html>

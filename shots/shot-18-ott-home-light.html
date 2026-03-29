@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StreamIN - Light Mode</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #E8E8E8;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    color: #1A1A1A;
+  }
+  .phone {
+    width: 390px;
+    min-height: 100vh;
+    background: #FAFAFA;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,250,250,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: #DC2626;
+  }
+  .header-icons { display: flex; gap: 16px; }
+  .header-icons i { color: #1A1A1A; cursor: pointer; }
+
+  /* Nav tabs */
+  .nav-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 4px 20px 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    padding: 7px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    background: #F0F0F0;
+    color: #666;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav-tab.active {
+    background: #DC2626;
+    color: #FFF;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    margin: 0 16px 20px;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 400px;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+  .hero img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 40%, transparent 70%);
+  }
+  .hero-content {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 24px;
+    color: #FFF;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: #DC2626;
+    color: #FFF;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .hero-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 16px;
+  }
+  .hero-actions { display: flex; gap: 10px; }
+  .btn-play {
+    display: flex; align-items: center; gap: 6px;
+    background: #DC2626;
+    color: #FFF;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: #FFF;
+  }
+
+  /* Sections */
+  .section {
+    padding: 0 20px;
+    margin-bottom: 28px;
+    opacity: 0; transform: translateY(20px);
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: #1A1A1A;
+  }
+  .see-all {
+    font-size: 12px;
+    font-weight: 600;
+    color: #DC2626;
+  }
+  .scroll-row {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin: 0 -20px;
+    padding: 0 20px 4px;
+  }
+  .scroll-row::-webkit-scrollbar { display: none; }
+
+  /* Continue Watching */
+  .cw-card {
+    flex-shrink: 0;
+    width: 150px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #FFF;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .cw-img {
+    width: 150px; height: 90px;
+    object-fit: cover;
+    display: block;
+    position: relative;
+  }
+  .cw-card .img-wrap { position: relative; }
+  .cw-play {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 32px; height: 32px;
+    background: rgba(220,38,38,0.9);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cw-play i { color: #FFF; }
+  .cw-progress {
+    height: 3px;
+    background: #E5E5E5;
+  }
+  .cw-progress-bar {
+    height: 100%;
+    background: #DC2626;
+    border-radius: 2px;
+  }
+  .cw-info { padding: 8px 10px; }
+  .cw-name { font-size: 12px; font-weight: 600; color: #1A1A1A; }
+  .cw-ep { font-size: 10px; color: #999; margin-top: 2px; }
+
+  /* Trending numbered */
+  .trend-card {
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+  }
+  .trend-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 100px;
+    line-height: 0.75;
+    color: #E5E5E5;
+    margin-right: -14px;
+    z-index: 1;
+    position: relative;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .trend-poster {
+    width: 110px; height: 160px;
+    border-radius: 14px;
+    object-fit: cover;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Top Picks */
+  .pick-card {
+    flex-shrink: 0;
+    width: 140px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #FFF;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .pick-img {
+    width: 140px; height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+  .pick-info { padding: 10px; }
+  .pick-name { font-size: 12px; font-weight: 700; color: #1A1A1A; }
+  .pick-genre { font-size: 10px; color: #999; margin-top: 2px; }
+  .pick-rating {
+    display: flex; align-items: center; gap: 3px;
+    margin-top: 4px;
+    font-size: 11px; font-weight: 600; color: #DC2626;
+  }
+
+  /* Genre pills */
+  .genre-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .genre-pill {
+    padding: 10px 20px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #FFF;
+    color: #1A1A1A;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid #F0F0F0;
+  }
+  .genre-pill span { margin-right: 6px; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 12px 0 28px;
+    background: rgba(250,250,250,0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid #F0F0F0;
+    position: sticky;
+    bottom: 0;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    color: #999;
+  }
+  .nav-item.active { color: #DC2626; }
+  .nav-item i { width: 22px; height: 22px; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .stagger-1 { animation: fadeUp 0.5s ease forwards 0.15s; }
+  .stagger-2 { animation: fadeUp 0.5s ease forwards 0.25s; }
+  .stagger-3 { animation: fadeUp 0.5s ease forwards 0.35s; }
+  .stagger-4 { animation: fadeUp 0.5s ease forwards 0.45s; }
+  .stagger-5 { animation: fadeUp 0.5s ease forwards 0.55s; }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">STREAMIN</div>
+    <div class="header-icons">
+      <i data-lucide="cast" style="width:20px;height:20px;"></i>
+      <i data-lucide="search" style="width:20px;height:20px;"></i>
+      <i data-lucide="user" style="width:20px;height:20px;"></i>
+    </div>
+  </div>
+
+  <!-- Nav Tabs -->
+  <div class="nav-tabs">
+    <div class="nav-tab active">For You</div>
+    <div class="nav-tab">Movies</div>
+    <div class="nav-tab">Series</div>
+    <div class="nav-tab">Originals</div>
+    <div class="nav-tab">Sports</div>
+    <div class="nav-tab">Kids</div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=390&h=400&fit=crop" alt="Hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Original Series</div>
+      <div class="hero-title">SCAM 1992</div>
+      <div class="hero-meta">2020 &bull; Drama &bull; 10 Episodes &bull; Hindi</div>
+      <div class="hero-actions">
+        <button class="btn-play">
+          <i data-lucide="play" style="width:16px;height:16px;fill:white;"></i>
+          Watch Now
+        </button>
+        <button class="btn-icon"><i data-lucide="plus" style="width:18px;height:18px;"></i></button>
+        <button class="btn-icon"><i data-lucide="bookmark" style="width:18px;height:18px;"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Continue Watching -->
+  <div class="section stagger-1">
+    <div class="section-header">
+      <div class="section-title">Continue Watching</div>
+      <div class="see-all">See All</div>
+    </div>
+    <div class="scroll-row">
+      <div class="cw-card">
+        <div class="img-wrap">
+          <img class="cw-img" src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=300&h=180&fit=crop" alt="">
+          <div class="cw-play"><i data-lucide="play" style="width:14px;height:14px;fill:white;"></i></div>
+        </div>
+        <div class="cw-progress"><div class="cw-progress-bar" style="width:65%"></div></div>
+        <div class="cw-info">
+          <div class="cw-name">Money Heist</div>
+          <div class="cw-ep">S3 E5 &bull; 32 min left</div>
+        </div>
+      </div>
+      <div class="cw-card">
+        <div class="img-wrap">
+          <img class="cw-img" src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=180&fit=crop" alt="">
+          <div class="cw-play"><i data-lucide="play" style="width:14px;height:14px;fill:white;"></i></div>
+        </div>
+        <div class="cw-progress"><div class="cw-progress-bar" style="width:30%"></div></div>
+        <div class="cw-info">
+          <div class="cw-name">Sacred Games</div>
+          <div class="cw-ep">S2 E1 &bull; 45 min left</div>
+        </div>
+      </div>
+      <div class="cw-card">
+        <div class="img-wrap">
+          <img class="cw-img" src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=300&h=180&fit=crop" alt="">
+          <div class="cw-play"><i data-lucide="play" style="width:14px;height:14px;fill:white;"></i></div>
+        </div>
+        <div class="cw-progress"><div class="cw-progress-bar" style="width:80%"></div></div>
+        <div class="cw-info">
+          <div class="cw-name">Panchayat</div>
+          <div class="cw-ep">S1 E8 &bull; 12 min left</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trending in India -->
+  <div class="section stagger-2">
+    <div class="section-header">
+      <div class="section-title">Trending in India</div>
+      <div class="see-all">See All</div>
+    </div>
+    <div class="scroll-row" style="align-items:flex-end;">
+      <div class="trend-card">
+        <span class="trend-num">1</span>
+        <img class="trend-poster" src="https://images.unsplash.com/photo-1534809027769-b00d750a6bac?w=220&h=320&fit=crop" alt="">
+      </div>
+      <div class="trend-card">
+        <span class="trend-num">2</span>
+        <img class="trend-poster" src="https://images.unsplash.com/photo-1518676590747-1e3dcf5a05be?w=220&h=320&fit=crop" alt="">
+      </div>
+      <div class="trend-card">
+        <span class="trend-num">3</span>
+        <img class="trend-poster" src="https://images.unsplash.com/photo-1616530940355-351fabd9524b?w=220&h=320&fit=crop" alt="">
+      </div>
+      <div class="trend-card">
+        <span class="trend-num">4</span>
+        <img class="trend-poster" src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=220&h=320&fit=crop" alt="">
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Picks -->
+  <div class="section stagger-3">
+    <div class="section-header">
+      <div class="section-title">Top Picks for You</div>
+      <div class="see-all">See All</div>
+    </div>
+    <div class="scroll-row">
+      <div class="pick-card">
+        <img class="pick-img" src="https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=280&h=400&fit=crop" alt="">
+        <div class="pick-info">
+          <div class="pick-name">The Family Man</div>
+          <div class="pick-genre">Action &bull; Thriller</div>
+          <div class="pick-rating"><i data-lucide="star" style="width:12px;height:12px;fill:#DC2626;stroke:none;"></i> 9.1</div>
+        </div>
+      </div>
+      <div class="pick-card">
+        <img class="pick-img" src="https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=280&h=400&fit=crop" alt="">
+        <div class="pick-info">
+          <div class="pick-name">Mirzapur</div>
+          <div class="pick-genre">Crime &bull; Drama</div>
+          <div class="pick-rating"><i data-lucide="star" style="width:12px;height:12px;fill:#DC2626;stroke:none;"></i> 8.5</div>
+        </div>
+      </div>
+      <div class="pick-card">
+        <img class="pick-img" src="https://images.unsplash.com/photo-1533928298208-27ff66555d8d?w=280&h=400&fit=crop" alt="">
+        <div class="pick-info">
+          <div class="pick-name">Breathe</div>
+          <div class="pick-genre">Suspense</div>
+          <div class="pick-rating"><i data-lucide="star" style="width:12px;height:12px;fill:#DC2626;stroke:none;"></i> 8.2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Genres -->
+  <div class="section stagger-4">
+    <div class="section-header">
+      <div class="section-title">Browse by Genre</div>
+    </div>
+    <div class="genre-grid">
+      <div class="genre-pill"><span>🎬</span> Action</div>
+      <div class="genre-pill"><span>😂</span> Comedy</div>
+      <div class="genre-pill"><span>💀</span> Horror</div>
+      <div class="genre-pill"><span>💕</span> Romance</div>
+      <div class="genre-pill"><span>🔍</span> Thriller</div>
+      <div class="genre-pill"><span>📺</span> Drama</div>
+      <div class="genre-pill"><span>🚀</span> Sci-Fi</div>
+      <div class="genre-pill"><span>📖</span> Documentary</div>
+    </div>
+  </div>
+
+  <div style="height:20px;"></div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <i data-lucide="home" style="width:22px;height:22px;"></i>
+      Home
+    </div>
+    <div class="nav-item">
+      <i data-lucide="compass" style="width:22px;height:22px;"></i>
+      Explore
+    </div>
+    <div class="nav-item">
+      <i data-lucide="clapperboard" style="width:22px;height:22px;"></i>
+      Originals
+    </div>
+    <div class="nav-item">
+      <i data-lucide="download" style="width:22px;height:22px;"></i>
+      Downloads
+    </div>
+  </div>
+
+</div>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

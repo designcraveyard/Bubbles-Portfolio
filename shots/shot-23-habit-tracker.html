@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0">
+<title>Habit Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: #f4f1f9;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+.phone {
+  width: 390px;
+  min-height: 844px;
+  background: linear-gradient(180deg, #f0edf6 0%, #f7f5fb 40%);
+  padding: 56px 20px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.greeting { font-size: 26px; font-weight: 800; color: #2d2d3a; }
+.date { font-size: 14px; color: #8e8e9e; margin-top: 2px; font-weight: 600; }
+.streak-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 13px; font-weight: 700; color: #FF8F00;
+  margin-top: 8px;
+}
+.progress-section {
+  display: flex; align-items: center; gap: 16px;
+  margin: 20px 0 16px;
+  background: white;
+  border-radius: 20px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.ring-wrap { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+.ring-wrap svg { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: #e8e5f0; stroke-width: 6; }
+.ring-fg { fill: none; stroke: #4CAF50; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.8s cubic-bezier(.4,0,.2,1); }
+.ring-text {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 18px; font-weight: 800; color: #2d2d3a;
+}
+.progress-info h3 { font-size: 16px; font-weight: 700; color: #2d2d3a; }
+.progress-info .sub { font-size: 13px; color: #8e8e9e; font-weight: 600; margin-top: 2px; }
+.progress-info .motivation {
+  font-size: 12px; color: #FF8F00; font-weight: 700; margin-top: 4px;
+}
+.habits { display: flex; flex-direction: column; gap: 8px; }
+.habit-card {
+  display: flex; align-items: center; gap: 12px;
+  background: white;
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+  transition: background 0.5s ease, transform 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.habit-card.done { background: linear-gradient(135deg, #f0faf0, #e8f5e9); }
+.habit-card.just-done {
+  animation: cardPop 0.5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes cardPop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+.checkbox {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  border: 2.5px solid #d0cdd8;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  transition: border-color 0.3s;
+}
+.checkbox.checked {
+  border-color: #4CAF50;
+  background: #4CAF50;
+}
+.checkbox .fill-circle {
+  position: absolute; width: 28px; height: 28px;
+  border-radius: 50%; background: #4CAF50;
+  transform: scale(0); opacity: 0;
+}
+.checkbox .fill-circle.animate {
+  animation: fillSweep 0.4s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes fillSweep {
+  0% { transform: scale(0); opacity: 1; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.checkmark {
+  position: relative; z-index: 1;
+  width: 14px; height: 14px;
+  opacity: 0;
+}
+.checkmark.animate { opacity: 1; }
+.checkmark path {
+  fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 20; stroke-dashoffset: 20;
+}
+.checkmark.animate path {
+  animation: drawCheck 0.35s 0.2s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+.habit-info { flex: 1; min-width: 0; }
+.habit-name { font-size: 14px; font-weight: 700; color: #2d2d3a; }
+.habit-meta { font-size: 12px; color: #8e8e9e; font-weight: 600; margin-top: 1px; }
+.habit-meta .streak-text { color: #FF8F00; }
+.points-float {
+  position: absolute; right: 16px; top: 50%;
+  font-size: 14px; font-weight: 800; color: #4CAF50;
+  opacity: 0; pointer-events: none;
+}
+.points-float.animate {
+  animation: floatUp 1s ease-out forwards;
+}
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateY(0); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-40px); }
+}
+.confetti-container {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 10;
+}
+.confetti {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  opacity: 0;
+}
+.confetti.animate {
+  animation: confettiBurst 0.8s cubic-bezier(.2,.8,.3,1) forwards;
+}
+@keyframes confettiBurst {
+  0% { opacity: 1; transform: translate(0,0) scale(1); }
+  100% { opacity: 0; transform: var(--confetti-end) scale(0.3); }
+}
+.flip-anim {
+  display: inline-block;
+}
+.flip-anim.flipping {
+  animation: flipNum 0.6s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes flipNum {
+  0% { transform: rotateX(0); }
+  50% { transform: rotateX(90deg); }
+  51% { transform: rotateX(-90deg); }
+  100% { transform: rotateX(0); }
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="greeting">Good morning, Anjali <i data-lucide="hand" style="width:24px;height:24px;vertical-align:middle"></i></div>
+  <div class="date">Thursday, Jan 16</div>
+  <div class="streak-badge"><i data-lucide="flame" style="width:14px;height:14px"></i> <span id="streakNum">12 days</span></div>
+
+  <div class="progress-section">
+    <div class="ring-wrap">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle class="ring-bg" cx="36" cy="36" r="30"/>
+        <circle class="ring-fg" id="ringFg" cx="36" cy="36" r="30"
+          stroke-dasharray="188.5"
+          stroke-dashoffset="75.4"/>
+      </svg>
+      <div class="ring-text" id="ringPercent">60%</div>
+    </div>
+    <div class="progress-info">
+      <h3><span id="habitCount" class="flip-anim">6 of 10</span> habits done</h3>
+      <div class="sub">Keep going, you're doing great!</div>
+      <div class="motivation" id="motivation"><i data-lucide="target" style="width:13px;height:13px;vertical-align:middle"></i> Almost there! 4 more to go</div>
+    </div>
+  </div>
+
+  <div class="habits">
+    <div class="habit-card done">
+      <div class="checkbox checked"><svg class="checkmark animate" viewBox="0 0 14 14"><path d="M2.5 7.5L5.5 10.5L11.5 4"/></svg></div>
+      <div class="habit-info"><div class="habit-name"><i data-lucide="droplets" style="width:14px;height:14px;vertical-align:middle"></i> Drink 8 glasses</div><div class="habit-meta"><span class="streak-text"><i data-lucide="flame" style="width:11px;height:11px;vertical-align:middle"></i> 12 days</span></div></div>
+    </div>
+    <div class="habit-card done">
+      <div class="checkbox checked"><svg class="checkmark animate" viewBox="0 0 14 14"><path d="M2.5 7.5L5.5 10.5L11.5 4"/></svg></div>
+      <div class="habit-info"><div class="habit-name"><i data-lucide="brain" style="width:14px;height:14px;vertical-align:middle"></i> Morning meditation 10min</div><div class="habit-meta"><span class="streak-text"><i data-lucide="flame" style="width:11px;height:11px;vertical-align:middle"></i> 7 days</span></div></div>
+    </div>
+    <div class="habit-card done">
+      <div class="checkbox checked"><svg class="checkmark animate" viewBox="0 0 14 14"><path d="M2.5 7.5L5.5 10.5L11.5 4"/></svg></div>
+      <div class="habit-info"><div class="habit-name"><i data-lucide="book-open" style="width:14px;height:14px;vertical-align:middle"></i> Read 20 min</div><div class="habit-meta"><span class="streak-text"><i data-lucide="flame" style="width:11px;height:11px;vertical-align:middle"></i> 12 days</span></div></div>
+    </div>
+    <div class="habit-card done">
+      <div class="checkbox checked"><svg class="checkmark animate" viewBox="0 0 14 14"><path d="M2.5 7.5L5.5 10.5L11.5 4"/></svg></div>
+      <div class="habit-info"><div class="habit-name"><i data-lucide="pill" style="width:14px;height:14px;vertical-align:middle"></i> Take vitamins</div><div class="habit-meta"><span class="streak-text"><i data-lucide="flame" style="width:11px;height:11px;vertical-align:middle"></i> 30 days!</span></div></div>
+    </div>
+    <div class="habit-card done">
+      <div class="checkbox checked"><svg class="checkmark animate" viewBox="0 0 14 14"><path d="M2.5 7.5L5.5 10.5L11.5 4"/></svg></div>
+      <div class="habit-info"><div class="habit-name"><i data-lucide="footprints" style="width:14px;height:14px;vertical-align:middle"></i> 10,000 steps</div><div class="habit-meta">Done: 11,847</div></div>
+    </div>
+    <div class="habit-card done">
+      <div class="checkbox checked"><svg class="checkmark animate" viewBox="0 0 14 14"><path d="M2.5 7.5L5.5 10.5L11.5 4"/></svg></div>
+      <div class="habit-info"><div class="habit-name"><i data-lucide="pen-line" style="width:14px;height:14px;vertical-align:middle"></i> Journal entry</div><div class="habit-meta"><span class="streak-text"><i data-lucide="flame" style="width:11px;height:11px;vertical-align:middle"></i> 6 days</span></div></div>
+    </div>
+
+    <!-- WORKOUT CARD -->
+    <div class="habit-card" id="workoutCard">
+      <div class="checkbox" id="workoutCheckbox">
+        <div class="fill-circle" id="workoutFill"></div>
+        <svg class="checkmark" id="workoutCheck" viewBox="0 0 14 14"><path d="M2.5 7.5L5.5 10.5L11.5 4"/></svg>
+      </div>
+      <div class="habit-info">
+        <div class="habit-name"><i data-lucide="dumbbell" style="width:14px;height:14px;vertical-align:middle"></i> Workout 45 min</div>
+        <div class="habit-meta" id="workoutMeta">Today 6PM</div>
+      </div>
+      <div class="confetti-container" id="confettiContainer"></div>
+      <div class="points-float" id="pointsFloat">+10 pts</div>
+    </div>
+
+    <div class="habit-card">
+      <div class="checkbox"></div>
+      <div class="habit-info"><div class="habit-name"><i data-lucide="salad" style="width:14px;height:14px;vertical-align:middle"></i> Eat healthy lunch</div><div class="habit-meta">Planned</div></div>
+    </div>
+    <div class="habit-card">
+      <div class="checkbox"></div>
+      <div class="habit-info"><div class="habit-name"><i data-lucide="laptop" style="width:14px;height:14px;vertical-align:middle"></i> Learn something new 30 min</div><div class="habit-meta">Planned</div></div>
+    </div>
+    <div class="habit-card">
+      <div class="checkbox"></div>
+      <div class="habit-info"><div class="habit-name"><i data-lucide="moon" style="width:14px;height:14px;vertical-align:middle"></i> Sleep by 11 PM</div><div class="habit-meta">Tonight</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function createConfetti(container) {
+  var colors = ['#4CAF50','#FF8F00','#9C27B0','#2196F3','#FF5252','#FFD740','#69F0AE','#E040FB'];
+  for (var i = 0; i < 12; i++) {
+    var c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.background = colors[i % colors.length];
+    c.style.left = '14px';
+    c.style.top = '14px';
+    var angle = (i / 12) * 360;
+    var dist = 30 + Math.random() * 40;
+    var x = Math.cos(angle * Math.PI / 180) * dist;
+    var y = Math.sin(angle * Math.PI / 180) * dist;
+    c.style.setProperty('--confetti-end', 'translate(' + x + 'px, ' + y + 'px)');
+    c.style.width = (4 + Math.random() * 4) + 'px';
+    c.style.height = (4 + Math.random() * 4) + 'px';
+    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    container.appendChild(c);
+    setTimeout(function(el){ el.classList.add('animate'); }, 10, c);
+  }
+}
+
+setTimeout(function() {
+  var card = document.getElementById('workoutCard');
+  var fill = document.getElementById('workoutFill');
+  var check = document.getElementById('workoutCheck');
+  var checkbox = document.getElementById('workoutCheckbox');
+  var confetti = document.getElementById('confettiContainer');
+  var points = document.getElementById('pointsFloat');
+  var meta = document.getElementById('workoutMeta');
+  var ring = document.getElementById('ringFg');
+  var ringPercent = document.getElementById('ringPercent');
+  var habitCount = document.getElementById('habitCount');
+  var motivation = document.getElementById('motivation');
+
+  // 1. Fill checkbox
+  fill.classList.add('animate');
+  checkbox.style.borderColor = '#4CAF50';
+
+  // 2. Draw checkmark
+  setTimeout(function() {
+    check.classList.add('animate');
+  }, 250);
+
+  // 3. Card green tint + pop
+  setTimeout(function() {
+    card.classList.add('done', 'just-done');
+  }, 400);
+
+  // 4. Confetti burst
+  setTimeout(function() {
+    createConfetti(confetti);
+  }, 350);
+
+  // 5. Streak update
+  setTimeout(function() {
+    meta.textContent = '';
+    var span = document.createElement('span');
+    span.className = 'streak-text';
+    span.innerHTML = '<i data-lucide="flame" style="width:11px;height:11px;vertical-align:middle"></i> 1 day';
+    meta.appendChild(span);
+  }, 500);
+
+  // 6. Points float
+  setTimeout(function() {
+    points.classList.add('animate');
+  }, 500);
+
+  // 7. Progress ring 60% -> 70%
+  setTimeout(function() {
+    ring.style.strokeDashoffset = '56.55';
+    ringPercent.textContent = '70%';
+
+    habitCount.classList.add('flipping');
+    setTimeout(function() {
+      habitCount.textContent = '7 of 10';
+    }, 300);
+
+    setTimeout(function() {
+      motivation.innerHTML = '<i data-lucide="target" style="width:13px;height:13px;vertical-align:middle"></i> Almost there! 3 more to go';
+    }, 300);
+  }, 800);
+
+  // Re-create Lucide icons after DOM updates
+  setTimeout(function() { lucide.createIcons(); }, 900);
+
+}, 2000);
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

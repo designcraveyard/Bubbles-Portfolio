@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anjali's Portfolio — Shot Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/util.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background: #09090B;
+    color: #FAFAFA;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px;
+    background: rgba(9,9,11,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .topbar h1 { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+  .topbar h1 span { color: #6366F1; }
+  .topbar-actions { display: flex; gap: 10px; align-items: center; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 999px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .15s;
+    border: 1px solid rgba(255,255,255,.1);
+    background: rgba(255,255,255,.04);
+    color: #A1A1AA;
+  }
+  .chip:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .chip.active { background: #6366F1; color: #fff; border-color: #6366F1; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 18px; border-radius: 10px;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; border: none; transition: all .15s;
+  }
+  .btn-primary { background: #6366F1; color: #fff; }
+  .btn-primary:hover { background: #818CF8; transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: #A1A1AA; border: 1px solid rgba(255,255,255,.1); }
+  .btn-ghost:hover { background: rgba(255,255,255,.06); color: #fff; }
+
+  .layout { display: flex; height: calc(100vh - 57px); }
+
+  .sidebar {
+    width: 280px; min-width: 280px;
+    border-right: 1px solid rgba(255,255,255,.06);
+    overflow-y: auto; padding: 12px 0;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+
+  .section-label {
+    padding: 12px 20px 6px;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: #52525B;
+  }
+
+  .shot-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; cursor: pointer;
+    transition: background .1s;
+    position: relative;
+  }
+  .shot-item:hover { background: rgba(255,255,255,.04); }
+  .shot-item.active { background: rgba(99,102,241,.12); }
+  .shot-item.active::before {
+    content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+    width: 3px; border-radius: 0 3px 3px 0; background: #6366F1;
+  }
+  .shot-num {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    background: rgba(255,255,255,.06); color: #71717A;
+    flex-shrink: 0;
+  }
+  .shot-item.active .shot-num { background: #6366F1; color: #fff; }
+  .shot-name {
+    font-size: 13px; font-weight: 500; color: #D4D4D8;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .shot-item.active .shot-name { color: #fff; font-weight: 600; }
+  .shot-tag {
+    margin-left: auto; font-size: 10px; padding: 2px 7px;
+    border-radius: 4px; font-weight: 600; flex-shrink: 0;
+  }
+  .tag-web { background: rgba(99,102,241,.15); color: #818CF8; }
+  .tag-mobile { background: rgba(16,185,129,.12); color: #34D399; }
+
+  .main {
+    flex: 1; display: flex; flex-direction: column;
+    overflow: hidden; position: relative;
+  }
+
+  .frame-wrapper {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 24px; overflow: hidden; position: relative;
+    background: radial-gradient(ellipse at center, rgba(99,102,241,.04) 0%, transparent 70%);
+  }
+
+  .frame-container {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 24px 80px rgba(0,0,0,.5);
+    background: #111;
+    transition: all .3s ease;
+  }
+
+  .frame-container iframe {
+    width: 100%; height: 100%; border: none; display: block;
+  }
+
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 12px; color: #52525B;
+    width: 600px; height: 400px;
+  }
+  .empty-state p { font-size: 14px; }
+
+  .bottombar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    border-top: 1px solid rgba(255,255,255,.06);
+    background: rgba(9,9,11,.6);
+  }
+  .shot-info { font-size: 12px; color: #71717A; }
+  .shot-info strong { color: #D4D4D8; font-weight: 600; }
+  .nav-btns { display: flex; gap: 8px; }
+
+  .progress-bar {
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    width: 300px; height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,.1); overflow: hidden;
+    opacity: 0; transition: opacity .3s; z-index: 200;
+  }
+  .progress-bar.show { opacity: 1; }
+  .progress-bar-fill {
+    height: 100%; width: 0%; border-radius: 3px;
+    background: linear-gradient(90deg, #6366F1, #10B981);
+    transition: width .15s;
+  }
+
+  .export-toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #18181B; border: 1px solid rgba(255,255,255,.1);
+    padding: 12px 24px; border-radius: 12px;
+    font-size: 13px; font-weight: 600; color: #A1A1AA;
+    opacity: 0; transition: all .3s ease; pointer-events: none; z-index: 200;
+  }
+  .export-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 900px) { .sidebar { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1><span>Bubbles</span> Portfolio Preview</h1>
+  <div class="topbar-actions">
+    <div class="chip active" data-filter="all" id="chip-all">All (25)</div>
+    <div class="chip" data-filter="web">Web</div>
+    <div class="chip" data-filter="mobile">Mobile</div>
+    <button class="btn btn-primary" id="exportBtn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="12" height="12" rx="2"/><path d="M7 4v5M5 7l2 2 2-2"/></svg>
+      Export JPEG
+    </button>
+    <button class="btn btn-primary" id="exportVideoBtn" style="background:#10B981;">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 12,7 5,11"/></svg>
+      Export Video
+    </button>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="main">
+    <div class="frame-wrapper">
+      <div class="frame-container" id="frameContainer">
+        <div class="empty-state" id="emptyState">
+          <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 16l5-5 4 4 4-6 5 5"/></svg>
+          <p>Select a shot from the sidebar</p>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <div class="shot-info" id="shotInfo">No shot selected</div>
+      <div class="nav-btns">
+        <button class="btn btn-ghost" id="prevBtn">&#8592; Prev</button>
+        <button class="btn btn-ghost" id="nextBtn">Next &#8594;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="progress-bar" id="progressBar"><div class="progress-bar-fill" id="progressFill"></div></div>
+<div class="export-toast" id="toast"></div>
+
+<script>
+const SHOTS = [
+  { num: 1,  name: "Finance Dashboard",    file: "shot-01-finance-dashboard.html",   type: "web",    theme: "dark",  section: "hero" },
+  { num: 2,  name: "Food Delivery Home",    file: "shot-02-food-delivery.html",       type: "mobile", theme: "light", section: "hero" },
+  { num: 3,  name: "Meditation Session",    file: "shot-03-meditation.html",          type: "mobile", theme: "dark",  section: "hero" },
+  { num: 4,  name: "Flight Search Results", file: "shot-04-flight-search.html",       type: "mobile", theme: "light", section: "hero" },
+  { num: 5,  name: "Quick Commerce Cart",   file: "shot-05-grocery-cart.html",        type: "mobile", theme: "light", section: "hero" },
+  { num: 6,  name: "UPI Send Money",        file: "shot-06-upi-send-money.html",      type: "mobile", theme: "light", section: "fintech" },
+  { num: 7,  name: "Credit Card Statement", file: "shot-07-credit-card.html",         type: "mobile", theme: "dark",  section: "fintech" },
+  { num: 8,  name: "Investment Portfolio",   file: "shot-08-investment-portfolio.html", type: "mobile", theme: "dark",  section: "fintech" },
+  { num: 9,  name: "EMI Calculator",        file: "shot-09-emi-calculator.html",       type: "web",    theme: "light", section: "fintech" },
+  { num: 10, name: "Fashion Product Detail", file: "shot-10-fashion-product.html",     type: "mobile", theme: "dark",  section: "commerce" },
+  { num: 11, name: "Checkout Flow",         file: "shot-11-checkout-flow.html",        type: "mobile", theme: "light", section: "commerce" },
+  { num: 12, name: "Wishlist Screen",       file: "shot-12-wishlist.html",             type: "mobile", theme: "light", section: "commerce" },
+  { num: 13, name: "Calorie Tracker",       file: "shot-13-calorie-tracker.html",      type: "mobile", theme: "light", section: "health" },
+  { num: 14, name: "Workout Session",       file: "shot-14-workout-session.html",      type: "mobile", theme: "dark",  section: "health" },
+  { num: 15, name: "Doctor Booking",        file: "shot-15-doctor-booking.html",       type: "mobile", theme: "light", section: "health" },
+  { num: 16, name: "Hotel Detail Page",     file: "shot-16-hotel-detail.html",         type: "mobile", theme: "light", section: "travel" },
+  { num: 17, name: "Train Ticket Results",  file: "shot-17-train-tickets.html",        type: "mobile", theme: "light", section: "travel" },
+  { num: 18, name: "OTT Home Screen",       file: "shot-18-ott-home.html",             type: "mobile", theme: "dark",  section: "lifestyle" },
+  { num: 19, name: "Short Video Feed",      file: "shot-19-short-video.html",          type: "mobile", theme: "dark",  section: "lifestyle" },
+  { num: 20, name: "Property Search",       file: "shot-20-property-search.html",      type: "mobile", theme: "light", section: "lifestyle" },
+  { num: 21, name: "Property Detail",       file: "shot-21-property-detail.html",      type: "mobile", theme: "light", section: "lifestyle" },
+  { num: 22, name: "Course Learning",       file: "shot-22-course-learning.html",      type: "mobile", theme: "dark",  section: "lifestyle" },
+  { num: 23, name: "Habit Tracker",         file: "shot-23-habit-tracker.html",        type: "mobile", theme: "light", section: "lifestyle" },
+  { num: 24, name: "Cab Booking Map",       file: "shot-24-cab-booking.html",          type: "mobile", theme: "dark",  section: "travel" },
+  { num: 25, name: "Ride In Progress",      file: "shot-25-ride-progress.html",        type: "mobile", theme: "dark",  section: "travel" },
+];
+
+const SECTIONS = {
+  hero: "Hero Shots", fintech: "Fintech", commerce: "Commerce",
+  health: "Health & Fitness", travel: "Travel & Transport", lifestyle: "Lifestyle & Entertainment",
+};
+
+let currentIndex = -1;
+let filterType = "all";
+
+function renderSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.textContent = "";
+  const grouped = {};
+  SHOTS.forEach(function(s, i) {
+    if (filterType !== "all" && s.type !== filterType) return;
+    if (!grouped[s.section]) grouped[s.section] = [];
+    grouped[s.section].push({ shot: s, idx: i });
+  });
+  Object.keys(SECTIONS).forEach(function(key) {
+    if (!grouped[key]) return;
+    var lbl = document.createElement("div");
+    lbl.className = "section-label";
+    lbl.textContent = SECTIONS[key];
+    sidebar.appendChild(lbl);
+
+    grouped[key].forEach(function(entry) {
+      var item = document.createElement("div");
+      item.className = "shot-item" + (entry.idx === currentIndex ? " active" : "");
+
+      var numEl = document.createElement("div");
+      numEl.className = "shot-num";
+      numEl.textContent = String(entry.shot.num).padStart(2, "0");
+
+      var nameEl = document.createElement("div");
+      nameEl.className = "shot-name";
+      nameEl.textContent = entry.shot.name;
+
+      var tagEl = document.createElement("span");
+      tagEl.className = "shot-tag " + (entry.shot.type === "web" ? "tag-web" : "tag-mobile");
+      tagEl.textContent = entry.shot.type;
+
+      item.appendChild(numEl);
+      item.appendChild(nameEl);
+      item.appendChild(tagEl);
+      item.addEventListener("click", function() { selectShot(entry.idx); });
+      sidebar.appendChild(item);
+    });
+  });
+}
+
+function selectShot(idx) {
+  currentIndex = idx;
+  var shot = SHOTS[idx];
+  var container = document.getElementById("frameContainer");
+  var empty = document.getElementById("emptyState");
+  if (empty) empty.style.display = "none";
+
+  container.className = "frame-container";
+  var fw = shot.type === "web" ? 1600 : 390;
+  var fh = shot.type === "web" ? 900 : 844;
+
+  var wrapper = container.parentElement;
+  var ww = wrapper.clientWidth - 48;
+  var wh = wrapper.clientHeight - 48;
+  var scale = Math.min(ww / fw, wh / fh, 1);
+  container.style.transform = "scale(" + scale + ")";
+  container.style.width = fw + "px";
+  container.style.height = fh + "px";
+
+  var old = container.querySelector("iframe");
+  if (old) old.remove();
+  var iframe = document.createElement("iframe");
+  iframe.src = shot.file;
+  iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
+  container.appendChild(iframe);
+
+  var info = document.getElementById("shotInfo");
+  info.textContent = "";
+  var strong = document.createElement("strong");
+  strong.textContent = "Shot " + String(shot.num).padStart(2, "0");
+  info.appendChild(strong);
+  info.appendChild(document.createTextNode(" \u2014 " + shot.name + " \u00b7 " + shot.type + " \u00b7 " + shot.theme));
+
+  renderSidebar();
+}
+
+function navigate(dir) {
+  if (currentIndex < 0) { selectShot(0); return; }
+  var next = currentIndex + dir;
+  if (next >= 0 && next < SHOTS.length) selectShot(next);
+}
+
+function showToast(msg) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(function() { t.classList.remove("show"); }, 2500);
+}
+
+function showProgress(pct) {
+  var bar = document.getElementById("progressBar");
+  var fill = document.getElementById("progressFill");
+  if (pct < 0) { bar.classList.remove("show"); fill.style.width = "0%"; return; }
+  bar.classList.add("show");
+  fill.style.width = Math.min(100, pct) + "%";
+}
+
+function freezeAnimations(doc) {
+  var style = doc.createElement("style");
+  style.id = "__export-freeze";
+  style.textContent = "*, *::before, *::after { animation-play-state: paused !important; transition: none !important; }";
+  doc.head.appendChild(style);
+}
+function unfreezeAnimations(doc) {
+  var s = doc.getElementById("__export-freeze");
+  if (s) s.remove();
+}
+
+function replayAnimations(doc) {
+  doc.querySelectorAll("*").forEach(function(el) {
+    var cs = getComputedStyle(el);
+    if (cs.animationName && cs.animationName !== "none") {
+      el.style.animation = "none";
+      void el.offsetHeight;
+      el.style.animation = "";
+    }
+  });
+}
+
+function captureFrame(iframe, shot) {
+  return html2canvas(iframe.contentDocument.body, {
+    width: shot.type === "web" ? 1600 : 390,
+    height: shot.type === "web" ? 900 : 844,
+    scale: 2, useCORS: true, backgroundColor: null, logging: false,
+  });
+}
+
+function exportCurrentShot() {
+  if (currentIndex < 0) { showToast("Select a shot first"); return; }
+  var shot = SHOTS[currentIndex];
+  var iframe = document.querySelector("#frameContainer iframe");
+  if (!iframe || !iframe.contentDocument) {
+    showToast("Cannot capture \u2014 opening in new tab");
+    window.open(shot.file, "_blank"); return;
+  }
+  showToast("Letting animations finish\u2026");
+  setTimeout(function() {
+    showToast("Capturing\u2026");
+    freezeAnimations(iframe.contentDocument);
+    setTimeout(function() {
+      captureFrame(iframe, shot).then(function(canvas) {
+        unfreezeAnimations(iframe.contentDocument);
+        canvas.toBlob(function(blob) {
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url;
+          a.download = shot.file.replace(".html", "") + ".jpg";
+          a.click(); URL.revokeObjectURL(url);
+          showToast("Exported!");
+        }, "image/jpeg", 0.95);
+      }).catch(function(e) {
+        unfreezeAnimations(iframe.contentDocument);
+        console.error(e);
+        showToast("Export failed \u2014 try opening shot directly");
+      });
+    }, 100);
+  }, 2500);
+}
+
+// ---- Video Export via ffmpeg.wasm ----
+var ffmpegLoaded = false;
+var ffmpegInstance = null;
+
+async function loadFFmpeg() {
+  if (ffmpegLoaded) return ffmpegInstance;
+  showToast("Loading FFmpeg\u2026");
+  var FFmpeg = FFmpegWASM.FFmpeg;
+  ffmpegInstance = new FFmpeg();
+  ffmpegInstance.on("progress", function(ev) {
+    if (ev.progress >= 0) showProgress(ev.progress * 100);
+  });
+  await ffmpegInstance.load({
+    coreURL: "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js",
+    wasmURL: "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm",
+  });
+  ffmpegLoaded = true;
+  return ffmpegInstance;
+}
+
+async function exportVideo() {
+  if (currentIndex < 0) { showToast("Select a shot first"); return; }
+  var shot = SHOTS[currentIndex];
+  var iframe = document.querySelector("#frameContainer iframe");
+  if (!iframe || !iframe.contentDocument) {
+    showToast("Cannot capture \u2014 iframe not accessible"); return;
+  }
+
+  var btn = document.getElementById("exportVideoBtn");
+  btn.disabled = true; btn.style.opacity = "0.5";
+
+  var DURATION = 4, FPS = 8, TOTAL = DURATION * FPS, INTERVAL = 1000 / FPS;
+
+  try {
+    replayAnimations(iframe.contentDocument);
+    showToast("Capturing " + TOTAL + " frames\u2026");
+
+    var frames = [];
+    for (var i = 0; i < TOTAL; i++) {
+      showProgress((i / TOTAL) * 50);
+      var canvas = await captureFrame(iframe, shot);
+      var blob = await new Promise(function(r) { canvas.toBlob(r, "image/png"); });
+      frames.push(new Uint8Array(await blob.arrayBuffer()));
+      if (i < TOTAL - 1) await new Promise(function(r) { setTimeout(r, INTERVAL); });
+    }
+
+    showToast("Encoding video\u2026"); showProgress(55);
+    var ffmpeg = await loadFFmpeg();
+
+    for (var j = 0; j < frames.length; j++) {
+      await ffmpeg.writeFile("frame" + String(j).padStart(4, "0") + ".png", frames[j]);
+      showProgress(55 + (j / frames.length) * 20);
+    }
+
+    showProgress(80);
+    await ffmpeg.exec([
+      "-framerate", String(FPS), "-i", "frame%04d.png",
+      "-c:v", "libx264", "-pix_fmt", "yuv420p",
+      "-preset", "fast", "-crf", "18",
+      "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2",
+      "output.mp4"
+    ]);
+
+    showProgress(95);
+    var data = await ffmpeg.readFile("output.mp4");
+
+    for (var k = 0; k < frames.length; k++) {
+      await ffmpeg.deleteFile("frame" + String(k).padStart(4, "0") + ".png");
+    }
+    await ffmpeg.deleteFile("output.mp4");
+
+    var videoBlob = new Blob([data.buffer], { type: "video/mp4" });
+    var url = URL.createObjectURL(videoBlob);
+    var a = document.createElement("a");
+    a.href = url; a.download = shot.file.replace(".html", "") + ".mp4";
+    a.click(); URL.revokeObjectURL(url);
+    showProgress(-1); showToast("Video exported!");
+  } catch (e) {
+    console.error("Video export error:", e);
+    showProgress(-1); showToast("Video export failed: " + e.message);
+  } finally {
+    btn.disabled = false; btn.style.opacity = "1";
+  }
+}
+
+// Event listeners
+document.querySelectorAll(".chip[data-filter]").forEach(function(chip) {
+  chip.addEventListener("click", function() {
+    document.querySelectorAll(".chip[data-filter]").forEach(function(c) { c.classList.remove("active"); });
+    chip.classList.add("active");
+    filterType = chip.dataset.filter;
+    renderSidebar();
+  });
+});
+
+document.getElementById("exportBtn").addEventListener("click", exportCurrentShot);
+document.getElementById("exportVideoBtn").addEventListener("click", exportVideo);
+document.getElementById("prevBtn").addEventListener("click", function() { navigate(-1); });
+document.getElementById("nextBtn").addEventListener("click", function() { navigate(1); });
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); navigate(1); }
+  if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); navigate(-1); }
+  if (e.key === "e" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); exportCurrentShot(); }
+  if (e.key === "v" && (e.metaKey || e.ctrlKey) && e.shiftKey) { e.preventDefault(); exportVideo(); }
+});
+
+renderSidebar();
+window.addEventListener("resize", function() { if (currentIndex >= 0) selectShot(currentIndex); });
+</script>
+</body>
+</html>

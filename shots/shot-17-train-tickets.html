@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Train Ticket Search</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px 0;
+  }
+  .phone {
+    width: 390px;
+    background: #f5f6f8;
+    min-height: 844px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 25px 80px rgba(0,0,0,.18);
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #003087 0%, #001f5c 100%);
+    padding: 52px 20px 16px;
+    color: #fff;
+  }
+  .header-route {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: .5px;
+  }
+  .header-route .arrow { opacity: .6; font-size: 16px; }
+  .header-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 400;
+    opacity: .85;
+  }
+  .header-meta .dot { width: 3px; height: 3px; background: rgba(255,255,255,.5); border-radius: 50%; }
+  .filter-badge {
+    background: #E68A00;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 4px;
+  }
+  .header-back {
+    position: absolute;
+    left: 16px;
+    top: 52px;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  /* Sort bar */
+  .sort-bar {
+    display: flex;
+    background: #fff;
+    border-bottom: 1px solid #e8eaed;
+    padding: 0 8px;
+  }
+  .sort-item {
+    flex: 1;
+    text-align: center;
+    padding: 12px 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+  }
+  .sort-item.active {
+    color: #003087;
+    font-weight: 600;
+  }
+  .sort-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    width: 60%;
+    height: 2.5px;
+    background: #003087;
+    border-radius: 2px;
+  }
+
+  /* Filter chips */
+  .chips {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    background: #fff;
+    border-bottom: 1px solid #e8eaed;
+  }
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: #eef2ff;
+    border: 1px solid #c8d4f0;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #003087;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .chip .x { font-size: 14px; opacity: .5; margin-left: 2px; }
+
+  /* Results count */
+  .results-info {
+    padding: 14px 16px 6px;
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+  }
+
+  /* Train Card */
+  .card {
+    background: #fff;
+    margin: 8px 12px;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    opacity: 0;
+    transform: translateY(24px);
+    animation: cardIn .5s ease forwards;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:nth-child(1) { animation-delay: .15s; }
+  .card:nth-child(2) { animation-delay: .35s; }
+  .card:nth-child(3) { animation-delay: .55s; }
+
+  @keyframes cardIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .badge-premium { background: linear-gradient(90deg, #E68A00, #f0a030); color: #fff; }
+  .badge-tatkal { background: #fff3e0; color: #e67700; border: 1px solid #ffd699; }
+  .badge-lowest { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+
+  .train-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+  }
+  .train-number {
+    font-size: 11px;
+    color: #999;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  /* Time row */
+  .time-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 14px;
+  }
+  .time-block {
+    text-align: center;
+  }
+  .time-block.left { text-align: left; }
+  .time-block.right { text-align: right; }
+  .time-val {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+  .stn-code {
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    margin-top: 3px;
+  }
+  .plus-day {
+    font-size: 9px;
+    color: #e67700;
+    font-weight: 600;
+  }
+
+  /* Duration line */
+  .duration-line {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 12px;
+    position: relative;
+  }
+  .dur-text {
+    font-size: 11px;
+    color: #999;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .dur-track {
+    width: 100%;
+    height: 2px;
+    background: #e0e0e0;
+    position: relative;
+    border-radius: 1px;
+  }
+  .dur-track::before, .dur-track::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    top: -3px;
+  }
+  .dur-track::before {
+    left: 0;
+    background: #003087;
+  }
+  .dur-track::after {
+    right: 0;
+    background: #003087;
+  }
+  .dur-track .train-icon {
+    position: absolute;
+    top: -8px;
+    left: 45%;
+    font-size: 14px;
+  }
+  .dur-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #003087, #4a7bcc);
+    border-radius: 1px;
+    width: 0%;
+    animation: fillLine 1s ease forwards;
+    animation-delay: inherit;
+  }
+  .card:nth-child(1) .dur-fill { animation-delay: .4s; }
+  .card:nth-child(2) .dur-fill { animation-delay: .6s; }
+  .card:nth-child(3) .dur-fill { animation-delay: .8s; }
+  @keyframes fillLine {
+    to { width: 100%; }
+  }
+
+  /* Icons row */
+  .icons-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: 11px;
+    color: #999;
+  }
+  .icons-row span {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  /* Running days */
+  .running-days {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 14px;
+  }
+  .day {
+    width: 24px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 600;
+    border-radius: 4px;
+    background: #f0f2f5;
+    color: #999;
+  }
+  .day.active {
+    background: #e8efff;
+    color: #003087;
+  }
+
+  /* Classes */
+  .classes {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .class-chip {
+    padding: 8px 10px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    min-width: 70px;
+    transition: all .2s;
+  }
+  .class-chip:hover { border-color: #003087; }
+  .class-chip.selected {
+    border-color: #E68A00;
+    background: #fff8f0;
+  }
+  .class-chip.full {
+    opacity: .45;
+    pointer-events: none;
+  }
+  .class-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: #333;
+  }
+  .class-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-top: 1px;
+  }
+  .class-avail {
+    font-size: 9px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .avl-green { color: #2e7d32; }
+  .avl-orange { color: #e67700; }
+  .avl-red { color: #d32f2f; }
+
+  /* Book button */
+  .book-btn {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #003087, #0047c8);
+    cursor: pointer;
+    letter-spacing: .3px;
+    transition: transform .15s;
+  }
+  .book-btn:active { transform: scale(.98); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-back">&#8592;</div>
+    <div class="header-route">
+      DEL <span class="arrow">&#8594;</span> BOM
+    </div>
+    <div class="header-meta">
+      Thu, Nov 21
+      <span class="dot"></span>
+      1 Adult
+      <span class="dot"></span>
+      Filters <span class="filter-badge">3</span>
+    </div>
+  </div>
+
+  <!-- Sort bar -->
+  <div class="sort-bar">
+    <div class="sort-item active">Relevance</div>
+    <div class="sort-item">Price</div>
+    <div class="sort-item">Duration</div>
+    <div class="sort-item">Departure</div>
+  </div>
+
+  <!-- Filter chips -->
+  <div class="chips">
+    <div class="chip">Non-stop</div>
+    <div class="chip">Morning</div>
+    <div class="chip">Sleeper</div>
+    <div class="chip">&#8377;500-&#8377;2000 <span class="x">&times;</span></div>
+  </div>
+
+  <div class="results-info">Showing 3 trains &middot; Nov 21, Thu</div>
+
+  <!-- Cards -->
+  <div class="cards">
+    <!-- Card 1: Rajdhani -->
+    <div class="card">
+      <span class="card-badge badge-premium">PREMIUM &middot; POPULAR</span>
+      <div class="train-name">Rajdhani Express</div>
+      <div class="train-number">12952 &nbsp;&middot;&nbsp; Superfast &nbsp;&middot;&nbsp; Fully AC</div>
+      <div class="time-row">
+        <div class="time-block left">
+          <div class="time-val">16:35</div>
+          <div class="stn-code">NDLS</div>
+        </div>
+        <div class="duration-line">
+          <div class="dur-text">15h 55m</div>
+          <div class="dur-track">
+            <div class="dur-fill"></div>
+            <span class="train-icon"><i data-lucide="train-front" style="width:14px;height:14px;color:#003087"></i></span>
+          </div>
+        </div>
+        <div class="time-block right">
+          <div class="time-val">08:30</div>
+          <div class="stn-code">CSMT</div>
+        </div>
+      </div>
+      <div class="icons-row">
+        <span><i data-lucide="utensils" style="width:11px;height:11px;display:inline-block;vertical-align:-1px"></i> Pantry</span>
+        <span><i data-lucide="plug-zap" style="width:11px;height:11px;display:inline-block;vertical-align:-1px"></i> Charging</span>
+        <span><i data-lucide="wifi" style="width:11px;height:11px;display:inline-block;vertical-align:-1px"></i> WiFi</span>
+      </div>
+      <div class="running-days">
+        <div class="day active">M</div>
+        <div class="day active">T</div>
+        <div class="day active">W</div>
+        <div class="day active">T</div>
+        <div class="day active">F</div>
+        <div class="day active">S</div>
+        <div class="day">S</div>
+      </div>
+      <div class="classes">
+        <div class="class-chip">
+          <div class="class-name">1A</div>
+          <div class="class-price">&#8377;4,785</div>
+          <div class="class-avail avl-green">6 AVL</div>
+        </div>
+        <div class="class-chip selected">
+          <div class="class-name">2A</div>
+          <div class="class-price">&#8377;2,855</div>
+          <div class="class-avail avl-green">12 AVL</div>
+        </div>
+        <div class="class-chip">
+          <div class="class-name">3A</div>
+          <div class="class-price">&#8377;2,045</div>
+          <div class="class-avail avl-orange">WL-3</div>
+        </div>
+        <div class="class-chip full">
+          <div class="class-name">SL</div>
+          <div class="class-price">&mdash;</div>
+          <div class="class-avail avl-red">FULL</div>
+        </div>
+      </div>
+      <button class="book-btn">Book &#8377;2,855</button>
+    </div>
+
+    <!-- Card 2: Duronto -->
+    <div class="card">
+      <span class="card-badge badge-tatkal">TATKAL AVAILABLE</span>
+      <div class="train-name">Duronto Express</div>
+      <div class="train-number">12222 &nbsp;&middot;&nbsp; Superfast &nbsp;&middot;&nbsp; Non-stop</div>
+      <div class="time-row">
+        <div class="time-block left">
+          <div class="time-val">23:00</div>
+          <div class="stn-code">NDLS</div>
+        </div>
+        <div class="duration-line">
+          <div class="dur-text">16h 30m</div>
+          <div class="dur-track">
+            <div class="dur-fill"></div>
+            <span class="train-icon"><i data-lucide="train-front" style="width:14px;height:14px;color:#003087"></i></span>
+          </div>
+        </div>
+        <div class="time-block right">
+          <div class="time-val">15:30</div>
+          <div class="stn-code">CSMT</div>
+        </div>
+      </div>
+      <div class="icons-row">
+        <span><i data-lucide="utensils" style="width:11px;height:11px;display:inline-block;vertical-align:-1px"></i> Pantry</span>
+        <span><i data-lucide="plug-zap" style="width:11px;height:11px;display:inline-block;vertical-align:-1px"></i> Charging</span>
+      </div>
+      <div class="running-days">
+        <div class="day active">M</div>
+        <div class="day">T</div>
+        <div class="day active">W</div>
+        <div class="day">T</div>
+        <div class="day active">F</div>
+        <div class="day">S</div>
+        <div class="day">S</div>
+      </div>
+      <div class="classes">
+        <div class="class-chip">
+          <div class="class-name">1A</div>
+          <div class="class-price">&#8377;4,315</div>
+          <div class="class-avail avl-green">2 AVL</div>
+        </div>
+        <div class="class-chip">
+          <div class="class-name">2A</div>
+          <div class="class-price">&#8377;2,570</div>
+          <div class="class-avail avl-green">18 AVL</div>
+        </div>
+        <div class="class-chip">
+          <div class="class-name">SL</div>
+          <div class="class-price">&#8377;625</div>
+          <div class="class-avail avl-green">42 AVL</div>
+        </div>
+      </div>
+      <button class="book-btn">Book &#8377;2,570</button>
+    </div>
+
+    <!-- Card 3: Mumbai Mail -->
+    <div class="card">
+      <span class="card-badge badge-lowest">LOWEST PRICE</span>
+      <div class="train-name">Mumbai Mail</div>
+      <div class="train-number">11094 &nbsp;&middot;&nbsp; Mail/Express</div>
+      <div class="time-row">
+        <div class="time-block left">
+          <div class="time-val">22:10</div>
+          <div class="stn-code">NDLS</div>
+        </div>
+        <div class="duration-line">
+          <div class="dur-text">21h 40m</div>
+          <div class="dur-track">
+            <div class="dur-fill"></div>
+            <span class="train-icon"><i data-lucide="train-front" style="width:14px;height:14px;color:#003087"></i></span>
+          </div>
+        </div>
+        <div class="time-block right">
+          <div class="time-val">19:50</div>
+          <div class="stn-code">CSMT</div>
+          <div class="plus-day">+1 day</div>
+        </div>
+      </div>
+      <div class="icons-row">
+        <span><i data-lucide="utensils" style="width:11px;height:11px;display:inline-block;vertical-align:-1px"></i> Pantry</span>
+      </div>
+      <div class="running-days">
+        <div class="day active">M</div>
+        <div class="day active">T</div>
+        <div class="day active">W</div>
+        <div class="day active">T</div>
+        <div class="day active">F</div>
+        <div class="day active">S</div>
+        <div class="day active">S</div>
+      </div>
+      <div class="classes">
+        <div class="class-chip">
+          <div class="class-name">2A</div>
+          <div class="class-price">&#8377;1,955</div>
+          <div class="class-avail avl-green">28 AVL</div>
+        </div>
+        <div class="class-chip">
+          <div class="class-name">3A</div>
+          <div class="class-price">&#8377;1,405</div>
+          <div class="class-avail avl-green">44 AVL</div>
+        </div>
+        <div class="class-chip">
+          <div class="class-name">SL</div>
+          <div class="class-price">&#8377;550</div>
+          <div class="class-avail avl-green">118 AVL</div>
+        </div>
+      </div>
+      <button class="book-btn">Book &#8377;550</button>
+    </div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

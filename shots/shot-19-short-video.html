@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Short Video Feed</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Inter', sans-serif; overflow: hidden; }
+.phone { width: 390px; height: 844px; position: relative; overflow: hidden; background: #000; }
+
+.reel { position: absolute; inset: 0; will-change: transform, opacity; transition: none; }
+.reel.active { z-index: 2; }
+.reel.next { z-index: 1; transform: translateY(100%); }
+.reel.exiting { z-index: 3; }
+
+.reel-bg { position: absolute; inset: 0; }
+.reel-1-bg { background: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=390&h=844&fit=crop') center/cover no-repeat; position:relative; }
+.reel-1-bg::after { content:''; position:absolute; inset:0; background: linear-gradient(135deg, rgba(139,69,19,0.5), rgba(218,165,32,0.4), rgba(160,82,45,0.5), rgba(205,133,63,0.4)); background-size: 400% 400%; animation: cookGradient 6s ease infinite; }
+.reel-2-bg { background: linear-gradient(135deg, #1a3a5c, #4a90d9, #1b2838, #2d6da3); background-size: 400% 400%; animation: travelGradient 6s ease infinite; }
+
+@keyframes cookGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes travelGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Top bar */
+.top-bar { position: absolute; top: 50px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; z-index: 10; }
+.top-bar span { color: rgba(255,255,255,0.85); font-size: 17px; font-weight: 600; }
+.top-bar .arrow { font-size: 22px; cursor: pointer; }
+.top-bar .camera { font-size: 20px; }
+
+/* Right sidebar */
+.sidebar { position: absolute; right: 12px; bottom: 180px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; }
+.sidebar-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.sidebar-item .count { color: #fff; font-size: 12px; font-weight: 500; }
+.avatar-wrap { position: relative; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; background: linear-gradient(135deg, #ff6b6b, #ffa500); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.avatar-plus { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 18px; height: 18px; background: #ff3b5c; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 700; line-height: 1; }
+.sidebar-btn { font-size: 28px; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); cursor: pointer; }
+.heart-btn { color: #fff; transition: color 0.2s; }
+.heart-btn.liked { color: #ff2d55; }
+.heart-btn.liked i { fill: #ff2d55; color: #ff2d55; }
+
+/* Bottom overlay */
+.bottom-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 70px 30px 16px; background: linear-gradient(transparent, rgba(0,0,0,0.7)); z-index: 10; }
+.creator { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.creator-name { color: #fff; font-size: 14px; font-weight: 700; }
+.verified { font-size: 12px; }
+.caption { color: rgba(255,255,255,0.92); font-size: 13px; line-height: 1.4; margin-bottom: 12px; }
+.audio-row { display: flex; align-items: center; gap: 8px; }
+.audio-text { color: rgba(255,255,255,0.8); font-size: 12px; }
+.disc { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4); background: radial-gradient(circle, #333 30%, #111 70%); animation: spin 3s linear infinite; position: absolute; right: 12px; bottom: 30px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Progress bar */
+.progress-bar { position: absolute; bottom: 0; left: 0; height: 2.5px; background: rgba(255,255,255,0.9); z-index: 20; border-radius: 2px; }
+
+/* Heart explosion */
+.heart-explosion { position: absolute; inset: 0; pointer-events: none; z-index: 50; }
+.burst-heart { position: absolute; font-size: 30px; opacity: 0; pointer-events: none; }
+@keyframes burstUp {
+  0% { opacity: 1; transform: scale(0.3) translateY(0); }
+  30% { opacity: 1; transform: scale(1.2) translateY(-40px); }
+  100% { opacity: 0; transform: scale(0.8) translateY(-200px); }
+}
+
+/* Swipe blur */
+.reel.blur-exit {
+  filter: blur(6px);
+  transform: translateY(-100%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), filter 0.35s ease;
+}
+.reel.slide-in {
+  transform: translateY(0);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+
+  <!-- Reel 1 -->
+  <div class="reel active" id="reel1">
+    <div class="reel-bg reel-1-bg"></div>
+  </div>
+
+  <!-- Reel 2 -->
+  <div class="reel next" id="reel2">
+    <div class="reel-bg reel-2-bg"></div>
+  </div>
+
+  <!-- HUD (always on top) -->
+  <div class="top-bar">
+    <span class="arrow">←</span>
+    <span>Reels</span>
+    <span class="camera"><i data-lucide="camera" style="width:20px;height:20px;color:rgba(255,255,255,0.85)"></i></span>
+  </div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-item">
+      <div class="avatar-wrap">
+        <div class="avatar"><i data-lucide="user" style="width:18px;height:18px;color:#fff"></i></div>
+        <div class="avatar-plus">+</div>
+      </div>
+    </div>
+    <div class="sidebar-item">
+      <div class="sidebar-btn heart-btn" id="heartBtn"><i data-lucide="heart" style="width:28px;height:28px"></i></div>
+      <span class="count" id="heartCount">48.2K</span>
+    </div>
+    <div class="sidebar-item">
+      <div class="sidebar-btn"><i data-lucide="message-circle" style="width:28px;height:28px;color:#fff"></i></div>
+      <span class="count" id="commentCount">3.4K</span>
+    </div>
+    <div class="sidebar-item">
+      <div class="sidebar-btn">↗</div>
+      <span class="count" id="shareCount">12K</span>
+    </div>
+    <div class="sidebar-item">
+      <div class="sidebar-btn"><i data-lucide="more-horizontal" style="width:28px;height:28px;color:#fff"></i></div>
+    </div>
+  </div>
+
+  <div class="bottom-overlay" id="bottomOverlay">
+    <div class="creator">
+      <span class="creator-name" id="creatorName">@priyakitchen</span>
+      <span class="verified"><i data-lucide="badge-check" style="width:14px;height:14px;color:#1DA1F2"></i></span>
+    </div>
+    <div class="caption" id="captionText">Maa ki dal recipe #homecooking #indianfood</div>
+    <div class="audio-row">
+      <span style="font-size:14px"><i data-lucide="music" style="width:14px;height:14px;color:rgba(255,255,255,0.8)"></i></span>
+      <span class="audio-text" id="audioText">Original audio — priyakitchen</span>
+    </div>
+  </div>
+
+  <div class="disc" id="disc"></div>
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="heart-explosion" id="heartExplosion"></div>
+</div>
+
+<script>
+const phone = document.getElementById('phone');
+const reel1 = document.getElementById('reel1');
+const reel2 = document.getElementById('reel2');
+const progressBar = document.getElementById('progressBar');
+const heartBtn = document.getElementById('heartBtn');
+const heartExplosion = document.getElementById('heartExplosion');
+
+const reelsData = [
+  { creator: '@priyakitchen', caption: 'Maa ki dal recipe #homecooking #indianfood', audio: 'Original audio — priyakitchen', hearts: '48.2K', comments: '3.4K', shares: '12K' },
+  { creator: '@wanderlust_raj', caption: 'Udaipur sunsets #travel #rajasthan #incredible_india', audio: 'Original audio — wanderlust_raj', hearts: '92.1K', comments: '5.8K', shares: '24K' }
+];
+
+let currentReel = 0;
+let progressAnim = null;
+
+function updateHUD(idx) {
+  const d = reelsData[idx];
+  document.getElementById('creatorName').textContent = d.creator;
+  document.getElementById('captionText').textContent = d.caption;
+  document.getElementById('audioText').textContent = d.audio;
+  document.getElementById('heartCount').textContent = d.hearts;
+  document.getElementById('commentCount').textContent = d.comments;
+  document.getElementById('shareCount').textContent = d.shares;
+  heartBtn.classList.remove('liked');
+}
+
+function animateProgress(duration, cb) {
+  progressBar.style.transition = 'none';
+  progressBar.style.width = '0%';
+  requestAnimationFrame(() => {
+    progressBar.style.transition = `width ${duration}ms linear`;
+    progressBar.style.width = '100%';
+  });
+  if (progressAnim) clearTimeout(progressAnim);
+  progressAnim = setTimeout(cb, duration);
+}
+
+function swipeToNext() {
+  const current = currentReel === 0 ? reel1 : reel2;
+  const next = currentReel === 0 ? reel2 : reel1;
+  const nextIdx = (currentReel + 1) % 2;
+
+  // Position next below
+  next.style.transition = 'none';
+  next.style.transform = 'translateY(100%)';
+  next.style.filter = 'none';
+  next.className = 'reel';
+  void next.offsetHeight;
+
+  // Animate current out
+  current.classList.add('blur-exit');
+
+  // Animate next in
+  setTimeout(() => {
+    next.classList.add('slide-in');
+    next.style.transform = 'translateY(0)';
+  }, 30);
+
+  setTimeout(() => {
+    current.className = 'reel next';
+    current.style.transform = 'translateY(100%)';
+    current.style.filter = 'none';
+    current.style.transition = 'none';
+    next.className = 'reel active';
+    currentReel = nextIdx;
+    updateHUD(nextIdx);
+    startReelTimer();
+  }, 380);
+}
+
+function doubleTapHeart() {
+  heartBtn.classList.add('liked');
+  // Burst hearts
+  for (let i = 0; i < 8; i++) {
+    const h = document.createElement('div');
+    h.className = 'burst-heart';
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('width','24');svg.setAttribute('height','24');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','#ff2d55');svg.setAttribute('stroke','#ff2d55');
+    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d','M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z');
+    svg.appendChild(p);h.appendChild(svg);
+    h.style.left = (170 + (Math.random() - 0.5) * 80) + 'px';
+    h.style.top = (400 + (Math.random() - 0.5) * 60) + 'px';
+    h.style.fontSize = (24 + Math.random() * 18) + 'px';
+    h.style.animation = `burstUp ${0.7 + Math.random() * 0.5}s ease-out forwards`;
+    h.style.animationDelay = (Math.random() * 0.15) + 's';
+    heartExplosion.appendChild(h);
+    setTimeout(() => h.remove(), 1400);
+  }
+}
+
+function startReelTimer() {
+  const duration = currentReel === 0 ? 3000 : 3000;
+  animateProgress(duration, swipeToNext);
+}
+
+// Timeline
+// 0s: show reel 1 for 3s
+// 3s: swipe to reel 2
+// ~3.4s: reel 2 visible for ~1.5s then double-tap
+// ~5s: double-tap heart
+// ~6.5s: wait then swipe back
+// ~7s: swipe back to reel 1
+// loop
+
+let loopTimeout;
+function runSequence() {
+  currentReel = 0;
+  reel1.className = 'reel active';
+  reel1.style.transform = '';
+  reel1.style.filter = '';
+  reel2.className = 'reel next';
+  reel2.style.transform = 'translateY(100%)';
+  reel2.style.filter = '';
+  updateHUD(0);
+
+  // Phase 1: show reel 1 for 3s
+  animateProgress(3000, () => {
+    // Phase 2: swipe to reel 2
+    swipeAndThen(() => {
+      // Phase 3: after 1.5s, double-tap
+      setTimeout(() => {
+        doubleTapHeart();
+        // Phase 4: wait 2s then swipe back
+        animateProgress(2500, () => {
+          swipeAndThen(() => {
+            // Loop
+            setTimeout(runSequence, 500);
+          });
+        });
+      }, 1500);
+    });
+  });
+}
+
+function swipeAndThen(cb) {
+  const current = currentReel === 0 ? reel1 : reel2;
+  const next = currentReel === 0 ? reel2 : reel1;
+  const nextIdx = (currentReel + 1) % 2;
+
+  next.style.transition = 'none';
+  next.style.transform = 'translateY(100%)';
+  next.style.filter = 'none';
+  next.className = 'reel';
+  void next.offsetHeight;
+
+  current.classList.add('blur-exit');
+
+  setTimeout(() => {
+    next.classList.add('slide-in');
+    next.style.transform = 'translateY(0)';
+  }, 30);
+
+  setTimeout(() => {
+    current.className = 'reel next';
+    current.style.transform = 'translateY(100%)';
+    current.style.filter = 'none';
+    current.style.transition = 'none';
+    next.className = 'reel active';
+    currentReel = nextIdx;
+    updateHUD(nextIdx);
+    progressBar.style.transition = 'none';
+    progressBar.style.width = '0%';
+    if (cb) cb();
+  }, 380);
+}
+
+runSequence();
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

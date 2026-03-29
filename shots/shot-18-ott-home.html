@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shot 18 — StreamIN OTT Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#E50914;--black:#000000;--dark:#0D0D0D;--dark2:#1A1A1A;--white:#FFFFFF;--gray:#888}
+body{background:#000;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;font-family:'DM Sans',sans-serif;color:var(--white)}
+.phone{width:390px;min-height:844px;background:#000;position:relative;overflow-x:hidden;overflow-y:auto}
+.phone::-webkit-scrollbar{display:none}
+
+/* Film grain overlay */
+.phone::before{content:'';position:fixed;top:0;left:50%;transform:translateX(-50%);width:390px;height:100%;pointer-events:none;z-index:100;opacity:.035;
+background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+background-size:128px 128px}
+
+/* Top bar */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--red);letter-spacing:2px;font-style:italic}
+.topbar-icons{display:flex;gap:16px;font-size:20px;opacity:.8}
+
+/* Nav tabs */
+.nav-tabs{display:flex;gap:24px;padding:4px 20px 14px;border-bottom:1px solid rgba(255,255,255,.06);overflow-x:auto}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{font-size:13px;font-weight:500;color:var(--gray);white-space:nowrap;padding-bottom:8px;border-bottom:2px solid transparent;cursor:pointer;transition:.2s}
+.nav-tab.active{color:var(--white);border-bottom-color:var(--red)}
+
+/* Hero */
+.hero{position:relative;height:420px;background:linear-gradient(170deg,#0D0D0D 0%,#1A0000 60%,#0D0D0D 100%);margin:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:24px 20px}
+.hero::before{content:'';position:absolute;inset:0;opacity:.06;
+background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+background-size:100px 100px}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:180px;background:linear-gradient(transparent,#000)}
+.hero-content{position:relative;z-index:2}
+.hero-badge{display:inline-block;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;margin-bottom:12px;letter-spacing:1px;text-transform:uppercase}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:.9;letter-spacing:3px;margin-bottom:10px}
+.hero-meta{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:6px}
+.hero-meta span{color:gold}
+.hero-tags{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.hero-tags span{font-size:11px;color:rgba(255,255,255,.5);background:rgba(255,255,255,.08);padding:3px 10px;border-radius:20px}
+.hero-actions{display:flex;gap:10px;margin-bottom:14px}
+.btn-play{background:var(--red);color:#fff;border:none;padding:10px 28px;border-radius:6px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn-watchlist{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);padding:10px 20px;border-radius:6px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
+.progress-wrap{width:100%}
+.progress-label{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:6px}
+.progress-bar{height:3px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;width:38%;background:var(--red);border-radius:3px}
+
+/* Sections */
+.section{padding:24px 0 8px}
+.section-header{display:flex;justify-content:space-between;align-items:center;padding:0 20px;margin-bottom:14px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px}
+.section-more{font-size:12px;color:var(--red);font-weight:500}
+.scroll-row{display:flex;gap:12px;padding:0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scroll-row::-webkit-scrollbar{display:none}
+
+/* Continue watching cards */
+.cw-card{min-width:160px;border-radius:10px;overflow:hidden;flex-shrink:0;position:relative;animation:fadeUp .6s ease both}
+.cw-poster{height:90px;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;position:relative}
+.cw-poster .icon{font-size:28px;opacity:.3}
+.cw-play{position:absolute;width:32px;height:32px;background:rgba(0,0,0,.7);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px}
+.cw-info{background:var(--dark2);padding:10px}
+.cw-info h4{font-size:12px;font-weight:600;margin-bottom:2px}
+.cw-info p{font-size:10px;color:var(--gray)}
+.cw-progress{height:2px;background:rgba(255,255,255,.1);margin-top:6px;border-radius:2px;overflow:hidden}
+.cw-progress div{height:100%;background:var(--red);border-radius:2px}
+
+/* Trending cards */
+.trend-card{min-width:120px;position:relative;flex-shrink:0;animation:fadeUp .6s ease both}
+.trend-num{position:absolute;bottom:4px;left:-4px;font-family:'Bebas Neue',sans-serif;font-size:64px;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.15);line-height:1;z-index:2}
+.trend-poster{width:120px;height:170px;border-radius:8px;overflow:hidden;position:relative}
+.trend-poster-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.trend-poster .watermark{font-size:36px;opacity:.15;position:absolute}
+.trend-title{font-size:11px;font-weight:600;margin-top:8px;line-height:1.3}
+.trend-sub{font-size:10px;color:var(--gray);margin-top:2px}
+
+/* Top picks */
+.pick-card{min-width:140px;flex-shrink:0;animation:fadeUp .6s ease both}
+.pick-poster{width:140px;height:80px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative}
+.pick-poster .watermark{font-size:28px;opacity:.15;position:absolute}
+.pick-badge{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.7);font-size:8px;padding:2px 6px;border-radius:3px;font-weight:600}
+.pick-title{font-size:12px;font-weight:600;margin-top:8px}
+.pick-sub{font-size:10px;color:var(--gray);margin-top:2px}
+
+/* Genre pills */
+.genre-wrap{display:flex;flex-wrap:wrap;gap:8px;padding:0 20px}
+.genre-pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);padding:8px 18px;border-radius:24px;font-size:12px;font-weight:500;color:rgba(255,255,255,.7);cursor:pointer;transition:.2s}
+.genre-pill:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+/* Gradients for poster placeholders */
+.g1{background:linear-gradient(135deg,#1a0000,#330000)}
+.g2{background:linear-gradient(135deg,#0d1117,#161b22)}
+.g3{background:linear-gradient(135deg,#1a1a2e,#0f3460)}
+.g4{background:linear-gradient(135deg,#2d132c,#801336)}
+.g5{background:linear-gradient(135deg,#0a1628,#1a3a5c)}
+.g6{background:linear-gradient(135deg,#1c1c1c,#333)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.cw-card:nth-child(1){animation-delay:.1s}
+.cw-card:nth-child(2){animation-delay:.2s}
+.trend-card:nth-child(1){animation-delay:.1s}
+.trend-card:nth-child(2){animation-delay:.15s}
+.trend-card:nth-child(3){animation-delay:.2s}
+.trend-card:nth-child(4){animation-delay:.25s}
+.trend-card:nth-child(5){animation-delay:.3s}
+.trend-card:nth-child(6){animation-delay:.35s}
+.pick-card:nth-child(1){animation-delay:.1s}
+.pick-card:nth-child(2){animation-delay:.15s}
+.pick-card:nth-child(3){animation-delay:.2s}
+.pick-card:nth-child(4){animation-delay:.25s}
+
+/* Bottom nav */
+.bottom-nav{display:flex;justify-content:space-around;padding:12px 0 28px;border-top:1px solid rgba(255,255,255,.06);margin-top:16px;background:#000}
+.bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;color:var(--gray)}
+.bottom-nav-item.active{color:var(--white)}
+.bottom-nav-item .ico{font-size:20px}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="logo">StreamIN</div>
+    <div class="topbar-icons">
+      <span><i data-lucide="search" style="width:20px;height:20px"></i></span>
+      <span><i data-lucide="user" style="width:20px;height:20px"></i></span>
+    </div>
+  </div>
+
+  <!-- Nav Tabs -->
+  <div class="nav-tabs">
+    <div class="nav-tab active">Home</div>
+    <div class="nav-tab">Series</div>
+    <div class="nav-tab">Movies</div>
+    <div class="nav-tab">Sports</div>
+    <div class="nav-tab">Live</div>
+  </div>
+
+  <!-- Hero Banner -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Original</div>
+      <div class="hero-title">SCAM<br>1992</div>
+      <div class="hero-meta">Based on Harshad Mehta &middot; <span>&#9733; 9.5 IMDb</span></div>
+      <div class="hero-tags">
+        <span>Drama</span><span>Crime</span><span>Hindi</span><span>10 eps</span>
+      </div>
+      <div class="hero-actions">
+        <button class="btn-play"><i data-lucide="play" style="width:14px;height:14px;fill:#fff"></i> Play</button>
+        <button class="btn-watchlist">&#xFF0B; Watchlist</button>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">Episode 4 of 10 &middot; 38%</div>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Continue Watching -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">CONTINUE WATCHING</div>
+      <div class="section-more">See All</div>
+    </div>
+    <div class="scroll-row">
+      <div class="cw-card">
+        <div class="cw-poster" style="background:url('https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=160&h=90&fit=crop&q=80') center/cover"><div class="cw-play"><i data-lucide="play" style="width:12px;height:12px;fill:#fff;color:#fff"></i></div></div>
+        <div class="cw-info"><h4>Money Heist</h4><p>S2 E5 &middot; 32 min left</p><div class="cw-progress"><div style="width:65%"></div></div></div>
+      </div>
+      <div class="cw-card">
+        <div class="cw-poster" style="background:url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=160&h=90&fit=crop&q=80') center/cover"><div class="cw-play"><i data-lucide="play" style="width:12px;height:12px;fill:#fff;color:#fff"></i></div></div>
+        <div class="cw-info"><h4>Sacred Games</h4><p>S1 E3 &middot; 18 min left</p><div class="cw-progress"><div style="width:40%"></div></div></div>
+      </div>
+      <div class="cw-card">
+        <div class="cw-poster" style="background:url('https://images.unsplash.com/photo-1485846234645-a62644f84728?w=160&h=90&fit=crop&q=80') center/cover"><div class="cw-play"><i data-lucide="play" style="width:12px;height:12px;fill:#fff;color:#fff"></i></div></div>
+        <div class="cw-info"><h4>Kota Factory</h4><p>S2 E1 &middot; 45 min left</p><div class="cw-progress"><div style="width:20%"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trending in India -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">TRENDING IN INDIA</div>
+      <div class="section-more">See All</div>
+    </div>
+    <div class="scroll-row">
+      <div class="trend-card">
+        <div class="trend-poster" style="background:url('https://images.unsplash.com/photo-1535016120720-40c646be5580?w=120&h=170&fit=crop&q=80') center/cover"></div>
+        <div class="trend-num">1</div>
+        <div class="trend-title">Mirzapur S3</div>
+        <div class="trend-sub">Action &middot; Crime</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-poster" style="background:url('https://images.unsplash.com/photo-1509281373149-e957c6296406?w=120&h=170&fit=crop&q=80') center/cover"></div>
+        <div class="trend-num">2</div>
+        <div class="trend-title">Family Man</div>
+        <div class="trend-sub">Thriller &middot; Spy</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-poster" style="background:url('https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=120&h=170&fit=crop&q=80') center/cover"></div>
+        <div class="trend-num">3</div>
+        <div class="trend-title">Ghoul</div>
+        <div class="trend-sub">Horror &middot; Thriller</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-poster" style="background:url('https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=120&h=170&fit=crop&q=80') center/cover"></div>
+        <div class="trend-num">4</div>
+        <div class="trend-title">Delhi Crime</div>
+        <div class="trend-sub">Crime &middot; Drama</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-poster" style="background:url('https://images.unsplash.com/photo-1524712245354-2c4e5e7121c0?w=120&h=170&fit=crop&q=80') center/cover"></div>
+        <div class="trend-num">5</div>
+        <div class="trend-title">Panchayat</div>
+        <div class="trend-sub">Comedy &middot; Drama</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-poster" style="background:url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=120&h=170&fit=crop&q=80') center/cover"></div>
+        <div class="trend-num">6</div>
+        <div class="trend-title">Paatal Lok</div>
+        <div class="trend-sub">Thriller &middot; Noir</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Picks -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">TOP PICKS FOR YOU</div>
+      <div class="section-more">See All</div>
+    </div>
+    <div class="scroll-row">
+      <div class="pick-card">
+        <div class="pick-poster" style="background:url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=140&h=80&fit=crop&q=80') center/cover"><span class="pick-badge">NEW</span></div>
+        <div class="pick-title">Breathe S2</div>
+        <div class="pick-sub">Thriller &middot; 8 eps</div>
+      </div>
+      <div class="pick-card">
+        <div class="pick-poster" style="background:url('https://images.unsplash.com/photo-1518676590747-1e3dcf5a04be?w=140&h=80&fit=crop&q=80') center/cover"><span class="pick-badge">HD</span></div>
+        <div class="pick-title">Rocket Boys</div>
+        <div class="pick-sub">Drama &middot; 8 eps</div>
+      </div>
+      <div class="pick-card">
+        <div class="pick-poster" style="background:url('https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=140&h=80&fit=crop&q=80') center/cover"><span class="pick-badge">TOP 10</span></div>
+        <div class="pick-title">Asur</div>
+        <div class="pick-sub">Thriller &middot; 8 eps</div>
+      </div>
+      <div class="pick-card">
+        <div class="pick-poster" style="background:url('https://images.unsplash.com/photo-1460881680858-30d872d5b530?w=140&h=80&fit=crop&q=80') center/cover"><span class="pick-badge">4K</span></div>
+        <div class="pick-title">Jubilee</div>
+        <div class="pick-sub">Period &middot; 10 eps</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">CATEGORIES</div>
+    </div>
+    <div class="genre-wrap">
+      <div class="genre-pill">Thriller</div>
+      <div class="genre-pill">Crime</div>
+      <div class="genre-pill">Bollywood</div>
+      <div class="genre-pill">Comedy</div>
+      <div class="genre-pill">Reality</div>
+      <div class="genre-pill">Documentary</div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="bottom-nav-item active"><span class="ico"><i data-lucide="home" style="width:20px;height:20px"></i></span>Home</div>
+    <div class="bottom-nav-item"><span class="ico"><i data-lucide="search" style="width:20px;height:20px"></i></span>Search</div>
+    <div class="bottom-nav-item"><span class="ico"><i data-lucide="download" style="width:20px;height:20px"></i></span>Downloads</div>
+    <div class="bottom-nav-item"><span class="ico"><i data-lucide="user" style="width:20px;height:20px"></i></span>Profile</div>
+  </div>
+
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

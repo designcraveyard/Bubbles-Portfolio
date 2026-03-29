@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aarke Studio - Embroidered Silk Kurta</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #e8e4df; display: flex; justify-content: center; font-family: 'Lato', sans-serif; color: #2a2420; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  .phone { width: 390px; background: #faf8f5; min-height: 100vh; position: relative; overflow-x: hidden; padding-bottom: 140px; }
+
+  /* Hero */
+  .hero {
+    position: relative; width: 100%; height: 520px; overflow: hidden;
+  }
+  .hero-img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .hero::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(250,248,245,.95) 0%, rgba(250,248,245,.3) 30%, transparent 60%);
+  }
+
+  .hero-top {
+    position: absolute; top: 16px; left: 16px; right: 16px; z-index: 2;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,.4); backdrop-filter: blur(8px); border: none; color: #fff; font-size: 18px; cursor: pointer; display: grid; place-items: center; }
+  .hero-actions { display: flex; gap: 10px; }
+  .hero-actions button { width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,.4); backdrop-filter: blur(8px); border: none; color: #fff; font-size: 16px; cursor: pointer; display: grid; place-items: center; transition: transform .2s; }
+  .hero-actions button:active { transform: scale(.9); }
+  .heart-btn { color: #e74c5e !important; animation: heartPop .4s ease; }
+  .heart-btn i { color: #e74c5e; }
+  @keyframes heartPop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+
+  .gallery-dots {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2;
+    display: flex; gap: 8px;
+  }
+  .gallery-dots span {
+    width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.4); transition: all .3s;
+  }
+  .gallery-dots span.active { width: 24px; border-radius: 4px; background: #D4AF37; }
+
+  /* Content */
+  .content { padding: 24px 20px; position: relative; }
+  .content::before {
+    content: ''; position: absolute; top: -30px; left: 0; right: 0; height: 30px;
+    background: linear-gradient(to top, #faf8f5, transparent);
+    pointer-events: none;
+  }
+
+  .brand {
+    font-family: 'Lato', sans-serif; font-weight: 700; font-size: 11px;
+    letter-spacing: 3px; text-transform: uppercase; color: #9a7b2e;
+    margin-bottom: 8px;
+    animation: fadeUp .6s ease both;
+  }
+  .product-name {
+    font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600;
+    line-height: 1.2; color: #2a2420; margin-bottom: 16px;
+    animation: fadeUp .6s ease .1s both;
+  }
+  .product-name em { font-style: italic; color: rgba(0,0,0,.45); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .rating-row {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; color: #888;
+    margin-bottom: 20px; animation: fadeUp .6s ease .15s both;
+  }
+  .stars { display: flex; gap: 2px; color: #f5a623; }
+  .stars i { width: 14px; height: 14px; }
+  .rating-num { color: #2a2420; font-weight: 700; }
+  .divider-dot { color: #ccc; }
+
+  .price-row {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px;
+    animation: fadeUp .6s ease .2s both;
+  }
+  .price { font-size: 28px; font-weight: 700; color: #2a2420; font-family: 'Lato', sans-serif; }
+  .mrp { font-size: 15px; color: #999; text-decoration: line-through; }
+  .off-badge {
+    font-size: 11px; font-weight: 700; color: #fff; background: #c0392b;
+    padding: 3px 8px; border-radius: 4px; letter-spacing: .5px;
+  }
+  .tax-note { font-size: 11px; color: #aaa; margin-bottom: 20px; animation: fadeUp .6s ease .22s both; }
+
+  /* Offers */
+  .offers {
+    display: flex; gap: 8px; overflow-x: auto; margin-bottom: 24px; padding-bottom: 4px;
+    animation: fadeUp .6s ease .25s both;
+    -ms-overflow-style: none; scrollbar-width: none;
+  }
+  .offers::-webkit-scrollbar { display: none; }
+  .offer-chip {
+    flex-shrink: 0; padding: 8px 14px; border-radius: 8px;
+    background: #fdf8ec; border: 1px solid #e8d9a0;
+    font-size: 12px; color: #555; white-space: nowrap;
+  }
+  .offer-chip strong { color: #D4AF37; }
+
+  /* Sections */
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: #999; margin-bottom: 12px;
+  }
+
+  /* Size Selector */
+  .size-section { margin-bottom: 24px; animation: fadeUp .6s ease .3s both; }
+  .sizes { display: flex; gap: 8px; }
+  .size-pill {
+    width: 46px; height: 40px; border-radius: 8px; border: 1px solid #ddd;
+    background: transparent; color: #666; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .25s; display: grid; place-items: center;
+    font-family: 'Lato', sans-serif;
+  }
+  .size-pill:hover { border-color: #999; color: #333; }
+  .size-pill.selected {
+    background: #2a2420; color: #faf8f5; border-color: #2a2420;
+    box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  }
+
+  /* Color */
+  .color-section { margin-bottom: 24px; animation: fadeUp .6s ease .35s both; }
+  .colors { display: flex; gap: 14px; align-items: center; }
+  .color-circle {
+    width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+    position: relative; transition: transform .2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,.4);
+  }
+  .color-circle:hover { transform: scale(1.1); }
+  .color-circle.selected { outline: 2px solid #9a7b2e; outline-offset: 3px; }
+  .color-circle.selected::after {
+    content: '\2713'; position: absolute; inset: 0; display: grid; place-items: center;
+    font-size: 14px; font-weight: 700; color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,.6);
+  }
+  .c-plum { background: #4a1942; }
+  .c-emerald { background: #1a5c3a; }
+  .c-terracotta { background: #a0522d; }
+  .c-ivory { background: #ede8d0; }
+
+  /* Delivery */
+  .delivery {
+    display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+    background: #f3f0eb; border-radius: 12px; margin-bottom: 24px;
+    animation: fadeUp .6s ease .4s both;
+  }
+  .delivery-icon { color: #666; }
+  .delivery-icon i { width: 22px; height: 22px; }
+  .delivery-text { font-size: 13px; color: #666; }
+  .delivery-text strong { color: #2a2420; }
+  .delivery-free { color: #27ae60; font-weight: 700; font-size: 12px; }
+
+  /* Sticky bottom */
+  .sticky-bar {
+    position: fixed; bottom: 0; width: 390px; left: 50%; transform: translateX(-50%); padding: 12px 16px 28px;
+    background: rgba(250,248,245,.97); backdrop-filter: blur(20px);
+    border-top: 1px solid #e8e2d9;
+    display: flex; flex-direction: column; gap: 8px; z-index: 10;
+    animation: slideUp .5s ease .5s both;
+  }
+  @keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
+
+  .btn {
+    height: 48px; border-radius: 12px; border: none; cursor: pointer;
+    font-family: 'Lato', sans-serif; font-weight: 700; font-size: 13px;
+    letter-spacing: .5px; transition: all .2s; display: flex; align-items: center;
+    justify-content: center; gap: 6px;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-wish {
+    width: 48px; flex-shrink: 0; background: #f3f0eb;
+    border: 1px solid #ddd6cb; color: #7a6f62;
+  }
+  .btn-wish i { width: 20px; height: 20px; }
+  .btn-cart {
+    width: 100%; background: #2a2420;
+    color: #faf8f5; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .btn-buy {
+    flex: 1; color: #111; text-transform: uppercase; letter-spacing: 1px;
+    background: linear-gradient(135deg, #D4AF37, #f0d060, #D4AF37);
+    background-size: 200% 200%; animation: goldShimmer 3s ease infinite;
+    box-shadow: 0 4px 20px rgba(212,175,55,.3);
+  }
+  @keyframes goldShimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="hero">
+    <img class="hero-img" src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=390&h=520&fit=crop&q=80" alt="Silk Kurta">
+    <div class="hero-top">
+      <button class="back-btn"><i data-lucide="arrow-left" style="width:18px;height:18px;"></i></button>
+      <div class="hero-actions">
+        <button><i data-lucide="share-2" style="width:16px;height:16px;"></i></button>
+        <button class="heart-btn"><i data-lucide="heart" style="width:18px;height:18px;fill:#e74c5e;color:#e74c5e;"></i></button>
+      </div>
+    </div>
+    <div class="gallery-dots">
+      <span class="active"></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="brand">Aarke Studio</div>
+    <div class="product-name">Embroidered Silk Kurta <em>&mdash; Midnight Plum</em></div>
+
+    <div class="rating-row">
+      <span class="stars">
+        <i data-lucide="star" style="width:14px;height:14px;fill:#f5a623;color:#f5a623;"></i>
+        <i data-lucide="star" style="width:14px;height:14px;fill:#f5a623;color:#f5a623;"></i>
+        <i data-lucide="star" style="width:14px;height:14px;fill:#f5a623;color:#f5a623;"></i>
+        <i data-lucide="star" style="width:14px;height:14px;fill:#f5a623;color:#f5a623;"></i>
+        <i data-lucide="star" style="width:14px;height:14px;color:#f5a623;"></i>
+      </span>
+      <span class="rating-num">4.7</span>
+      <span>(238 reviews)</span>
+      <span class="divider-dot">|</span>
+      <span>892 sold</span>
+    </div>
+
+    <div class="price-row">
+      <span class="price">&#8377;3,299</span>
+      <span class="mrp">MRP &#8377;5,499</span>
+      <span class="off-badge">40% OFF</span>
+    </div>
+    <div class="tax-note">Inclusive of all taxes</div>
+
+    <div class="offers">
+      <div class="offer-chip"><strong>Extra 10% off</strong>&nbsp;HDFC</div>
+      <div class="offer-chip"><strong>Free delivery</strong></div>
+      <div class="offer-chip"><strong>Easy returns</strong>&nbsp;30 days</div>
+    </div>
+
+    <div class="size-section">
+      <div class="section-label">Select Size</div>
+      <div class="sizes">
+        <button class="size-pill">XS</button>
+        <button class="size-pill">S</button>
+        <button class="size-pill selected">M</button>
+        <button class="size-pill">L</button>
+        <button class="size-pill">XL</button>
+        <button class="size-pill">XXL</button>
+      </div>
+    </div>
+
+    <div class="color-section">
+      <div class="section-label">Colour</div>
+      <div class="colors">
+        <div class="color-circle c-plum selected"></div>
+        <div class="color-circle c-emerald"></div>
+        <div class="color-circle c-terracotta"></div>
+        <div class="color-circle c-ivory"></div>
+      </div>
+    </div>
+
+    <div class="delivery">
+      <span class="delivery-icon"><i data-lucide="package" style="width:22px;height:22px;"></i></span>
+      <div>
+        <div class="delivery-text">Delivery by <strong>Wed, Mar 5</strong></div>
+        <div class="delivery-free">FREE</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sticky-bar">
+    <button class="btn btn-cart">Add to Cart</button>
+    <div class="btn-row">
+      <button class="btn btn-wish"><i data-lucide="heart" style="width:20px;height:20px;"></i></button>
+      <button class="btn btn-buy">Buy Now</button>
+    </div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

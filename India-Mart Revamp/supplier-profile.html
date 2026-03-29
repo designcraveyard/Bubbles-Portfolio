@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HS Enterprises — IndiaMART Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --im-green: #2E7D32;
+    --im-green-dark: #1B5E20;
+    --im-green-light: #E8F5E9;
+    --im-green-50: #f1f8f1;
+    --im-blue: #1565C0;
+    --im-blue-light: #E3F2FD;
+    --surface: #FAFAFA;
+    --card: #FFFFFF;
+    --text-primary: #1A1A1A;
+    --text-secondary: #5F6368;
+    --text-tertiary: #9AA0A6;
+    --border: #E8EAED;
+    --border-light: #F1F3F4;
+    --gold: #F9A825;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--surface);
+    color: var(--text-primary);
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 80px;
+  }
+
+  /* ─── STICKY HEADER ─── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--im-green);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 14px;
+    margin-left: auto;
+  }
+
+  .header-actions button {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,.85);
+    cursor: pointer;
+  }
+
+  /* ─── HERO CARD ─── */
+  .hero-card {
+    background: var(--card);
+    margin: 12px;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    animation: fadeUp .4s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .company-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -.3px;
+    line-height: 1.2;
+  }
+
+  .badge-strip {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: .2px;
+  }
+
+  .badge-green {
+    background: var(--im-green-light);
+    color: var(--im-green-dark);
+  }
+
+  .badge-blue {
+    background: var(--im-blue-light);
+    color: var(--im-blue);
+  }
+
+  .badge-gold {
+    background: #FFF8E1;
+    color: #F57F17;
+  }
+
+  .rating-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  .star { color: var(--gold); font-size: 15px; }
+  .star.empty { color: #E0E0E0; }
+
+  .rating-num {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .rating-count {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .location-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .location-row svg { flex-shrink: 0; }
+
+  .contact-name {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+  }
+
+  /* ─── QUICK STATS ─── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 0 12px;
+    margin-top: 4px;
+    animation: fadeUp .5s ease;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .stat-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    margin: 16px 12px 0;
+    animation: fadeUp .5s ease;
+  }
+
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -.2px;
+  }
+
+  /* ─── ABOUT ─── */
+  .about-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  /* ─── PRODUCT SCROLL SECTIONS ─── */
+  .product-section { margin-top: 20px; }
+
+  .product-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 12px 10px;
+    letter-spacing: -.2px;
+  }
+
+  .product-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 0 12px 8px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .product-scroll::-webkit-scrollbar { display: none; }
+
+  .product-card {
+    flex: 0 0 152px;
+    background: var(--card);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    scroll-snap-align: start;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .2s, box-shadow .2s;
+  }
+
+  .product-card:active {
+    transform: scale(.97);
+    box-shadow: var(--shadow-md);
+  }
+
+  .product-card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .product-info {
+    padding: 10px;
+  }
+
+  .product-name {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .product-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--im-green-dark);
+    margin-top: 4px;
+  }
+
+  .product-cta {
+    display: block;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--im-green);
+    padding: 6px 0 2px;
+    border-top: 1px solid var(--border-light);
+    margin-top: 8px;
+  }
+
+  /* ─── COMPANY DETAILS ─── */
+  .details-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .detail-row:last-child { border-bottom: none; }
+
+  .detail-label {
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+    width: 42%;
+  }
+
+  .detail-value {
+    color: var(--text-primary);
+    font-weight: 500;
+    text-align: right;
+    flex: 1;
+  }
+
+  /* ─── RATING BREAKDOWN ─── */
+  .rating-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 16px;
+  }
+
+  .rating-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .rating-big {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-primary);
+  }
+
+  .rating-big-sub {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .bar-label {
+    font-size: 12px;
+    font-weight: 600;
+    width: 20px;
+    text-align: right;
+    color: var(--text-secondary);
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--border-light);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .8s cubic-bezier(.4,0,.2,1);
+  }
+
+  .bar-fill-5 { background: #4CAF50; }
+  .bar-fill-4 { background: #8BC34A; }
+  .bar-fill-3 { background: #FFC107; }
+  .bar-fill-2 { background: #FF9800; }
+  .bar-fill-1 { background: #F44336; }
+
+  .bar-count {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    width: 24px;
+  }
+
+  /* ─── CONTACT SECTION ─── */
+  .contact-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 20px;
+    text-align: center;
+  }
+
+  .contact-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .contact-card p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .btn-contact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    background: var(--im-green);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+  }
+
+  .btn-contact:active {
+    background: var(--im-green-dark);
+    transform: scale(.98);
+  }
+
+  /* ─── BOTTOM BAR ─── */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    z-index: 100;
+    display: flex;
+    gap: 10px;
+  }
+
+  .bottom-bar .btn-contact { flex: 1; }
+  .btn-whatsapp {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: #fff;
+    color: #25D366;
+    border: 1.5px solid #E0E0E0;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all .15s;
+  }
+
+  .btn-whatsapp:hover { border-color: #25D366; background: #f0faf3; }
+
+  /* ─── UTILITY ─── */
+  .fade-section {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .fade-section.visible {
+    animation: fadeUp .5s ease forwards;
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── STICKY HEADER ─── -->
+<div class="header">
+  <a href="redesign.html">
+    <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  </a>
+  <div class="header-title">HS Enterprises</div>
+  <div class="header-actions">
+    <button><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>
+    <button><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+  </div>
+</div>
+
+<!-- ─── HERO CARD ─── -->
+<div class="hero-card">
+  <div class="company-name">HS Enterprises</div>
+  <div class="badge-strip">
+    <span class="badge badge-green">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+      GST Verified
+    </span>
+    <span class="badge badge-blue">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61z"/></svg>
+      TrustSEAL
+    </span>
+    <span class="badge badge-gold">10 Yrs+</span>
+  </div>
+  <div class="rating-row">
+    <div class="stars">
+      <span class="star">&#9733;</span>
+      <span class="star">&#9733;</span>
+      <span class="star">&#9733;</span>
+      <span class="star">&#9733;</span>
+      <span class="star empty">&#9733;</span>
+    </div>
+    <span class="rating-num">3.8</span>
+    <span class="rating-count">86 reviews</span>
+  </div>
+  <div class="location-row">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 13S1 8.5 1 5a6 6 0 0112 0c0 3.5-6 8-6 8z"/><circle cx="7" cy="5" r="1.5"/></svg>
+    J Extension, Laxmi Nagar, New Delhi - 110092
+  </div>
+  <div class="contact-name">Harshad Bindal (Proprietor)</div>
+</div>
+
+<!-- ─── QUICK STATS ─── -->
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--im-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+    <div class="stat-value">2018</div>
+    <div class="stat-label">Est.</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--im-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+    <div class="stat-value">11-25</div>
+    <div class="stat-label">People</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--im-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+    <div class="stat-value">5-10 Cr</div>
+    <div class="stat-label">Turnover</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--im-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+    <div class="stat-value">79%</div>
+    <div class="stat-label">Response</div>
+  </div>
+</div>
+
+<!-- ─── ABOUT ─── -->
+<div class="section fade-section">
+  <h2 class="section-title">About</h2>
+  <div class="about-card">
+    HS Enterprises holds expertise in manufacturing wall beds, wooden tables, TV cabinets, dining sets, office chairs, windows, modular kitchens, and furniture pieces. Established in 2018, we are based in Laxmi Nagar, New Delhi, serving customers across India with high-quality, custom furniture solutions.
+  </div>
+</div>
+
+<!-- ─── PRODUCT CATEGORIES ─── -->
+<div class="fade-section">
+  <div class="product-section">
+    <div class="product-section-title">Wooden Tables</div>
+    <div class="product-scroll">
+      <a href="product-detail.html" class="product-card">
+        <img src="images/1473410110p3-500x500.png" alt="Dining Console Table" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Dining Console Table</div>
+          <div class="product-price">&#8377;18,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+      <a href="product-detail.html" class="product-card">
+        <img src="images/3x2-ft-table-500x500.jpg" alt="Wall Mounting Table" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Wall Mounting Table</div>
+          <div class="product-price">Get Quote</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+      <a href="product-detail.html" class="product-card">
+        <img src="images/square-coffee-table-500x500.jpg" alt="Lifting Coffee Table" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Lifting Coffee Table</div>
+          <div class="product-price">&#8377;16,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+      <a href="product-detail.html" class="product-card">
+        <img src="images/hexagonal-table-500x500.jpg" alt="Compact Office Table" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Compact Office Table</div>
+          <div class="product-price">&#8377;25,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="product-section">
+    <div class="product-section-title">Designer Beds</div>
+    <div class="product-scroll">
+      <a href="product-detail.html" class="product-card">
+        <img src="images/designer-wooden-table-500x500.jpg" alt="Teak Wood Bed" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Teak Wood Bed</div>
+          <div class="product-price">&#8377;32,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+      <a href="product-detail.html" class="product-card">
+        <img src="images/product-jpeg-500x500.jpg" alt="Kids Bunk Bed" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Kids Bunk Bed</div>
+          <div class="product-price">&#8377;35,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+      <a href="product-detail.html" class="product-card">
+        <img src="images/product-500x500.jpeg" alt="Modern Storage Bed" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Modern Storage Bed</div>
+          <div class="product-price">&#8377;25,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="product-section">
+    <div class="product-section-title">Sofa Sets</div>
+    <div class="product-scroll">
+      <a href="product-detail.html" class="product-card">
+        <img src="images/brown-designer-table-500x500.jpg" alt="L Shape Modular Sofa" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">L Shape Modular Sofa</div>
+          <div class="product-price">&#8377;25,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+      <a href="product-detail.html" class="product-card">
+        <img src="images/designer-showcase-table-500x500.jpg" alt="Love Seat Sofa" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Love Seat Sofa</div>
+          <div class="product-price">&#8377;12,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+      <a href="product-detail.html" class="product-card">
+        <img src="images/nesting-tables-sheesham-wood-set-of-3-stools-500x500.png" alt="Wood Quilt Sofa" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Wood Quilt Sofa</div>
+          <div class="product-price">&#8377;72,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="product-section">
+    <div class="product-section-title">Modular Kitchens</div>
+    <div class="product-scroll">
+      <a href="product-detail.html" class="product-card">
+        <img src="images/digital-glass-centre-table-500x500.jpg" alt="Modern L Shape Kitchen" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Modern L Shape Kitchen</div>
+          <div class="product-price">&#8377;1,400/sqft</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+      <a href="product-detail.html" class="product-card">
+        <img src="images/centre-table-1582805576524-500x500.jpg" alt="U Shape Kitchen" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">U Shape Kitchen</div>
+          <div class="product-price">&#8377;1,000/sqft</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="product-section">
+    <div class="product-section-title">Wall Beds</div>
+    <div class="product-scroll">
+      <a href="product-detail.html" class="product-card">
+        <img src="images/img-20180123-wa0048-500x500.jpg" alt="Horizontal Wall Bed" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Horizontal Wall Bed</div>
+          <div class="product-price">&#8377;32,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+      <a href="product-detail.html" class="product-card">
+        <img src="images/square-table-with-4-benches-500x500.png" alt="Hide Away Bed" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">Hide Away Bed</div>
+          <div class="product-price">&#8377;90,000</div>
+          <div class="product-cta">Contact Supplier</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ─── COMPANY DETAILS ─── -->
+<div class="section fade-section">
+  <h2 class="section-title">Company Details</h2>
+  <div class="details-card">
+    <div class="detail-row">
+      <span class="detail-label">GST No.</span>
+      <span class="detail-value">07AALFH1410N1ZD</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">GST Registered</span>
+      <span class="detail-value">15-03-2018</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Legal Status</span>
+      <span class="detail-value">Partnership</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Nature of Business</span>
+      <span class="detail-value">Manufacturer</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">No. of Employees</span>
+      <span class="detail-value">11-25</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Annual Turnover</span>
+      <span class="detail-value">Rs. 5-10 Crore</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Year Established</span>
+      <span class="detail-value">2018</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Location</span>
+      <span class="detail-value">New Delhi, Delhi, India</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── RATING BREAKDOWN ─── -->
+<div class="section fade-section">
+  <h2 class="section-title">Ratings &amp; Reviews</h2>
+  <div class="rating-card">
+    <div class="rating-summary">
+      <div>
+        <div class="rating-big">3.8</div>
+        <div class="rating-big-sub">86 reviews</div>
+      </div>
+      <div style="flex:1">
+        <div class="bar-row">
+          <span class="bar-label">5</span>
+          <div class="bar-track"><div class="bar-fill bar-fill-5" style="width:0%" data-width="54.6%"></div></div>
+          <span class="bar-count">47</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">4</span>
+          <div class="bar-track"><div class="bar-fill bar-fill-4" style="width:0%" data-width="8.1%"></div></div>
+          <span class="bar-count">7</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">3</span>
+          <div class="bar-track"><div class="bar-fill bar-fill-3" style="width:0%" data-width="7%"></div></div>
+          <span class="bar-count">6</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">2</span>
+          <div class="bar-track"><div class="bar-fill bar-fill-2" style="width:0%" data-width="5.8%"></div></div>
+          <span class="bar-count">5</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">1</span>
+          <div class="bar-track"><div class="bar-fill bar-fill-1" style="width:0%" data-width="24.4%"></div></div>
+          <span class="bar-count">21</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CONTACT SECTION ─── -->
+<div class="section fade-section" style="margin-bottom:24px">
+  <div class="contact-card">
+    <h3>Get in Touch</h3>
+    <p>Connect with HS Enterprises for custom furniture quotes and inquiries</p>
+    <button class="btn-contact" onclick="alert('Contact form would open here')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      Contact Supplier
+    </button>
+  </div>
+</div>
+
+<!-- ─── BOTTOM STICKY BAR ─── -->
+<div class="bottom-bar">
+  <button class="btn-whatsapp" aria-label="WhatsApp">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </button>
+  <button class="btn-contact">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    Contact Supplier
+  </button>
+</div>
+
+<script>
+// Intersection Observer for fade-in sections
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-section').forEach(el => observer.observe(el));
+
+// Animate rating bars after visible
+const ratingObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.bar-fill').forEach((bar, i) => {
+        setTimeout(() => {
+          bar.style.width = bar.dataset.width;
+        }, i * 100);
+      });
+      ratingObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.rating-card').forEach(el => ratingObserver.observe(el));
+</script>
+
+</body>
+</html>

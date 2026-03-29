@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume — Anjali Verma</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #FAF7F2;
+  --ink: #1A1714;
+  --muted: #6B6560;
+  --accent: #C4522A;
+  --accent-light: #F5E8E0;
+  --border: #E8E2D9;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans);
+  min-height: 100vh;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(250,247,242,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 0.5px solid var(--border);
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--accent); }
+
+.btn-download {
+  background: var(--accent);
+  color: #fff !important;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  transition: background 0.2s;
+  cursor: pointer;
+  border: none;
+  font-family: var(--sans);
+  font-weight: 500;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-download:hover { background: #A8431F; }
+
+/* Resume container */
+.resume-wrapper {
+  padding-top: 64px;
+  min-height: 100vh;
+}
+
+.resume-toolbar {
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 24px 2rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-link {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--accent); }
+
+iframe {
+  width: 100%;
+  max-width: 840px;
+  margin: 24px auto 60px;
+  display: block;
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--cream);
+  box-shadow: 0 4px 24px rgba(26,23,20,0.06);
+}
+
+/* Print styles */
+@media print {
+  nav, .resume-toolbar { display: none !important; }
+  .resume-wrapper { padding-top: 0; }
+  iframe { border: none; box-shadow: none; margin: 0; border-radius: 0; max-width: 100%; }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .resume-toolbar { flex-direction: column; gap: 12px; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">Anjali<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#works">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="resume.html" style="color: var(--accent);">Resume</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="resume-wrapper">
+  <div class="resume-toolbar">
+    <a href="index.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to Portfolio
+    </a>
+    <button class="btn-download" onclick="downloadResume()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2V11M8 11L4.5 7.5M8 11L11.5 7.5M3 14H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Download PDF
+    </button>
+  </div>
+  <iframe id="resumeFrame" src="anjali_resume.html" style="height: 1400px;" scrolling="no"></iframe>
+</div>
+
+<script>
+// Auto-resize iframe to content
+const iframe = document.getElementById('resumeFrame');
+iframe.addEventListener('load', () => {
+  try {
+    const h = iframe.contentDocument.body.scrollHeight;
+    iframe.style.height = (h + 40) + 'px';
+  } catch(e) {}
+});
+
+function downloadResume() {
+  // Open the resume in a new window optimized for printing/saving as PDF
+  const win = window.open('anjali_resume.html', '_blank');
+  win.addEventListener('load', () => {
+    setTimeout(() => win.print(), 500);
+  });
+}
+</script>
+
+</body>
+</html>

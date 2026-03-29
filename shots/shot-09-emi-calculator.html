@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>Home Loan EMI Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F3460;--mint:#00B4A6;--mint-light:#E0F7F5;--bg:#FAFBFD;--card:#FFFFFF;--text:#3A4A5C;--border:#E8ECF1;--shadow:0 2px 24px rgba(15,52,96,.07)}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;justify-content:center;padding:40px 0}
+.container{width:1200px;padding:0 40px}
+.header{display:flex;align-items:center;gap:14px;margin-bottom:36px;animation:fadeUp .6s ease both}
+.header .header-icon{width:36px;height:36px;color:var(--mint)}
+.header h1{font-family:'DM Sans',sans-serif;font-weight:700;font-size:26px;color:var(--navy)}
+.main{display:flex;gap:32px;margin-bottom:32px}
+.left{flex:0 0 58%;background:var(--card);border-radius:20px;padding:36px 40px;box-shadow:var(--shadow);animation:fadeUp .6s .1s ease both}
+.right{flex:1;display:flex;flex-direction:column;gap:24px;animation:fadeUp .6s .2s ease both}
+.slider-group{margin-bottom:32px}
+.slider-group:last-of-type{margin-bottom:0}
+.slider-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.slider-label span{font-size:13px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.6px}
+.slider-value{font-family:'DM Sans',sans-serif;font-size:22px;font-weight:700;color:var(--navy)}
+.slider-value .currency{font-size:16px;font-weight:600;opacity:.7}
+.slider-wrap{position:relative}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--border);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:18px;border-radius:9px;background:var(--navy);border:3px solid var(--navy);box-shadow:inset 0 0 0 3px #fff,0 2px 8px rgba(15,52,96,.25);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:28px;height:18px;border-radius:9px;background:var(--navy);border:3px solid var(--navy);box-shadow:inset 0 0 0 3px #fff,0 2px 8px rgba(15,52,96,.25);cursor:pointer}
+.range-labels{display:flex;justify-content:space-between;font-size:11px;color:#8E99A8;font-weight:500;margin-top:6px}
+.toggle-row{display:flex;gap:0;border-radius:10px;overflow:hidden;border:1.5px solid var(--border);width:fit-content}
+.toggle-btn{padding:8px 20px;font-size:13px;font-weight:600;background:transparent;border:none;cursor:pointer;color:var(--text);transition:all .2s}
+.toggle-btn.active{background:var(--navy);color:#fff}
+.tenure-toggle{margin-top:12px}
+.amor-section{margin-top:28px;padding-top:24px;border-top:1.5px solid var(--border)}
+.amor-section .slider-label{margin-bottom:12px}
+.donut-card{background:var(--card);border-radius:20px;padding:32px;box-shadow:var(--shadow);text-align:center}
+.donut-wrap{position:relative;width:220px;height:220px;margin:0 auto 8px}
+.donut-wrap svg{width:220px;height:220px}
+.emi-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.emi-center small{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8E99A8;display:block;margin-bottom:2px}
+.emi-center .emi-amount{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--navy);line-height:1.1}
+.emi-center .per-month{font-size:11px;color:#8E99A8;font-weight:500;margin-top:2px}
+.legend{display:flex;justify-content:center;gap:24px;margin-top:12px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+.breakdown-card{background:var(--card);border-radius:20px;padding:28px 32px;box-shadow:var(--shadow)}
+.breakdown-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+.breakdown-row:last-child{border:none;font-weight:700;color:var(--navy);font-size:15px}
+.breakdown-row .label{color:#8E99A8;font-weight:500}
+.breakdown-row .val{font-weight:600;color:var(--navy)}
+.cta-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:14px;background:var(--mint);color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;text-align:center;transition:all .2s;box-shadow:0 4px 16px rgba(0,180,166,.25)}
+.cta-btn:hover{background:#009B8F;transform:translateY(-1px)}
+.amor-table-section{background:var(--card);border-radius:20px;padding:32px 40px;box-shadow:var(--shadow);animation:fadeUp .6s .3s ease both}
+.amor-table-section h3{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:12px 16px;font-weight:600;color:#8E99A8;text-transform:uppercase;font-size:11px;letter-spacing:.5px;border-bottom:2px solid var(--border)}
+td{padding:13px 16px;border-bottom:1px solid var(--border);font-weight:500;color:var(--navy)}
+tr:nth-child(even) td{background:#F8FAFB}
+tr:hover td{background:var(--mint-light)}
+.view-all{display:inline-flex;align-items:center;gap:4px;margin-top:16px;font-size:13px;font-weight:600;color:var(--mint);text-decoration:none;cursor:pointer}
+.view-all:hover{text-decoration:underline}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <i data-lucide="calculator" class="header-icon" style="width:36px;height:36px;"></i>
+    <h1>Home Loan Calculator</h1>
+  </div>
+  <div class="main">
+    <div class="left">
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Loan Amount</span>
+          <div class="slider-value"><span class="currency">&#8377;</span><span id="loanDisplay">50,00,000</span></div>
+        </div>
+        <input type="range" id="loanAmount" min="500000" max="50000000" step="100000" value="5000000">
+        <div class="range-labels"><span>&#8377;5L</span><span>&#8377;5Cr</span></div>
+      </div>
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Interest Rate</span>
+          <div class="slider-value"><span id="rateDisplay">8.5</span>% <span class="currency">p.a.</span></div>
+        </div>
+        <input type="range" id="interestRate" min="6" max="18" step="0.1" value="8.5">
+        <div class="range-labels"><span>6%</span><span>18%</span></div>
+      </div>
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Loan Tenure</span>
+          <div class="slider-value"><span id="tenureDisplay">20</span> <span class="currency" id="tenureUnit">Years</span></div>
+        </div>
+        <input type="range" id="tenure" min="1" max="30" step="1" value="20">
+        <div class="range-labels"><span>1</span><span>30</span></div>
+        <div class="tenure-toggle">
+          <div class="toggle-row" id="tenureToggle">
+            <button class="toggle-btn active" data-val="years">Years</button>
+            <button class="toggle-btn" data-val="months">Months</button>
+          </div>
+        </div>
+      </div>
+      <div class="amor-section">
+        <div class="slider-label"><span>Amortization Method</span></div>
+        <div class="toggle-row" id="amorToggle">
+          <button class="toggle-btn active" data-val="reducing">Reducing Balance</button>
+          <button class="toggle-btn" data-val="flat">Flat Rate</button>
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="donut-card">
+        <div class="donut-wrap">
+          <svg viewBox="0 0 220 220" id="donutSvg">
+            <circle cx="110" cy="110" r="85" fill="none" stroke="#E8ECF1" stroke-width="24"/>
+            <circle id="principalArc" cx="110" cy="110" r="85" fill="none" stroke="#0F3460" stroke-width="24" stroke-dasharray="0 534" stroke-linecap="round" transform="rotate(-90 110 110)" style="transition:stroke-dasharray .5s"/>
+            <circle id="interestArc" cx="110" cy="110" r="85" fill="none" stroke="#00B4A6" stroke-width="24" stroke-dasharray="0 534" stroke-linecap="round" transform="rotate(-90 110 110)" style="transition:stroke-dasharray .5s,stroke-dashoffset .5s"/>
+          </svg>
+          <div class="emi-center">
+            <small>Monthly EMI</small>
+            <div class="emi-amount" id="emiAmount">&#8377;43,391</div>
+            <div class="per-month">per month</div>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Principal</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--mint)"></div>Interest</div>
+        </div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-row"><span class="label">Principal Amount</span><span class="val" id="bPrincipal">&#8377;50,00,000</span></div>
+        <div class="breakdown-row"><span class="label">Total Interest</span><span class="val" id="bInterest">&#8377;54,13,830</span></div>
+        <div class="breakdown-row"><span class="label">Processing Fee (0.5%)</span><span class="val" id="bFee">&#8377;25,000</span></div>
+        <div class="breakdown-row"><span class="label">Total Payment</span><span class="val" id="bTotal">&#8377;1,04,38,830</span></div>
+      </div>
+      <button class="cta-btn">Apply for Home Loan <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></button>
+    </div>
+  </div>
+  <div class="amor-table-section">
+    <h3>Amortization Schedule</h3>
+    <table>
+      <thead><tr><th>Year</th><th>Opening Balance</th><th>EMI Paid</th><th>Principal Paid</th><th>Interest Paid</th><th>Closing Balance</th></tr></thead>
+      <tbody id="amorBody"></tbody>
+    </table>
+    <a class="view-all" id="viewAllLink">View All 20 Years <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></a>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+lucide.createIcons();
+(function(){
+  var $ = function(id){return document.getElementById(id)};
+  var fmt = function(n){return '\u20B9'+Math.round(n).toLocaleString('en-IN')};
+  var tenureMode = 'years';
+  var amorMethod = 'reducing';
+  var showAll = false;
+
+  function setupToggle(id, cb){
+    var btns = document.querySelectorAll('#'+id+' .toggle-btn');
+    btns.forEach(function(b){
+      b.addEventListener('click',function(){
+        btns.forEach(function(x){x.classList.remove('active')});
+        b.classList.add('active');
+        cb(b.dataset.val);
+      });
+    });
+  }
+
+  setupToggle('tenureToggle',function(val){
+    tenureMode=val;
+    var sl=$('tenure');
+    if(val==='months'){sl.min=12;sl.max=360;sl.step=12;sl.value=Math.min(360,Math.max(12,parseInt(sl.value)*12))}
+    else{sl.min=1;sl.max=30;sl.step=1;sl.value=Math.round(parseInt(sl.value)/12)||20}
+    calc();
+  });
+  setupToggle('amorToggle',function(val){amorMethod=val;calc()});
+
+  function getMonths(){var v=parseInt($('tenure').value);return tenureMode==='years'?v*12:v}
+
+  function paintSlider(el){
+    var pct=((el.value-el.min)/(el.max-el.min))*100;
+    el.style.background='linear-gradient(to right,#00B4A6 0%,#00B4A6 '+pct+'%,#E8ECF1 '+pct+'%,#E8ECF1 100%)';
+  }
+
+  function calc(){
+    var P=parseInt($('loanAmount').value);
+    var annualRate=parseFloat($('interestRate').value);
+    var n=getMonths();
+    $('loanDisplay').textContent=Math.round(P).toLocaleString('en-IN');
+    $('rateDisplay').textContent=annualRate.toFixed(1);
+    $('tenureDisplay').textContent=$('tenure').value;
+    $('tenureUnit').textContent=tenureMode==='years'?'Years':'Months';
+
+    var r=annualRate/12/100;
+    var emi,totalInterest,totalPayment;
+    if(amorMethod==='reducing'){
+      if(r===0){emi=P/n}else{emi=P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)}
+      totalPayment=emi*n;totalInterest=totalPayment-P;
+    }else{
+      totalInterest=P*(annualRate/100)*(n/12);totalPayment=P+totalInterest;emi=totalPayment/n;
+    }
+    var fee=P*0.005;
+    $('emiAmount').textContent='\u20B9'+Math.round(emi).toLocaleString('en-IN');
+    $('bPrincipal').textContent=fmt(P);
+    $('bInterest').textContent=fmt(totalInterest);
+    $('bFee').textContent=fmt(fee);
+    $('bTotal').textContent=fmt(totalPayment+fee);
+
+    var circ=2*Math.PI*85;
+    var pRatio=P/totalPayment;
+    var pLen=pRatio*circ;
+    $('principalArc').setAttribute('stroke-dasharray',pLen+' '+circ);
+    $('interestArc').setAttribute('stroke-dasharray',(circ-pLen)+' '+circ);
+    $('interestArc').setAttribute('stroke-dashoffset',(-pLen).toString());
+
+    paintSlider($('loanAmount'));paintSlider($('interestRate'));paintSlider($('tenure'));
+    buildAmor(P,r,n,emi);
+  }
+
+  function buildAmor(P,r,n,emi){
+    var years=Math.ceil(n/12);
+    var show=showAll?years:Math.min(5,years);
+    var balance=P;
+    var tbody=$('amorBody');
+    while(tbody.firstChild)tbody.removeChild(tbody.firstChild);
+    for(var y=1;y<=show;y++){
+      var opening=balance;
+      var yPrincipal=0,yInterest=0;
+      var mths=Math.min(12,n-(y-1)*12);
+      for(var m=0;m<mths;m++){
+        var intPart=amorMethod==='reducing'?balance*r:P*r;
+        var prinPart=emi-intPart;
+        yInterest+=intPart;yPrincipal+=prinPart;balance-=prinPart;
+      }
+      if(balance<0)balance=0;
+      var tr=document.createElement('tr');
+      [y,fmt(opening),fmt(emi*mths),fmt(yPrincipal),fmt(yInterest),fmt(balance)].forEach(function(v){
+        var td=document.createElement('td');td.textContent=v;tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    }
+    var link=$('viewAllLink');
+    link.innerHTML=showAll?'Show Less':'View All '+years+' Years <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>';
+    lucide.createIcons({nameAttr:'data-lucide',attrs:{},icons:{},node:link});
+  }
+
+  $('viewAllLink').addEventListener('click',function(){showAll=!showAll;calc()});
+  $('loanAmount').addEventListener('input',calc);
+  $('interestRate').addEventListener('input',calc);
+  $('tenure').addEventListener('input',calc);
+  calc();
+})();
+</script>
+</body>
+</html>

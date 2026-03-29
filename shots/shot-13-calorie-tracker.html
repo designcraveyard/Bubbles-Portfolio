@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calorie Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#f0f0f0;display:flex;justify-content:center;align-items:start;min-height:100vh;padding:20px 0}
+.phone{width:390px;min-height:844px;background:#FAFAFA;border-radius:40px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.screen{padding:20px 20px 100px;overflow-y:auto}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.greeting{font-size:22px;font-weight:700;color:#1B4332;display:flex;align-items:center;gap:8px}
+.greeting i{width:22px;height:22px;color:#F5A623}
+.header-right{display:flex;align-items:center;gap:12px}
+.streak{font-size:13px;font-weight:600;background:#FFF3E0;padding:4px 10px;border-radius:20px;color:#E65100;display:flex;align-items:center;gap:4px}
+.streak i{width:14px;height:14px}
+.settings{width:32px;height:32px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.08);cursor:pointer;color:#555}
+.settings i{width:16px;height:16px}
+.date-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;color:#555;margin:8px 0 16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.date-chip i{width:14px;height:14px}
+.ring-section{display:flex;justify-content:center;margin:8px 0 20px;opacity:0;animation:fadeUp .5s .2s forwards}
+.ring-container{position:relative;width:200px;height:200px}
+.ring-container svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:#E8F5E9;stroke-width:14}
+.ring-fill{fill:none;stroke:#76C043;stroke-width:14;stroke-linecap:round;stroke-dasharray:534;stroke-dashoffset:534;animation:ringFill 1.2s .5s ease-out forwards}
+@keyframes ringFill{to{stroke-dashoffset:168}}
+.ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-number{font-size:48px;font-weight:800;color:#1B4332;line-height:1}
+.ring-label{font-size:12px;color:#888;font-weight:500;margin-top:2px}
+.ring-goal{font-size:11px;color:#1B4332;font-weight:700;margin-top:4px}
+.section-title{font-size:15px;font-weight:700;color:#1B4332;margin:16px 0 10px}
+.macros{display:flex;gap:10px;margin-bottom:16px}
+.macro-card{flex:1;background:#fff;border-radius:16px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.04);opacity:0;animation:fadeUp .4s forwards}
+.macro-card:nth-child(1){animation-delay:.6s}
+.macro-card:nth-child(2){animation-delay:.7s}
+.macro-card:nth-child(3){animation-delay:.8s}
+.macro-icon{display:flex;align-items:center;color:#1B4332}
+.macro-icon i{width:18px;height:18px}
+.macro-name{font-size:11px;color:#888;font-weight:500;margin:4px 0 2px}
+.macro-val{font-size:13px;font-weight:700;color:#1B4332}
+.macro-bar{height:5px;background:#eee;border-radius:4px;margin-top:6px;overflow:hidden}
+.macro-bar-fill{height:100%;border-radius:4px;width:0;animation:barGrow .8s 1s ease-out forwards}
+.blue .macro-bar-fill{background:#4A90D9}
+.orange .macro-bar-fill{background:#F5A623}
+.yellow .macro-bar-fill{background:#F7DC6F}
+@keyframes barGrow{to{width:var(--w)}}
+.water-section{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);opacity:0;animation:fadeUp .4s .9s forwards}
+.water-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.water-title{font-size:14px;font-weight:600;color:#1B4332;display:flex;align-items:center;gap:6px}
+.water-title i{width:16px;height:16px;color:#4A90D9}
+.water-amount{font-size:12px;color:#888;font-weight:500}
+.water-add{font-size:12px;font-weight:600;color:#4A90D9;cursor:pointer}
+.glasses{display:flex;gap:10px;justify-content:center}
+.glass{width:32px;height:40px;border:2.5px solid #B3E5FC;border-radius:6px 6px 10px 10px;position:relative;overflow:hidden;transition:all .3s}
+.glass.filled{border-color:#4A90D9}
+.glass.filled::after{content:'';position:absolute;bottom:0;left:0;right:0;height:100%;background:linear-gradient(to top,#4A90D9,#81D4FA);animation:waterFill .6s ease-out forwards}
+.glass:nth-child(1).filled::after{animation-delay:.9s}
+.glass:nth-child(2).filled::after{animation-delay:1s}
+.glass:nth-child(3).filled::after{animation-delay:1.1s}
+@keyframes waterFill{from{height:0}to{height:100%}}
+.meals{margin-bottom:16px}
+.meal-card{background:#fff;border-radius:16px;padding:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.04);opacity:0;animation:fadeUp .4s forwards}
+.meal-card:nth-child(1){animation-delay:1s}
+.meal-card:nth-child(2){animation-delay:1.1s}
+.meal-card:nth-child(3){animation-delay:1.2s}
+.meal-card:nth-child(4){animation-delay:1.3s}
+.meal-left{display:flex;align-items:center;gap:10px}
+.meal-icon{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:#F0F7E8}
+.meal-icon i{width:20px;height:20px;color:#5DA832}
+.meal-name{font-size:14px;font-weight:700;color:#1B4332}
+.meal-items{font-size:11px;color:#888;margin-top:2px}
+.meal-kcal{font-size:13px;font-weight:700;color:#1B4332}
+.meal-add{width:28px;height:28px;background:#F0F0F0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#888;cursor:pointer}
+.meal-card.dashed{border:2px dashed #ccc;background:transparent;box-shadow:none;justify-content:center;cursor:pointer}
+.meal-card.dashed .meal-left{color:#aaa;font-size:13px;font-weight:600;gap:6px}
+.meal-card.dashed .meal-left i{width:16px;height:16px}
+.fab{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#76C043,#5DA832);color:#fff;padding:14px 32px;border-radius:50px;font-size:15px;font-weight:700;box-shadow:0 6px 20px rgba(118,192,67,.4);cursor:pointer;display:flex;align-items:center;gap:8px;border:none;opacity:0;animation:fabIn .4s 1.4s forwards;z-index:10}
+@keyframes fabIn{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
+.fab i{width:18px;height:18px}
+.fab:hover{transform:translateX(-50%) scale(1.04)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="screen">
+  <div class="header">
+    <div class="greeting">Good morning Anjali <i data-lucide="sun" style="width:22px;height:22px;"></i></div>
+    <div class="header-right">
+      <span class="streak"><i data-lucide="flame" style="width:14px;height:14px;color:#E65100;"></i> 8 days</span>
+      <div class="settings"><i data-lucide="settings" style="width:16px;height:16px;"></i></div>
+    </div>
+  </div>
+  <div class="date-chip"><i data-lucide="calendar" style="width:14px;height:14px;"></i> Today, Feb 14</div>
+
+  <div class="ring-section">
+    <div class="ring-container">
+      <svg viewBox="0 0 200 200" width="200" height="200">
+        <circle cx="100" cy="100" r="85" class="ring-bg"/>
+        <circle cx="100" cy="100" r="85" class="ring-fill"/>
+      </svg>
+      <div class="ring-text">
+        <div class="ring-number">560</div>
+        <div class="ring-label">kcal remaining</div>
+        <div class="ring-goal">of 1,800 kcal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Macros</div>
+  <div class="macros">
+    <div class="macro-card blue">
+      <div class="macro-icon"><i data-lucide="dumbbell" style="width:18px;height:18px;color:#4A90D9;"></i></div>
+      <div class="macro-name">Protein</div>
+      <div class="macro-val">68g / 90g</div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="--w:75%"></div></div>
+    </div>
+    <div class="macro-card orange">
+      <div class="macro-icon"><i data-lucide="wheat" style="width:18px;height:18px;color:#F5A623;"></i></div>
+      <div class="macro-name">Carbs</div>
+      <div class="macro-val">142g / 200g</div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="--w:71%"></div></div>
+    </div>
+    <div class="macro-card yellow">
+      <div class="macro-icon"><i data-lucide="leaf" style="width:18px;height:18px;color:#7FB847;"></i></div>
+      <div class="macro-name">Fat</div>
+      <div class="macro-val">38g / 60g</div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="--w:63%"></div></div>
+    </div>
+  </div>
+
+  <div class="water-section">
+    <div class="water-header">
+      <div class="water-title"><i data-lucide="droplets" style="width:16px;height:16px;"></i> Water Intake</div>
+      <div class="water-amount">1.5L / 2.5L</div>
+      <div class="water-add">+ Add</div>
+    </div>
+    <div class="glasses">
+      <div class="glass filled"></div>
+      <div class="glass filled"></div>
+      <div class="glass filled"></div>
+      <div class="glass"></div>
+      <div class="glass"></div>
+    </div>
+  </div>
+
+  <div class="section-title">Today's Meals</div>
+  <div class="meals">
+    <div class="meal-card">
+      <div class="meal-left"><div class="meal-icon"><i data-lucide="sunrise" style="width:20px;height:20px;"></i></div><div><div class="meal-name">Breakfast</div><div class="meal-items">Dalia with milk, Banana</div></div></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="meal-kcal">420 kcal</span><div class="meal-add">+</div></div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-left"><div class="meal-icon"><i data-lucide="sun" style="width:20px;height:20px;"></i></div><div><div class="meal-name">Lunch</div><div class="meal-items">Dal chawal, Salad</div></div></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="meal-kcal">520 kcal</span><div class="meal-add">+</div></div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-left"><div class="meal-icon"><i data-lucide="sunset" style="width:20px;height:20px;"></i></div><div><div class="meal-name">Dinner</div><div class="meal-items">2 Rotis, Paneer curry</div></div></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="meal-kcal">300 kcal</span><div class="meal-add">+</div></div>
+    </div>
+    <div class="meal-card dashed">
+      <div class="meal-left"><i data-lucide="apple" style="width:16px;height:16px;"></i> Snacks &middot; 0 kcal &middot; + Add snack</div>
+    </div>
+  </div>
+</div>
+<button class="fab"><i data-lucide="utensils" style="width:18px;height:18px;"></i> Log Food</button>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

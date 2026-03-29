@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPI Send Money Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f5f5f5;font-family:'Outfit',sans-serif}
+.frame{width:1200px;height:800px;background:#fff;display:flex;align-items:center;justify-content:center;gap:36px;position:relative;overflow:hidden}
+.phone{width:360px;height:720px;border-radius:40px;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.12),0 4px 16px rgba(0,0,0,.06);border:6px solid #1a1a1a;position:relative;overflow:hidden;opacity:0;transform:translateY(30px);flex-shrink:0}
+.phone:nth-child(1){animation:fadeUp .6s .2s forwards}
+.phone:nth-child(2){animation:fadeUp .6s .5s forwards}
+.phone:nth-child(3){animation:fadeUp .6s .8s forwards}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(10px) rotate(360deg);opacity:.6}}
+
+/* Status bar */
+.status-bar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:12px;font-weight:600;color:#1a1a1a}
+.status-bar .time{font-weight:700}
+.status-icons{display:flex;gap:4px;align-items:center}
+.status-icons span{font-size:11px}
+
+/* Screen 1 */
+.s1-header{display:flex;align-items:center;padding:4px 16px 12px;gap:12px}
+.s1-header .back{font-size:20px;color:#1a1a1a;cursor:pointer}
+.s1-header .title{font-size:16px;font-weight:600;flex:1}
+.contact-bar{display:flex;align-items:center;gap:12px;padding:8px 20px 16px;border-bottom:1px solid #f0f0f0}
+.avatar{width:40px;height:40px;border-radius:50%;background:#1A73E8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0}
+.contact-info .name{font-size:14px;font-weight:600;color:#1a1a1a}
+.contact-info .upi{font-size:12px;color:#888}
+.amount-display{text-align:center;padding:32px 0 8px}
+.amount-display .rupee{font-size:48px;font-weight:800;color:#1a1a1a;letter-spacing:-1px}
+.amount-display .cursor{display:inline-block;width:2px;height:40px;background:#1A73E8;margin-left:2px;vertical-align:middle;animation:blink 1s infinite}
+.chips{display:flex;gap:8px;justify-content:center;padding:12px 16px}
+.chip{padding:6px 14px;border-radius:20px;background:#f0f4ff;color:#1A73E8;font-size:12px;font-weight:600}
+.note-field{margin:12px 20px;padding:10px 14px;border-radius:12px;background:#f7f7f7;font-size:13px;color:#555;display:flex;align-items:center;gap:6px}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;padding:8px 24px}
+.numpad .key{height:44px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:#1a1a1a;border-radius:8px}
+.proceed-btn{margin:8px 20px;padding:14px;border-radius:14px;background:#1A73E8;color:#fff;text-align:center;font-size:15px;font-weight:600}
+
+/* Screen 2 */
+.confirm-header{text-align:center;padding:8px 16px 0;font-size:16px;font-weight:600;color:#1a1a1a}
+.recipient-card{margin:16px 20px;padding:16px;border-radius:16px;background:#f8f9fa;display:flex;align-items:center;gap:14px}
+.recipient-card .details .bank{font-size:12px;color:#888;margin-top:2px}
+.confirm-amount{text-align:center;padding:16px 0 8px}
+.confirm-amount .val{font-size:44px;font-weight:800;color:#1a1a1a}
+.pin-section{text-align:center;padding:12px 0}
+.pin-label{font-size:13px;color:#888;margin-bottom:12px}
+.pin-dots{display:flex;gap:12px;justify-content:center;margin-bottom:16px}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid #ccc;background:#fff}
+.pin-dot.filled{background:#1a1a1a;border-color:#1a1a1a}
+.s2-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;padding:0 28px}
+.s2-numpad .key{height:42px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:#1a1a1a}
+.secured{text-align:center;padding:10px;font-size:12px;color:#555}
+
+/* Screen 3 */
+.success-top{background:#34A853;padding:40px 0 32px;text-align:center;color:#fff;position:relative;overflow:hidden}
+.checkmark{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;animation:pulse 2s infinite}
+.success-top .amt{font-size:32px;font-weight:800}
+.success-top .to{font-size:14px;opacity:.9;margin-top:4px}
+.txn-card{margin:20px;padding:20px;border-radius:16px;background:#f8f9fa}
+.txn-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
+.txn-row .label{color:#888}
+.txn-row .value{font-weight:600;color:#1a1a1a}
+.success-btns{display:flex;gap:12px;padding:0 20px;margin-top:16px}
+.success-btns .btn{flex:1;padding:13px;border-radius:12px;text-align:center;font-size:14px;font-weight:600}
+.btn-outline{border:1.5px solid #1A73E8;color:#1A73E8;background:#fff}
+.btn-solid{background:#1A73E8;color:#fff;border:none}
+.confetti{position:absolute;width:6px;height:6px;border-radius:50%;animation:confettiFall 3s infinite}
+</style>
+</head>
+<body>
+<div class="frame">
+  <!-- Screen 1: Enter Amount -->
+  <div class="phone">
+    <div class="status-bar"><span class="time">9:41</span><div class="status-icons"><span>4G</span><span>&#9679;&#9679;&#9679;</span></div></div>
+    <div class="s1-header"><span class="back">&#8592;</span><span class="title">Send Money</span></div>
+    <div class="contact-bar">
+      <div class="avatar">R</div>
+      <div class="contact-info"><div class="name">Rahul Sharma</div><div class="upi">@rahul.upi</div></div>
+    </div>
+    <div class="amount-display"><span class="rupee">&#8377;2,500</span><span class="cursor"></span></div>
+    <div class="chips"><span class="chip">&#8377;500</span><span class="chip">&#8377;1000</span><span class="chip">&#8377;2000</span><span class="chip">&#8377;5000</span></div>
+    <div class="note-field"><i data-lucide="pencil" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> Coffee <i data-lucide="coffee" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-left:4px;"></i></div>
+    <div class="numpad">
+      <div class="key">1</div><div class="key">2</div><div class="key">3</div>
+      <div class="key">4</div><div class="key">5</div><div class="key">6</div>
+      <div class="key">7</div><div class="key">8</div><div class="key">9</div>
+      <div class="key">.</div><div class="key">0</div><div class="key">&#9003;</div>
+    </div>
+    <div class="proceed-btn">Proceed</div>
+  </div>
+
+  <!-- Screen 2: Confirm Payment -->
+  <div class="phone">
+    <div class="status-bar"><span class="time">9:41</span><div class="status-icons"><span>4G</span><span>&#9679;&#9679;&#9679;</span></div></div>
+    <div class="confirm-header">Confirm Payment</div>
+    <div class="recipient-card">
+      <div class="avatar">R</div>
+      <div class="details">
+        <div class="name" style="font-size:14px;font-weight:600">Rahul Sharma</div>
+        <div class="bank">SBI Bank &bull; **** 4521</div>
+      </div>
+    </div>
+    <div class="confirm-amount"><div class="val">&#8377;2,500</div></div>
+    <div class="pin-section">
+      <div class="pin-label">Enter UPI PIN</div>
+      <div class="pin-dots">
+        <div class="pin-dot filled"></div>
+        <div class="pin-dot filled"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+      </div>
+    </div>
+    <div class="s2-numpad">
+      <div class="key">1</div><div class="key">2</div><div class="key">3</div>
+      <div class="key">4</div><div class="key">5</div><div class="key">6</div>
+      <div class="key">7</div><div class="key">8</div><div class="key">9</div>
+      <div class="key"></div><div class="key">0</div><div class="key">&#9003;</div>
+    </div>
+    <div class="secured"><i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> Secured by UPI</div>
+  </div>
+
+  <!-- Screen 3: Payment Successful -->
+  <div class="phone">
+    <div class="status-bar" style="background:#34A853;color:#fff"><span class="time">9:42</span><div class="status-icons"><span>4G</span><span>&#9679;&#9679;&#9679;</span></div></div>
+    <div class="success-top" style="position:relative">
+      <div class="confetti" style="top:10px;left:30px;background:#FFD54F"></div>
+      <div class="confetti" style="top:20px;left:80px;background:#FF7043;animation-delay:.5s"></div>
+      <div class="confetti" style="top:8px;right:40px;background:#42A5F5;animation-delay:1s"></div>
+      <div class="confetti" style="top:30px;right:70px;background:#AB47BC;animation-delay:.3s"></div>
+      <div class="confetti" style="top:15px;left:150px;background:#66BB6A;animation-delay:.7s"></div>
+      <div class="confetti" style="top:25px;right:120px;background:#FFA726;animation-delay:1.2s"></div>
+      <div class="confetti" style="top:5px;left:200px;background:#EF5350;animation-delay:.4s;width:5px;height:5px"></div>
+      <div class="confetti" style="top:35px;left:250px;background:#29B6F6;animation-delay:.9s;width:4px;height:4px"></div>
+      <div class="checkmark">&#10003;</div>
+      <div class="amt">&#8377;2,500 Sent!</div>
+      <div class="to">To Rahul Sharma</div>
+    </div>
+    <div class="txn-card">
+      <div class="txn-row"><span class="label">Transaction ID</span><span class="value">TXN928374651</span></div>
+      <div class="txn-row"><span class="label">Date &amp; Time</span><span class="value">12 Jan, 9:41 AM</span></div>
+      <div class="txn-row"><span class="label">Payment Method</span><span class="value">SBI **** 4521</span></div>
+      <div class="txn-row"><span class="label">Note</span><span class="value">Coffee <i data-lucide="coffee" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i></span></div>
+    </div>
+    <div class="success-btns">
+      <div class="btn btn-outline">Share Receipt</div>
+      <div class="btn btn-solid">Go Home</div>
+    </div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

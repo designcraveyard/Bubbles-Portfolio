@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Course Learning Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;font-family:'Plus Jakarta Sans',sans-serif;color:#fff}
+.phone{width:390px;min-height:100vh;background:#141414;position:relative;overflow-x:hidden;padding-bottom:120px}
+
+/* Top Bar */
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;position:relative;z-index:2;opacity:0;animation:fadeDown .5s .1s forwards}
+.top-bar .back{font-size:22px;color:#fff;text-decoration:none;cursor:pointer}
+.top-bar .title{font-size:13px;font-weight:600;color:#e0e0e0;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 12px}
+.top-bar .actions{display:flex;gap:16px;align-items:center;font-size:14px;color:#9e9e9e}
+.top-bar .actions span{cursor:pointer}
+
+/* Video Player */
+.video-player{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a237e,#311b92);overflow:hidden;opacity:0;animation:fadeIn .6s .2s forwards}
+.video-player .code-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:30px}
+.code-overlay pre{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;color:rgba(255,255,255,.7);white-space:pre;text-shadow:0 0 20px rgba(41,121,255,.3)}
+.code-overlay pre .keyword{color:#bb86fc}
+.code-overlay pre .func{color:#2979FF}
+.code-overlay pre .string{color:#FFA000}
+.code-overlay pre .comment{color:rgba(255,255,255,.3)}
+
+.live-chip{position:absolute;top:12px;left:12px;background:#d32f2f;color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;letter-spacing:.3px}
+.live-chip::before{content:'';width:6px;height:6px;background:#fff;border-radius:50%;animation:pulse 1.2s infinite}
+
+.play-controls{position:absolute;bottom:0;left:0;right:0;padding:10px 14px 12px;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.play-btn{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.play-btn .btn{width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;backdrop-filter:blur(4px)}
+.play-btn .time{font-size:11px;color:rgba(255,255,255,.7);font-family:'IBM Plex Mono',monospace}
+.play-btn .fullscreen{margin-left:auto;font-size:14px;cursor:pointer;color:rgba(255,255,255,.6)}
+.progress-track{width:100%;height:3px;background:rgba(255,255,255,.15);border-radius:2px;position:relative}
+.progress-fill{width:40%;height:100%;background:#2979FF;border-radius:2px;position:relative}
+.progress-fill::after{content:'';position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:8px;height:8px;background:#2979FF;border-radius:50%;box-shadow:0 0 6px rgba(41,121,255,.6)}
+
+/* Lesson Info */
+.lesson-info{padding:18px 20px 0;opacity:0;animation:fadeUp .5s .35s forwards}
+.lesson-title{font-size:17px;font-weight:700;line-height:1.35;margin-bottom:14px}
+
+.instructor{display:flex;align-items:center;gap:12px;padding:0 20px;margin-bottom:16px;opacity:0;animation:fadeUp .5s .45s forwards}
+.instructor .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2979FF,#7c4dff);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
+.instructor .info .name{font-size:13px;font-weight:600;color:#fff}
+.instructor .info .meta{font-size:11px;color:#9e9e9e;margin-top:2px}
+.instructor .info .meta .star{color:#FFA000}
+
+/* Lesson Progress */
+.lesson-progress{margin:0 20px 20px;opacity:0;animation:fadeUp .5s .55s forwards}
+.lesson-progress .label{font-size:12px;color:#9e9e9e;margin-bottom:8px;display:flex;justify-content:space-between}
+.lesson-progress .track{height:4px;background:#262626;border-radius:2px;overflow:hidden}
+.lesson-progress .fill{width:0;height:100%;background:linear-gradient(90deg,#2979FF,#7c4dff);border-radius:2px;animation:progressGrow 1s .8s forwards}
+
+/* Divider */
+.divider{height:1px;background:#222;margin:0 20px}
+
+/* Course Content */
+.section-header{padding:18px 20px 10px;opacity:0;animation:fadeUp .5s .6s forwards}
+.section-header h3{font-size:14px;font-weight:700;color:#fff}
+.section-header .sub{font-size:11px;color:#9e9e9e;margin-top:3px}
+
+.lesson-list{padding:0 20px 16px}
+.lesson-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;margin-bottom:4px;cursor:pointer;transition:background .2s}
+.lesson-item.current{background:rgba(41,121,255,.1);border:1px solid rgba(41,121,255,.2)}
+.lesson-item .icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.lesson-item.done .icon{background:rgba(76,175,80,.15);color:#4caf50}
+.lesson-item.current .icon{background:rgba(41,121,255,.2);color:#2979FF}
+.lesson-item.locked .icon{background:#222;color:#555}
+.lesson-item .text{font-size:13px;color:#bbb;flex:1}
+.lesson-item.current .text{color:#fff;font-weight:600}
+.lesson-item.done .text{color:#9e9e9e}
+.lesson-item .dur{font-size:11px;color:#8a8a8a;font-family:'IBM Plex Mono',monospace}
+
+/* Stagger lesson items */
+.lesson-item:nth-child(1){opacity:0;animation:fadeUp .4s .65s forwards}
+.lesson-item:nth-child(2){opacity:0;animation:fadeUp .4s .72s forwards}
+.lesson-item:nth-child(3){opacity:0;animation:fadeUp .4s .79s forwards}
+.lesson-item:nth-child(4){opacity:0;animation:fadeUp .4s .86s forwards}
+.lesson-item:nth-child(5){opacity:0;animation:fadeUp .4s .93s forwards}
+
+/* Resources */
+.resources{padding:16px 20px;opacity:0;animation:fadeUp .5s 1s forwards}
+.resources h4{font-size:12px;color:#8a8a8a;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:600}
+.res-row{display:flex;gap:8px;flex-wrap:wrap}
+.res-chip{padding:10px 16px;background:#1e1e1e;border-radius:10px;font-size:12px;font-weight:500;color:#bbb;cursor:pointer;border:1px solid #2a2a2a;transition:all .2s;display:flex;align-items:center;gap:6px}
+.res-chip:hover{border-color:#2979FF;color:#2979FF}
+.res-chip .ic{font-size:14px}
+
+/* Bottom Tabs */
+.bottom-tabs{position:fixed;bottom:56px;width:390px;left:50%;transform:translateX(-50%);background:#1a1a1a;border-top:1px solid #222;display:flex;z-index:10;opacity:0;animation:fadeUp .5s 1.1s forwards}
+.bottom-tabs .tab{flex:1;text-align:center;padding:12px 0;font-size:12px;font-weight:600;color:#8a8a8a;cursor:pointer;position:relative;transition:color .2s}
+.bottom-tabs .tab.active{color:#2979FF}
+.bottom-tabs .tab.active::after{content:'';position:absolute;bottom:0;left:30%;right:30%;height:2px;background:#2979FF;border-radius:1px}
+.bottom-tabs .tab .badge{background:#d32f2f;color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:3px;font-weight:700}
+
+/* Sticky Nav */
+.sticky-nav{position:fixed;bottom:0;width:390px;left:50%;transform:translateX(-50%);background:#1e1e1e;border-top:1px solid #2a2a2a;display:flex;gap:10px;padding:10px 20px;z-index:10;opacity:0;animation:fadeUp .5s 1.2s forwards}
+.sticky-nav button{flex:1;padding:12px;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.sticky-nav .prev{background:#262626;color:#9e9e9e}
+.sticky-nav .next{background:#2979FF;color:#fff}
+.sticky-nav .next:hover{background:#448aff}
+
+/* Animations */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes progressGrow{to{width:35%}}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <span class="back">&larr;</span>
+    <span class="title">React.js for Designers</span>
+    <div class="actions">
+      <span>&ctdot;</span>
+      <span style="font-size:12px">Share</span>
+    </div>
+  </div>
+
+  <!-- Video Player -->
+  <div class="video-player">
+    <div class="code-overlay">
+      <pre><span class="comment">// State Management</span>
+<span class="keyword">const</span> [theme, setTheme] = <span class="func">useState</span>(<span class="string">'dark'</span>);
+
+<span class="keyword">function</span> <span class="func">toggleTheme</span>() {
+  <span class="func">setTheme</span>(prev =>
+    prev === <span class="string">'dark'</span> ? <span class="string">'light'</span> : <span class="string">'dark'</span>
+  );
+}</pre>
+    </div>
+    <div class="live-chip">LIVE &middot; 284 watching</div>
+    <div class="play-controls">
+      <div class="play-btn">
+        <div class="btn"><i data-lucide="play" style="width:14px;height:14px;color:#fff"></i></div>
+        <span class="time">12:34 / 28:00</span>
+        <span class="fullscreen"><i data-lucide="maximize" style="width:14px;height:14px;color:rgba(255,255,255,.6)"></i></span>
+      </div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Lesson Info -->
+  <div class="lesson-info">
+    <div class="lesson-title">09. State Management with Hooks</div>
+  </div>
+
+  <!-- Instructor -->
+  <div class="instructor">
+    <div class="avatar">AV</div>
+    <div class="info">
+      <div class="name">Akash Verma</div>
+      <div class="meta">Senior Designer @ Google &middot; <span class="star">4.9 <i data-lucide="star" style="width:11px;height:11px;fill:#FFA000;color:#FFA000;vertical-align:middle"></i></span> &middot; 24K learners</div>
+    </div>
+  </div>
+
+  <!-- Lesson Progress -->
+  <div class="lesson-progress">
+    <div class="label"><span>Lesson 9 of 24</span><span>35% complete</span></div>
+    <div class="track"><div class="fill"></div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Course Content -->
+  <div class="section-header">
+    <h3>Section 3: React Hooks</h3>
+    <div class="sub">3 of 5 lessons completed</div>
+  </div>
+
+  <div class="lesson-list">
+    <div class="lesson-item done">
+      <div class="icon"><i data-lucide="check-circle" style="width:16px;height:16px"></i></div>
+      <div class="text">07. Intro to Hooks</div>
+      <div class="dur">18:20</div>
+    </div>
+    <div class="lesson-item done">
+      <div class="icon"><i data-lucide="check-circle" style="width:16px;height:16px"></i></div>
+      <div class="text">08. useState Hook</div>
+      <div class="dur">22:15</div>
+    </div>
+    <div class="lesson-item current">
+      <div class="icon"><i data-lucide="play-circle" style="width:16px;height:16px"></i></div>
+      <div class="text">09. State Management</div>
+      <div class="dur">28:00</div>
+    </div>
+    <div class="lesson-item locked">
+      <div class="icon"><i data-lucide="circle" style="width:16px;height:16px"></i></div>
+      <div class="text">10. useEffect Hook</div>
+      <div class="dur">25:40</div>
+    </div>
+    <div class="lesson-item locked">
+      <div class="icon"><i data-lucide="circle" style="width:16px;height:16px"></i></div>
+      <div class="text">11. Custom Hooks</div>
+      <div class="dur">30:10</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Resources -->
+  <div class="resources">
+    <h4>Resources</h4>
+    <div class="res-row">
+      <div class="res-chip"><span class="ic"><i data-lucide="file-text" style="width:14px;height:14px"></i></span> Download Notes PDF</div>
+      <div class="res-chip"><span class="ic"><i data-lucide="folder" style="width:14px;height:14px"></i></span> Exercise Files</div>
+      <div class="res-chip"><span class="ic"><i data-lucide="laptop" style="width:14px;height:14px"></i></span> Code Sandbox</div>
+    </div>
+  </div>
+
+  <!-- Bottom Tabs -->
+  <div class="bottom-tabs">
+    <div class="tab active">Course Content</div>
+    <div class="tab">Q&A <span class="badge">12</span></div>
+    <div class="tab">Notes</div>
+    <div class="tab">Reviews</div>
+  </div>
+
+  <!-- Sticky Nav -->
+  <div class="sticky-nav">
+    <button class="prev">&larr; Prev</button>
+    <button class="next">Next &rarr;</button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>

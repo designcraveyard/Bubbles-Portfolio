@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grocery Cart — Quick Commerce</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* macOS-like scrollbars */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.0);border-radius:3px;transition:background .3s}
+  :hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.4)}
+  *{scrollbar-width:thin;scrollbar-color:transparent transparent}
+  *:hover{scrollbar-color:rgba(128,128,128,.25) transparent}
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#f0f0f0;display:flex;justify-content:center;align-items:center;min-height:100vh;-webkit-font-smoothing:antialiased}
+  .phone{width:390px;min-height:844px;background:#fff;border-radius:40px;overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,.18);position:relative;display:flex;flex-direction:column;padding-bottom:80px}
+  .status-bar{height:54px;padding:14px 28px 0;display:flex;justify-content:space-between;align-items:center;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px}
+  .status-icons{display:flex;gap:6px;align-items:center}
+  .status-icons span{font-size:13px}
+  .header{padding:8px 20px 12px;display:flex;align-items:center;justify-content:space-between}
+  .header-left{display:flex;align-items:center;gap:10px}
+  .back-btn{width:36px;height:36px;border-radius:50%;background:#f5f5f5;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .back-btn svg{width:18px;height:18px;stroke:#222;stroke-width:2.2}
+  .header h1{font-size:20px;font-weight:700;color:#111}
+  .item-badge{background:#111;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:6px}
+  .trash-btn{width:36px;height:36px;border-radius:50%;background:#f5f5f5;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .trash-btn svg{width:18px;height:18px;stroke:#666;stroke-width:1.8}
+
+  .delivery-banner{margin:0 16px 12px;padding:12px 16px;background:#f0faf0;border-radius:14px;display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:500;color:#1a7a1a}
+  .pulse-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;position:relative;flex-shrink:0}
+  .pulse-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;background:rgba(34,197,94,.3);animation:pulse 2s ease infinite}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(2.2);opacity:0}}
+
+  .cart-items{padding:0 16px;flex:1;overflow-y:auto}
+  .cart-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #f3f3f3}
+  .cart-item:last-child{border-bottom:none}
+  .item-img{width:56px;height:56px;border-radius:12px;background:#f8f8f8;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;overflow:hidden}
+  .item-img img{width:100%;height:100%;object-fit:cover}
+  .item-info{flex:1;min-width:0}
+  .item-name{font-size:14px;font-weight:600;color:#111;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item-weight{font-size:12px;color:#888;margin-bottom:4px}
+  .item-price{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#111;position:relative;overflow:hidden;height:22px}
+  .price-value{display:inline-block;transition:transform .4s cubic-bezier(.4,0,.2,1);position:relative}
+  .price-value.flip-out{transform:translateY(-100%);opacity:0}
+  .price-value.flip-in{animation:flipIn .4s cubic-bezier(.4,0,.2,1) forwards}
+  @keyframes flipIn{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+
+  .qty-ctrl{display:flex;align-items:center;background:#f5f5f5;border-radius:10px;overflow:hidden;flex-shrink:0}
+  .qty-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:#111;cursor:pointer;user-select:none;border:none;background:transparent}
+  .qty-btn:active{background:#e8e8e8}
+  .qty-num{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;width:28px;text-align:center;color:#111;position:relative;overflow:hidden;height:32px;display:flex;align-items:center;justify-content:center}
+  .qty-num-inner{display:inline-block;transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .qty-num-inner.flip-out{transform:translateY(-100%);opacity:0}
+  .qty-num-inner.flip-in{animation:flipIn .35s cubic-bezier(.4,0,.2,1) forwards}
+
+  .highlight-qty .qty-ctrl{background:#ADDE45;animation:qtyPop .5s cubic-bezier(.4,0,.2,1)}
+  @keyframes qtyPop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+  .add-more{padding:16px 0;display:flex;align-items:center;gap:10px;cursor:pointer}
+  .add-more-icon{width:40px;height:40px;border-radius:12px;border:2px dashed #ccc;display:flex;align-items:center;justify-content:center;color:#999;font-size:20px}
+  .add-more span{font-size:14px;font-weight:500;color:#666}
+
+  .savings{margin:0 16px 10px;padding:12px 16px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:14px;font-size:14px;font-weight:600;color:#16a34a;display:flex;align-items:center;gap:6px}
+  .savings.pop{animation:savePop .5s cubic-bezier(.4,0,.2,1)}
+  @keyframes savePop{0%{transform:scale(1)}30%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+  .bill{margin:0 16px 12px;padding:16px;background:#fafafa;border-radius:16px}
+  .bill h3{font-size:14px;font-weight:700;color:#111;margin-bottom:12px}
+  .bill-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#555;margin-bottom:8px}
+  .bill-row:last-child{margin-bottom:0}
+  .bill-row span:last-child{font-family:'Space Grotesk',sans-serif;font-weight:600;color:#222}
+  .bill-row.free span:last-child{color:#16a34a;font-weight:700}
+  .bill-row.total{border-top:1.5px solid #e5e5e5;padding-top:10px;margin-top:4px;font-size:15px;font-weight:700;color:#111}
+  .bill-row.total span:last-child{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700}
+  .bill-total-value{display:inline-block;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+  .bill-total-value.flip-out{transform:translateY(-100%);opacity:0}
+  .bill-total-value.flip-in{animation:flipIn .4s cubic-bezier(.4,0,.2,1) forwards}
+
+  .bottom-bar{position:fixed;bottom:0;width:390px;left:50%;transform:translateX(-50%);padding:12px 16px 34px;background:rgba(255,255,255,.97);backdrop-filter:blur(16px);border-top:1px solid #f0f0f0;z-index:10}
+  .pay-btn{width:100%;padding:16px;background:#ADDE45;border:none;border-radius:16px;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;color:#111;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s,box-shadow .15s}
+  .pay-btn:active{transform:scale(.97)}
+  .pay-btn:hover{box-shadow:0 4px 20px rgba(173,222,69,.4)}
+  .pay-btn .pay-amount{font-family:'Space Grotesk',sans-serif}
+
+  .item-total-value{display:inline-block;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+  .item-total-value.flip-out{transform:translateY(-100%);opacity:0}
+  .item-total-value.flip-in{animation:flipIn .4s cubic-bezier(.4,0,.2,1) forwards}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="status-icons">
+      <span>●●●●</span>
+      <span>WiFi</span>
+      <svg width="22" height="12" viewBox="0 0 22 12"><rect x="0" y="1" width="18" height="10" rx="2" fill="none" stroke="#111" stroke-width="1.2"/><rect x="2" y="3" width="12" height="6" rx="1" fill="#111"/><rect x="19" y="4" width="2" height="4" rx="1" fill="#111"/></svg>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="header-left">
+      <div class="back-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M15 19l-7-7 7-7"/></svg></div>
+      <h1>My Cart <span class="item-badge" id="itemCount">4 items</span></h1>
+    </div>
+    <div class="trash-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6"/></svg></div>
+  </div>
+
+  <div class="delivery-banner">
+    <div class="pulse-dot"></div>
+    <span><i data-lucide="rocket" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> Arriving in <strong>9 mins</strong> · Sector 62, Noida</span>
+  </div>
+
+  <div class="cart-items">
+    <div class="cart-item" id="butter-item">
+      <div class="item-img"><img src="https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=60&h=60&fit=crop" alt="Butter"></div>
+      <div class="item-info">
+        <div class="item-name">Amul Butter</div>
+        <div class="item-weight">500g</div>
+        <div class="item-price"><span class="price-value" id="butter-price">₹280</span></div>
+      </div>
+      <div class="qty-ctrl" id="butter-qty-ctrl">
+        <div class="qty-btn">−</div>
+        <div class="qty-num"><span class="qty-num-inner" id="butter-qty">1</span></div>
+        <div class="qty-btn">+</div>
+      </div>
+    </div>
+
+    <div class="cart-item">
+      <div class="item-img"><img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=60&h=60&fit=crop" alt="Bread"></div>
+      <div class="item-info">
+        <div class="item-name">Britannia Bread</div>
+        <div class="item-weight">Regular</div>
+        <div class="item-price"><span class="price-value">₹90</span></div>
+      </div>
+      <div class="qty-ctrl">
+        <div class="qty-btn">−</div>
+        <div class="qty-num"><span class="qty-num-inner">2</span></div>
+        <div class="qty-btn">+</div>
+      </div>
+    </div>
+
+    <div class="cart-item">
+      <div class="item-img"><img src="https://images.unsplash.com/photo-1563636619-e9143da7973b?w=60&h=60&fit=crop" alt="Milk"></div>
+      <div class="item-info">
+        <div class="item-name">Mother Dairy Milk</div>
+        <div class="item-weight">1L</div>
+        <div class="item-price"><span class="price-value">₹68</span></div>
+      </div>
+      <div class="qty-ctrl">
+        <div class="qty-btn">−</div>
+        <div class="qty-num"><span class="qty-num-inner">1</span></div>
+        <div class="qty-btn">+</div>
+      </div>
+    </div>
+
+    <div class="cart-item">
+      <div class="item-img"><img src="https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=60&h=60&fit=crop" alt="Bhujia"></div>
+      <div class="item-info">
+        <div class="item-name">Haldiram's Bhujia</div>
+        <div class="item-weight">400g</div>
+        <div class="item-price"><span class="price-value">₹120</span></div>
+      </div>
+      <div class="qty-ctrl">
+        <div class="qty-btn">−</div>
+        <div class="qty-num"><span class="qty-num-inner">1</span></div>
+        <div class="qty-btn">+</div>
+      </div>
+    </div>
+
+    <div class="add-more">
+      <div class="add-more-icon">+</div>
+      <span>Add more items</span>
+    </div>
+  </div>
+
+  <div class="savings" id="savings">
+    <span id="savings-text">You saved ₹47 <i data-lucide="party-popper" style="width:16px;height:16px;display:inline-block;vertical-align:middle;"></i></span>
+  </div>
+
+  <div class="bill">
+    <h3>Bill Summary</h3>
+    <div class="bill-row">
+      <span>Item total</span>
+      <span><span class="item-total-value" id="item-total">₹558</span></span>
+    </div>
+    <div class="bill-row free">
+      <span>Delivery</span>
+      <span>FREE</span>
+    </div>
+    <div class="bill-row">
+      <span>Platform fee</span>
+      <span>₹2</span>
+    </div>
+    <div class="bill-row total">
+      <span>Total</span>
+      <span><span class="bill-total-value" id="bill-total">₹560</span></span>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="pay-btn">Proceed to Pay · <span class="pay-amount" id="pay-amount">₹560</span></button>
+  </div>
+</div>
+
+<script>
+  // Auto-animate after 2s: Amul Butter qty 1→2, price 280→560, totals update
+  setTimeout(() => {
+    const qtyEl = document.getElementById('butter-qty');
+    const priceEl = document.getElementById('butter-price');
+    const qtyCtrl = document.getElementById('butter-qty-ctrl');
+    const itemTotal = document.getElementById('item-total');
+    const billTotal = document.getElementById('bill-total');
+    const payAmount = document.getElementById('pay-amount');
+    const savings = document.getElementById('savings');
+    const savingsText = document.getElementById('savings-text');
+
+    // Flip qty
+    qtyEl.classList.add('flip-out');
+    setTimeout(() => {
+      qtyEl.textContent = '2';
+      qtyEl.classList.remove('flip-out');
+      qtyEl.classList.add('flip-in');
+      qtyCtrl.parentElement.classList.add('highlight-qty');
+    }, 200);
+
+    // Flip price
+    setTimeout(() => {
+      priceEl.classList.add('flip-out');
+      setTimeout(() => {
+        priceEl.textContent = '₹560';
+        priceEl.classList.remove('flip-out');
+        priceEl.classList.add('flip-in');
+      }, 200);
+    }, 300);
+
+    // Flip item total
+    setTimeout(() => {
+      itemTotal.classList.add('flip-out');
+      setTimeout(() => {
+        itemTotal.textContent = '₹838';
+        itemTotal.classList.remove('flip-out');
+        itemTotal.classList.add('flip-in');
+      }, 200);
+    }, 500);
+
+    // Flip bill total + pay
+    setTimeout(() => {
+      billTotal.classList.add('flip-out');
+      setTimeout(() => {
+        billTotal.textContent = '₹840';
+        billTotal.classList.remove('flip-out');
+        billTotal.classList.add('flip-in');
+      }, 200);
+      payAmount.style.transition = 'opacity .3s';
+      payAmount.style.opacity = '0';
+      setTimeout(() => {
+        payAmount.textContent = '₹840';
+        payAmount.style.opacity = '1';
+      }, 300);
+    }, 700);
+
+    // Pop savings
+    setTimeout(() => {
+      savingsText.textContent = 'You saved ₹94';
+      const icon = document.createElement('i');
+      icon.setAttribute('data-lucide', 'party-popper');
+      icon.style.cssText = 'width:16px;height:16px;display:inline-block;vertical-align:middle;margin-left:4px;';
+      savingsText.appendChild(icon);
+      lucide.createIcons({nodes: [savingsText]});
+      savings.classList.add('pop');
+    }, 900);
+
+    // Update badge
+    setTimeout(() => {
+      // badge stays at 4 items — qty change, not new item
+    }, 400);
+
+  }, 2000);
+</script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons()</script>
+</body>
+</html>
