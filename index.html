@@ -298,6 +298,99 @@ section { padding: 100px 2rem; }
   border-color: rgba(196,82,42,0.2);
 }
 
+/* ===== PROCESS ===== */
+#process {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.process-intro {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 56px;
+}
+
+.process-intro p {
+  font-size: 16px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.8;
+  margin-top: 16px;
+}
+
+.process-steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.process-step {
+  padding: 28px;
+  border-radius: 14px;
+  border: 0.5px solid var(--border);
+  background: var(--cream-dark);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.process-step:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(26,23,20,0.06);
+}
+
+.process-step-num {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.process-step-num::after {
+  content: '';
+  flex: 1;
+  height: 0.5px;
+  background: var(--border);
+}
+
+.process-step h3 {
+  font-family: var(--serif);
+  font-size: 18px;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.process-step p {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.process-note {
+  text-align: center;
+  margin-top: 40px;
+  padding: 24px;
+  border-radius: 12px;
+  background: var(--accent-light);
+  border: 0.5px solid rgba(196,82,42,0.15);
+}
+
+.process-note p {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.process-note strong {
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .process-steps { grid-template-columns: 1fr; }
+}
+
 /* ===== WORKS ===== */
 #works {
   max-width: 1200px;
@@ -629,6 +722,7 @@ footer p {
     </button>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
+      <li><a href="#process">Process</a></li>
       <li><a href="#works">Work</a></li>
       <li><a href="#edu-videos">Videos</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -692,6 +786,52 @@ footer p {
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="process-intro">
+    <p class="section-eyebrow">How I Learn</p>
+    <h2 class="section-title">My Design Process</h2>
+    <p>I'm a self-taught designer using the same principles I used to teach school students — curiosity, structure, and repetition. Claude is my design mentor.</p>
+  </div>
+
+  <div class="process-steps">
+    <div class="process-step fade-up">
+      <p class="process-step-num">01</p>
+      <h3>Pick a challenge</h3>
+      <p>Each day starts with a fresh design prompt. Claude asks thought-provoking questions about my real-life observations to set the context.</p>
+    </div>
+    <div class="process-step fade-up">
+      <p class="process-step-num">02</p>
+      <h3>Study real apps</h3>
+      <p>I explore competitor apps in the wild — using them, noting what works, what doesn't, and building my own perspective before designing.</p>
+    </div>
+    <div class="process-step fade-up">
+      <p class="process-step-num">03</p>
+      <h3>Discuss & distill</h3>
+      <p>I log my observations and discuss them with Claude. Together we arrive at fundamental UX principles for that specific screen.</p>
+    </div>
+    <div class="process-step fade-up">
+      <p class="process-step-num">04</p>
+      <h3>Design in Figma</h3>
+      <p>With a clear brief, I design in Figma using auto layout and iOS/Android component libraries. Share, get feedback, iterate, repeat.</p>
+    </div>
+    <div class="process-step fade-up">
+      <p class="process-step-num">05</p>
+      <h3>Review & iterate</h3>
+      <p>I share each version with Claude for critique. Each round sharpens the design and deepens my understanding of why things work.</p>
+    </div>
+    <div class="process-step fade-up">
+      <p class="process-step-num">06</p>
+      <h3>Prototype & reflect</h3>
+      <p>Once the design feels right, I build an interactive prototype — then step back to absorb what I learned that day.</p>
+    </div>
+  </div>
+
+  <div class="process-note">
+    <p>I've been doing this daily for the last 3 months. I take pride in being self-taught — and I'm <strong>looking for real-world projects to collaborate on</strong> and keep learning.</p>
   </div>
 </section>
 
